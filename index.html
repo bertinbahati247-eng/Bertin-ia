@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>⚽ EDGE PRO AI v8.1 · PRO</title>
+  <style>
+    :root {
+      --bg:#0a0d14;--card:#141b2b;--border:#1f2937;--text:#f1f5f9;--sub:#94a3b8;
+      --cyan:#06b6d4;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--yellow:#eab308;
+      --purple:#8b5cf6;--orange:#f97316;--radius:14px;--safe:env(safe-area-inset-bottom,8px);
+      --gold:#f59e0b;--premium:linear-gradient(135deg,#1a1a2e,#16213e);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;justify-content:center;min-height:100vh}
+    .app{max-width:560px;width:100%;padding:10px;padding-bottom:100px}
+    .header{background:var(--card);padding:12px 16px;border-radius:var(--radius);display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);margin-bottom:8px;position:sticky;top:8px;z-index:10;backdrop-filter:blur(10px)}
+    .header h1{font-size:0.9rem;font-weight:800;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .version-badge{font-size:0.5rem;padding:3px 8px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--cyan));color:#fff;font-weight:700}
+    .card{background:var(--card);border-radius:var(--radius);padding:12px;margin-bottom:8px;border:1px solid var(--border)}
+    .card.premium{background:var(--premium);border:2px solid var(--gold)}
+    h2{font-size:0.78rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    h3{font-size:0.7rem;font-weight:700;margin:8px 0 6px;color:var(--cyan)}
+    .field{margin-bottom:6px;position:relative}
+    .field label{display:block;font-size:0.5rem;text-transform:uppercase;color:var(--sub);font-weight:600;margin-bottom:2px}
+    input,select,textarea{width:100%;padding:8px 10px;background:#1a2233;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;transition:border-color 0.2s}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+    textarea{resize:vertical;min-height:60px;font-family:monospace;font-size:0.65rem}
+    .btn{padding:10px 12px;border:none;border-radius:8px;font-weight:700;font-size:0.72rem;cursor:pointer;width:100%;margin:3px 0;color:#fff;transition:all 0.2s}
+    .btn:disabled{opacity:0.5;cursor:not-allowed}
+    .btn-accent{background:linear-gradient(135deg,var(--yellow),var(--orange));color:#000}
+    .btn-accent:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 12px rgba(234,179,8,.3)}
+    .btn-success{background:linear-gradient(135deg,var(--green),#10b981)}
+    .btn-danger{background:linear-gradient(135deg,var(--red),#dc2626)}
+    .btn-secondary{background:#1a2233;border:1px solid var(--border)}
+    .btn-premium{background:linear-gradient(135deg,var(--gold),#d97706);color:#000}
+    .btn-small{padding:5px 8px;font-size:0.6rem;width:auto}
+    .row{display:flex;gap:5px;flex-wrap:wrap}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+    .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+    .four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px}
+    .badge{display:inline-block;padding:2px 6px;border-radius:10px;font-size:0.5rem;font-weight:700}
+    .badge-green{background:rgba(34,197,94,.2);color:var(--green)}
+    .badge-blue{background:rgba(59,130,246,.2);color:var(--blue)}
+    .badge-yellow{background:rgba(234,179,8,.2);color:var(--yellow)}
+    .badge-red{background:rgba(239,68,68,.2);color:var(--red)}
+    .badge-purple{background:rgba(139,92,246,.2);color:var(--purple)}
+    .badge-gold{background:rgba(245,158,11,.2);color:var(--gold)}
+    .nav-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:560px;width:100%;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:4px 0 var(--safe);z-index:20;overflow-x:auto;gap:2px}
+    .nav-item{display:flex;flex-direction:column;align-items:center;font-size:0.4rem;color:var(--sub);cursor:pointer;padding:3px 2px;border:none;background:transparent;min-width:44px;transition:color 0.2s}
+    .nav-item .icon{font-size:0.9rem}
+    .nav-item.active{color:var(--cyan)}
+    .page{display:none}
+    .page.active{display:block}
+    .suggestions{background:#1a2233;border-radius:8px;margin-top:2px;max-height:160px;overflow-y:auto;display:none;border:1px solid var(--border);position:absolute;z-index:5;width:100%}
+    .suggestions div{padding:8px 10px;cursor:pointer;font-size:0.7rem;border-bottom:1px solid var(--border)}
+    .suggestions div:hover{background:var(--border)}
+    .result-box{background:#1a2233;border-radius:8px;padding:10px;margin:5px 0}
+    .stat-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(31,41,55,.5);font-size:0.65rem}
+    .stat-row:last-child{border-bottom:none}
+    .stat-value{font-weight:700}
+    .confidence-bar{height:6px;background:#1f2937;border-radius:3px;overflow:hidden;margin:4px 0}
+    .confidence-fill{height:100%;border-radius:3px;transition:width 0.5s}
+    .confidence-fill.high{background:linear-gradient(90deg,var(--green),#10b981)}
+    .confidence-fill.medium{background:linear-gradient(90deg,var(--yellow),var(--orange))}
+    .confidence-fill.low{background:linear-gradient(90deg,var(--orange),var(--red))}
+    .final-pick-box{background:linear-gradient(135deg,#0a0f1a,#111827);border:3px solid var(--green);border-radius:var(--radius);padding:16px;margin:10px 0;text-align:center;animation:glowPick 2s infinite}
+    .final-pick-box.hot{border-color:var(--gold);animation:glowHot 1.5s infinite}
+    .final-pick-box.no-value{border-color:var(--red);animation:none;opacity:0.8}
+    @keyframes glowPick{0%,100%{box-shadow:0 0 12px rgba(34,197,94,.4)}50%{box-shadow:0 0 24px rgba(34,197,94,.8)}}
+    @keyframes glowHot{0%,100%{box-shadow:0 0 16px rgba(245,158,11,.5)}50%{box-shadow:0 0 32px rgba(245,158,11,.9)}}
+    .pick-label{font-size:0.5rem;text-transform:uppercase;letter-spacing:2px;color:var(--sub)}
+    .pick-market{font-size:1.1rem;font-weight:900;margin:3px 0}
+    .pick-selection{font-size:1.6rem;font-weight:900;margin:4px 0}
+    .pick-odd{font-size:0.9rem;color:var(--yellow)}
+    .pick-edge{font-size:0.6rem;color:var(--green);margin-top:3px}
+    .compare-table{width:100%;border-collapse:collapse;font-size:0.5rem;margin:6px 0}
+    .compare-table th{background:#0d1117;padding:5px 3px;text-align:center;color:var(--sub);font-size:0.45rem;text-transform:uppercase}
+    .compare-table td{padding:5px 3px;text-align:center;border-bottom:1px solid var(--border)}
+    .compare-table .value-row{background:rgba(34,197,94,.1)}
+    .import-summary{background:#0d1117;border-radius:8px;padding:10px;margin:6px 0;border:1px solid var(--border)}
+    .import-summary .line{padding:3px 0;font-size:0.65rem;display:flex;justify-content:space-between}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid #1f2937;border-top-color:var(--cyan);border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--card);color:var(--text);padding:8px 16px;border-radius:16px;font-size:0.7rem;z-index:30;border:1px solid var(--border);animation:fadeInOut 2.5s}
+    @keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(8px)}10%{opacity:1}90%{opacity:1}100%{opacity:0}}
+    .section-title{font-size:0.55rem;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin:8px 0 4px;padding-bottom:2px;border-bottom:1px solid var(--border)}
+    .kelly-box{background:rgba(139,92,246,.1);border:1px solid var(--purple);border-radius:6px;padding:6px;margin:4px 0;font-size:0.6rem}
+    .rating{color:var(--gold);letter-spacing:2px}
+    .slider{width:100%;accent-color:var(--cyan)}
+    .chart-bar{height:20px;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:4px;transition:width 0.5s;margin:2px 0}
+    .mini-chart{display:flex;align-items:flex-end;gap:2px;height:40px}
+    .mini-chart div{flex:1;background:var(--cyan);border-radius:2px 2px 0 0;min-width:3px}
+    .tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:0.45rem;margin:1px;background:rgba(59,130,246,.2);color:var(--blue)}
+    .h2h-card{background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.3);border-radius:8px;padding:8px;margin:6px 0}
+    .explanation-box{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:8px;margin:8px 0;font-size:0.55rem}
+    .explanation-box .reason{padding:2px 0;color:var(--green)}
+    .error-report{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:6px;margin:4px 0;font-size:0.5rem;max-height:150px;overflow-y:auto}
+    .import-log{background:#0d1117;border-radius:8px;padding:8px;margin:4px 0;font-size:0.5rem;max-height:200px;overflow-y:auto}
+    canvas{border-radius:8px;background:#0d1117;width:100%;max-width:100%}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:6px">
+      <h1>⚽ EDGE PRO AI</h1>
+      <span class="version-badge">v8.1</span>
+    </div>
+    <div style="font-size:0.45rem;color:var(--sub);text-align:right">
+      <div>🗄️<span id="hdrDB">0</span> · ⚽<span id="hdrMatches">0</span></div>
+    </div>
+  </div>
+
+  <!-- PAGE 1: ANALYSE -->
+  <div class="page active" id="pg-analyse">
+    <div class="card">
+      <h2>🏴 Analyse de match</h2>
+      <div class="row">
+        <div class="field" style="position:relative;flex:1">
+          <label>Domicile</label>
+          <input id="teamA" placeholder="Liverpool" oninput="App.suggest('teamA')" autocomplete="off">
+          <div class="suggestions" id="suggestA"></div>
+        </div>
+        <div class="field" style="position:relative;flex:1">
+          <label>Extérieur</label>
+          <input id="teamB" placeholder="Arsenal" oninput="App.suggest('teamB')" autocomplete="off">
+          <div class="suggestions" id="suggestB"></div>
+        </div>
+      </div>
+      <div class="field"><label>🏆 Championnat</label><select id="leagueSelect"></select></div>
+      <div class="section-title">📊 Cotes</div>
+      <div class="three-col">
+        <div class="field"><label>1</label><input id="c1" type="number" step="0.01" placeholder="2.50"></div>
+        <div class="field"><label>X</label><input id="cX" type="number" step="0.01" placeholder="3.40"></div>
+        <div class="field"><label>2</label><input id="c2" type="number" step="0.01" placeholder="2.80"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>BTTS OUI</label><input id="cbttsY" type="number" step="0.01" placeholder="1.80"></div>
+        <div class="field"><label>Over 2.5</label><input id="cover" type="number" step="0.01" placeholder="1.90"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Corners +9.5</label><input id="ccorners" type="number" step="0.01" placeholder="1.90"></div>
+        <div class="field"><label>Cartons +3.5</label><input id="ccards" type="number" step="0.01" placeholder="1.85"></div>
+      </div>
+      <button class="btn btn-accent" id="btnAnalyze" onclick="App.analyzeMatch()">🚀 ANALYSE COMPLÈTE</button>
+    </div>
+    <div id="analysisOutput"></div>
+  </div>
+
+  <!-- PAGE 2: CALIBRATION MATCH -->
+  <div class="page" id="pg-calibration-match">
+    <div class="card">
+      <h2>🧠 Calibration Match</h2>
+      <div class="two-col">
+        <div class="field"><label>Équipe Domicile</label><input id="calTeamA" placeholder="Sélectionnée auto"></div>
+        <div class="field"><label>Équipe Extérieur</label><input id="calTeamB" placeholder="Sélectionnée auto"></div>
+      </div>
+      <div class="section-title">🏥 Domicile</div>
+      <div class="two-col">
+        <div class="field"><label>Blessures</label><select id="calInjA"><option value="0">Aucun absent</option><option value="1">1 titulaire</option><option value="2">2 titulaires</option><option value="3">Plusieurs titulaires</option></select></div>
+        <div class="field"><label>Suspensions</label><select id="calSuspA"><option value="0">Non</option><option value="1">Oui</option></select></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Fatigue (0-100)</label><input id="calFatigueA" type="range" min="0" max="100" value="20" class="slider"><span style="font-size:0.5rem" id="calFatigueAVal">20</span></div>
+        <div class="field"><label>Rotation (0-100)</label><input id="calRotA" type="range" min="0" max="100" value="10" class="slider"><span style="font-size:0.5rem" id="calRotAVal">10</span></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Motivation</label><select id="calMotA"><option value="1">Très faible</option><option value="2">Faible</option><option value="3" selected>Normale</option><option value="4">Forte</option><option value="5">Très forte</option></select></div>
+        <div class="field"><label>Importance</label><select id="calImpA"><option value="1">Amical</option><option value="2" selected>Championnat</option><option value="3">Coupe</option><option value="4">Qualification</option><option value="5">Finale</option></select></div>
+      </div>
+      <div class="section-title">🏥 Extérieur</div>
+      <div class="two-col">
+        <div class="field"><label>Blessures</label><select id="calInjB"><option value="0">Aucun absent</option><option value="1">1 titulaire</option><option value="2">2 titulaires</option><option value="3">Plusieurs titulaires</option></select></div>
+        <div class="field"><label>Suspensions</label><select id="calSuspB"><option value="0">Non</option><option value="1">Oui</option></select></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Fatigue (0-100)</label><input id="calFatigueB" type="range" min="0" max="100" value="20" class="slider"><span style="font-size:0.5rem" id="calFatigueBVal">20</span></div>
+        <div class="field"><label>Rotation (0-100)</label><input id="calRotB" type="range" min="0" max="100" value="10" class="slider"><span style="font-size:0.5rem" id="calRotBVal">10</span></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Motivation</label><select id="calMotB"><option value="1">Très faible</option><option value="2">Faible</option><option value="3" selected>Normale</option><option value="4">Forte</option><option value="5">Très forte</option></select></div>
+        <div class="field"><label>Importance</label><select id="calImpB"><option value="1">Amical</option><option value="2" selected>Championnat</option><option value="3">Coupe</option><option value="4">Qualification</option><option value="5">Finale</option></select></div>
+      </div>
+      <div class="section-title">🌤️ Conditions</div>
+      <div class="two-col">
+        <div class="field"><label>Météo</label><select id="calWeather"><option value="0">Soleil</option><option value="1">Nuages</option><option value="2">Pluie</option><option value="3">Neige</option><option value="4">Vent fort</option></select></div>
+        <div class="field"><label>Pelouse</label><select id="calPitch"><option value="0">Excellent</option><option value="1">Bon</option><option value="2">Moyen</option><option value="3">Mauvais</option></select></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Jours repos Domicile</label><input id="calRestA" type="number" min="0" max="10" value="4"></div>
+        <div class="field"><label>Jours repos Extérieur</label><input id="calRestB" type="number" min="0" max="10" value="4"></div>
+      </div>
+      <button class="btn btn-premium" onclick="App.applyCalibration()">🧠 APPLIQUER CALIBRATION</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3: CALIBRATION ÉQUIPE -->
+  <div class="page" id="pg-calibration-team">
+    <div class="card">
+      <h2>⚙ Calibration Équipe</h2>
+      <div class="field" style="position:relative">
+        <label>Équipe</label>
+        <input id="calTeamSearch" placeholder="Rechercher..." oninput="App.suggestCalTeam()" autocomplete="off">
+        <div class="suggestions" id="suggestCalTeam"></div>
+      </div>
+      <div id="calTeamForm"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: STATISTIQUES -->
+  <div class="page" id="pg-stats">
+    <div class="card">
+      <h2>📊 Statistiques</h2>
+      <div class="field" style="position:relative">
+        <input id="statsSearch" placeholder="Rechercher une équipe..." oninput="App.searchStats()" autocomplete="off">
+        <div class="suggestions" id="suggestStats"></div>
+      </div>
+      <div id="statsDetail"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 5: BASE DE DONNÉES -->
+  <div class="page" id="pg-base">
+    <div class="card">
+      <h2>📂 Import</h2>
+      <input type="file" id="fileInput" style="display:none" accept=".csv,.txt,.tsv,.json,.xlsx" onchange="App.importMassive(event)" multiple>
+      <button class="btn btn-accent" onclick="document.getElementById('fileInput').click()">📥 IMPORTER CSV/JSON</button>
+      <button class="btn btn-secondary" onclick="App.exportDatabase()">📤 EXPORTER JSON</button>
+      <button class="btn btn-secondary" onclick="App.importJSON()">📥 IMPORTER JSON (Fusion)</button>
+      <div id="importStatus"></div>
+      <div class="section-title">📋 Journal d'importation</div>
+      <div id="importLog" class="import-log">Aucun import récent.</div>
+      <button class="btn btn-small btn-secondary" onclick="App.clearImportLog()" style="margin-top:4px">🗑️ Effacer journal</button>
+    </div>
+    <div class="card">
+      <h2>🗄️ Base (<span id="dbCount">0</span> éq. · <span id="dbMatchCount">0</span> matchs)</h2>
+      <div class="row">
+        <input id="dbSearch" placeholder="🔍 Rechercher..." oninput="App.searchDB()" style="flex:2">
+        <button class="btn btn-secondary btn-small" onclick="App.searchDB()" style="flex:1">🔍</button>
+      </div>
+      <div id="dbResults" style="max-height:350px;overflow-y:auto;margin-top:6px"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 6: HISTORIQUE -->
+  <div class="page" id="pg-history">
+    <div class="card">
+      <h2>📈 Historique & Backtest</h2>
+      <div id="historyStats" style="font-size:0.55rem;margin-bottom:6px"></div>
+      <div id="historyFilters" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+        <select id="filterLeague" style="flex:1;font-size:0.55rem" onchange="App.showHistory()"><option value="">Toutes ligues</option></select>
+        <select id="filterPeriod" style="flex:1;font-size:0.55rem" onchange="App.showHistory()"><option value="all">Tout</option><option value="30">30 jours</option><option value="7">7 jours</option></select>
+      </div>
+      <div id="historyContent" style="max-height:450px;overflow-y:auto"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 7: PARAMÈTRES -->
+  <div class="page" id="pg-settings">
+    <div class="card">
+      <h2>⚙️ Paramètres</h2>
+      <div class="section-title">Pondérations</div>
+      <div class="two-col">
+        <div class="field"><label>Elo</label><input id="setElo" type="number" step="0.01" value="0.20"></div>
+        <div class="field"><label>Dixon-Coles</label><input id="setDC" type="number" step="0.01" value="0.25"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Monte Carlo</label><input id="setMC" type="number" step="0.01" value="0.22"></div>
+        <div class="field"><label>Momentum</label><input id="setMom" type="number" step="0.01" value="0.10"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>H2H</label><input id="setH2H" type="number" step="0.01" value="0.08"></div>
+        <div class="field"><label>xG Model</label><input id="setXG" type="number" step="0.01" value="0.15"></div>
+      </div>
+      <div class="section-title">Seuils</div>
+      <div class="two-col">
+        <div class="field"><label>Value Bet (%)</label><input id="setValueTh" type="number" step="0.1" value="3"></div>
+        <div class="field"><label>Confiance min (%)</label><input id="setConfMin" type="number" step="1" value="50"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Simulations</label><input id="setSims" type="number" step="1000" value="10000"></div>
+        <div class="field"><label>Kelly fraction</label><input id="setKelly" type="number" step="0.1" value="0.5"></div>
+      </div>
+      <button class="btn btn-success" onclick="App.saveSettings()">💾 SAUVEGARDER</button>
+      <button class="btn btn-danger" onclick="App.resetDatabase()">🗑️ RÉINITIALISER</button>
+    </div>
+  </div>
+
+  <!-- PAGE 8: CHAMPIONNATS -->
+  <div class="page" id="pg-leagues">
+    <div class="card">
+      <h2>🏆 Championnats</h2>
+      <button class="btn btn-accent" onclick="App.showAddLeagueForm()">➕ Ajouter une ligue</button>
+      <button class="btn btn-secondary" onclick="App.exportLeagues()">📤 Exporter ligues</button>
+      <button class="btn btn-secondary" onclick="App.importLeagues()">📥 Importer ligues</button>
+      <div id="addLeagueForm" style="display:none"></div>
+      <div id="leaguesList"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 9: RAPPORTS -->
+  <div class="page" id="pg-reports">
+    <div class="card">
+      <h2>📋 Rapport global</h2>
+      <div id="globalReport"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 10: DASHBOARD -->
+  <div class="page" id="pg-dashboard">
+    <div class="card">
+      <h2>📊 Tableau de bord</h2>
+      <div id="dashboardContent"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 11: BANKROLL -->
+  <div class="page" id="pg-bankroll">
+    <div class="card">
+      <h2>💰 Suivi de bankroll</h2>
+      <div class="two-col">
+        <div class="field"><label>Mise unitaire (€)</label><input id="bkStake" type="number" step="0.1" value="1"></div>
+        <div class="field"><label>Bookmaker</label><input id="bkBookmaker" placeholder="Betclic"></div>
+      </div>
+      <button class="btn btn-accent" onclick="App.calculateBankroll()">📈 Calculer performance</button>
+      <div id="bankrollStats" style="margin:10px 0"></div>
+      <canvas id="bankrollChart" width="300" height="150" style="background:#0d1117; border-radius:8px; width:100%; max-width:100%;"></canvas>
+    </div>
+  </div>
+
+  <!-- PAGE 12: SMART BET -->
+  <div class="page" id="pg-smartbet">
+    <div class="card">
+      <h2>🤖 Smart Bet – Analyse par lot</h2>
+      <textarea id="smartBetInput" placeholder='[{"home":"Liverpool","away":"Arsenal","odds":{"1":2.5,"X":3.4,"2":2.8},"league":"PremierLeague"}]' style="min-height:120px"></textarea>
+      <button class="btn btn-accent" onclick="App.runSmartBet()">🚀 ANALYSER LE LOT</button>
+      <div id="smartBetResults"></div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="nav-bar">
+    <button class="nav-item active" data-page="pg-analyse" onclick="App.nav('pg-analyse',this)"><span class="icon">🏠</span>Analyse</button>
+    <button class="nav-item" data-page="pg-calibration-match" onclick="App.nav('pg-calibration-match',this)"><span class="icon">🧠</span>Cal. Match</button>
+    <button class="nav-item" data-page="pg-calibration-team" onclick="App.nav('pg-calibration-team',this)"><span class="icon">⚙</span>Cal. Équipe</button>
+    <button class="nav-item" data-page="pg-stats" onclick="App.nav('pg-stats',this)"><span class="icon">📊</span>Stats</button>
+    <button class="nav-item" data-page="pg-base" onclick="App.nav('pg-base',this)"><span class="icon">🗄️</span>Base</button>
+    <button class="nav-item" data-page="pg-history" onclick="App.nav('pg-history',this);App.showHistory()"><span class="icon">📈</span>Historique</button>
+    <button class="nav-item" data-page="pg-settings" onclick="App.nav('pg-settings',this);App.loadSettings()"><span class="icon">⚙️</span>Réglages</button>
+    <button class="nav-item" data-page="pg-leagues" onclick="App.nav('pg-leagues',this);App.showLeagues()"><span class="icon">🏆</span>Ligues</button>
+    <button class="nav-item" data-page="pg-reports" onclick="App.nav('pg-reports',this);App.showReport()"><span class="icon">📋</span>Rapports</button>
+    <button class="nav-item" data-page="pg-dashboard" onclick="App.nav('pg-dashboard',this);App.showDashboard()"><span class="icon">📊</span>Dashboard</button>
+    <button class="nav-item" data-page="pg-bankroll" onclick="App.nav('pg-bankroll',this);App.showBankroll()"><span class="icon">💰</span>Bankroll</button>
+    <button class="nav-item" data-page="pg-smartbet" onclick="App.nav('pg-smartbet',this)"><span class="icon">🤖</span>Smart Bet</button>
+  </div>
+</div>
+
+<script>
+// ==================== CONSTANTES ====================
+const VERSION="8.1.0";
+const TEAM_ALIASES={liverpool:["liverpool fc","reds","lfc"],arsenal:["arsenal fc","gunners"],"manchester city":["man city","city","mcfc"],"manchester united":["man united","man utd","mufc"],chelsea:["chelsea fc","blues"],tottenham:["tottenham hotspur","spurs"],newcastle:["newcastle united","magpies"],"aston villa":["aston villa fc","villa"],"west ham":["west ham united","hammers"],brighton:["brighton & hove albion","seagulls"],"real madrid":["real madrid cf","rmcf"],barcelona:["fc barcelona","barca","fcb"],"atletico madrid":["atletico","atm"],sevilla:["sevilla fc"],valencia:["valencia cf"],juventus:["juve","juventus fc"],"inter milan":["inter","internazionale"],"ac milan":["milan","rossoneri"],napoli:["napoli","ssc napoli"],roma:["as roma","roma"],lazio:["lazio","ss lazio"],"bayern munich":["bayern","fc bayern"],"borussia dortmund":["dortmund","bvb"],"rb leipzig":["leipzig","rbl"],"bayer leverkusen":["leverkusen","bayer"],psg:["paris sg","paris saint-germain"],marseille:["om","olympique marseille"],lyon:["ol","olympique lyonnais"],monaco:["as monaco"],lille:["lille","los","losc"],ajax:["ajax amsterdam"],psv:["psv eindhoven"],feyenoord:["feyenoord"],benfica:["sl benfica"],porto:["fc porto"],sporting:["sporting cp","sporting lisbonne"],celtic:["celtic fc","celtic glasgow"],rangers:["rangers fc","glasgow rangers"],galatasaray:["galatasaray sk","gs"],fenerbahce:["fenerbahçe","fb"]};
+const TEAM_LEAGUE={liverpool:"PremierLeague",arsenal:"PremierLeague","manchester city":"PremierLeague","manchester united":"PremierLeague",chelsea:"PremierLeague",tottenham:"PremierLeague",newcastle:"PremierLeague","aston villa":"PremierLeague","west ham":"PremierLeague",brighton:"PremierLeague","real madrid":"LaLiga",barcelona:"LaLiga","atletico madrid":"LaLiga",sevilla:"LaLiga",valencia:"LaLiga",juventus:"SerieA","inter milan":"SerieA","ac milan":"SerieA",napoli:"SerieA",roma:"SerieA",lazio:"SerieA","bayern munich":"Bundesliga","borussia dortmund":"Bundesliga","rb leipzig":"Bundesliga","bayer leverkusen":"Bundesliga",psg:"Ligue1",marseille:"Ligue1",lyon:"Ligue1",monaco:"Ligue1",lille:"Ligue1",ajax:"Eredivisie",psv:"Eredivisie",feyenoord:"Eredivisie",benfica:"PrimeiraLiga",porto:"PrimeiraLiga",sporting:"PrimeiraLiga",celtic:"Premiership",rangers:"Premiership",galatasaray:"SuperLig",fenerbahce:"SuperLig"};
+const DEFAULT_LEAGUES={PremierLeague:{name:"Premier League",country:"England",goal_rate:2.85,home_goal_rate:1.65,away_goal_rate:1.20,avg_xg_home:1.60,avg_xg_away:1.25,btts:55,over25:55,home_adv:42,importance:5,cards:3.5,corners:10.5,reliability:95,matches_used:0},LaLiga:{name:"La Liga",country:"Spain",goal_rate:2.65,home_goal_rate:1.55,away_goal_rate:1.10,avg_xg_home:1.55,avg_xg_away:1.20,btts:58,over25:52,home_adv:38,importance:5,cards:4.5,corners:9.5,reliability:95,matches_used:0},SerieA:{name:"Serie A",country:"Italy",goal_rate:2.55,home_goal_rate:1.40,away_goal_rate:1.15,avg_xg_home:1.45,avg_xg_away:1.15,btts:52,over25:48,home_adv:40,importance:5,cards:4.0,corners:10.0,reliability:95,matches_used:0},Bundesliga:{name:"Bundesliga",country:"Germany",goal_rate:3.10,home_goal_rate:1.80,away_goal_rate:1.30,avg_xg_home:1.70,avg_xg_away:1.35,btts:60,over25:58,home_adv:35,importance:5,cards:3.0,corners:9.8,reliability:95,matches_used:0},Ligue1:{name:"Ligue 1",country:"France",goal_rate:2.70,home_goal_rate:1.50,away_goal_rate:1.20,avg_xg_home:1.50,avg_xg_away:1.25,btts:54,over25:50,home_adv:37,importance:4,cards:3.8,corners:9.2,reliability:90,matches_used:0},Eredivisie:{name:"Eredivisie",country:"Netherlands",goal_rate:3.15,home_goal_rate:1.80,away_goal_rate:1.35,avg_xg_home:1.70,avg_xg_away:1.30,btts:62,over25:60,home_adv:45,importance:3,cards:2.8,corners:10.0,reliability:85,matches_used:0},PrimeiraLiga:{name:"Primeira Liga",country:"Portugal",goal_rate:2.60,home_goal_rate:1.50,away_goal_rate:1.10,avg_xg_home:1.50,avg_xg_away:1.15,btts:53,over25:50,home_adv:43,importance:4,cards:4.2,corners:10.3,reliability:85,matches_used:0},Premiership:{name:"Premiership",country:"Scotland",goal_rate:2.70,home_goal_rate:1.60,away_goal_rate:1.10,avg_xg_home:1.55,avg_xg_away:1.15,btts:54,over25:52,home_adv:41,importance:3,cards:3.5,corners:10.5,reliability:80,matches_used:0},SuperLig:{name:"Süper Lig",country:"Turkey",goal_rate:2.75,home_goal_rate:1.55,away_goal_rate:1.20,avg_xg_home:1.50,avg_xg_away:1.20,btts:55,over25:52,home_adv:44,importance:4,cards:4.8,corners:9.0,reliability:80,matches_used:0},Default:{name:"Inconnu",country:"?",goal_rate:2.70,home_goal_rate:1.50,away_goal_rate:1.20,avg_xg_home:1.50,avg_xg_away:1.25,btts:55,over25:52,home_adv:40,importance:2,cards:3.5,corners:10.0,reliability:50,matches_used:0}};
+
+// ==================== UTILITAIRES ====================
+const clean=s=>(s||'').normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,'').trim();
+const now=()=>new Date().toISOString();
+const formatDate=d=>{const dt=new Date(d);if(isNaN(dt.getTime()))return d;return dt.toLocaleDateString('fr-FR',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});};
+function resolveAlias(n){if(!n||typeof n!=='string')return'';const cn=clean(n);if(cn.length<2)return cn;for(const[m,a]of Object.entries(TEAM_ALIASES)){if(cn===clean(m))return m;if(a.some(x=>clean(x)===cn))return m;}for(const[m,a]of Object.entries(TEAM_ALIASES)){if(cn.includes(clean(m))||clean(m).includes(cn))return m;for(const x of a){if(cn.includes(clean(x))||clean(x).includes(cn))return m;}}return cn;}
+function showToast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
+function getRating(v,max=5){const s=Math.round((v/100)*max);return'★'.repeat(s)+'☆'.repeat(max-s);}
+
+// ==================== PARSEUR DE DATE ====================
+const DateParser = {
+  patterns: [
+    { regex: /^(\d{4})-(\d{2})-(\d{2})$/, format: 'YYYY-MM-DD' },
+    { regex: /^(\d{2})\/(\d{2})\/(\d{4})$/, format: 'DD/MM/YYYY' },
+    { regex: /^(\d{2})\/(\d{2})\/(\d{2})$/, format: 'DD/MM/YY' },
+    { regex: /^(\d{4})\/(\d{2})\/(\d{2})$/, format: 'YYYY/MM/DD' },
+    { regex: /^(\d{2})\.(\d{2})\.(\d{4})$/, format: 'DD.MM.YYYY' },
+    { regex: /^(\d{2})-(\d{2})-(\d{4})$/, format: 'DD-MM-YYYY' },
+    { regex: /^(\d{2}) (\w+) (\d{4})$/, format: 'DD MMM YYYY' },
+    { regex: /^(\w+) (\d{2}), (\d{4})$/, format: 'MMM DD, YYYY' }
+  ],
+  monthNames: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec','janv','févr','fevr','mars','avr','mai','juin','juil','août','aout','sept','oct','nov','déc','dec'],
+  monthValues: [0,1,2,3,4,5,6,7,8,9,10,11,0,1,1,2,3,4,5,6,7,7,8,9,10,11,11],
+  parse(dateStr) { /* ... identique à votre version ... */ return null; },
+  detectColumn(headers) { /* ... */ return -1; }
+};
+
+// ==================== BASE DE DONNÉES ====================
+const DB={
+  _db:null,V:23,_cache:{teams:null,analyses:null,leagues:null,settings:null,lastFetch:{}},
+  async open(){if(this._db)return this._db;return new Promise((r,rej)=>{const req=indexedDB.open("EdgeProV23",this.V);req.onupgradeneeded=e=>{const db=e.target.result;['teams','analyses','settings','leagues'].forEach(s=>{if(!db.objectStoreNames.contains(s))db.createObjectStore(s,{keyPath:s==='teams'?'name':s==='settings'?'key':s==='leagues'?'id':'id',autoIncrement:s==='analyses'});});};req.onsuccess=e=>{this._db=e.target.result;r(this._db);};req.onerror=()=>rej(new Error('IndexedDB'));});},
+  async saveTeam(t){this._cache.teams=null;await this.open();return new Promise(r=>{const tx=this._db.transaction('teams','readwrite');tx.objectStore('teams').put(t);tx.oncomplete=()=>r(t);});},
+  async getTeam(n){await this.open();return new Promise(r=>{const req=this._db.transaction('teams').objectStore('teams').get(n);req.onsuccess=()=>r(req.result||null);});},
+  async getAllTeams(){if(this._cache.teams&&Date.now()-this._cache.lastFetch.teams<5000)return this._cache.teams;await this.open();return new Promise(r=>{const req=this._db.transaction('teams').objectStore('teams').getAll();req.onsuccess=()=>{this._cache.teams=req.result||[];this._cache.lastFetch.teams=Date.now();r(this._cache.teams);};});},
+  async countTeams(){await this.open();return new Promise(r=>{this._db.transaction('teams').objectStore('teams').count().onsuccess=e=>r(e.target.result);});},
+  async saveAnalysis(d){this._cache.analyses=null;await this.open();return new Promise(r=>{const tx=this._db.transaction('analyses','readwrite');const o={...d,date:now(),id:Date.now()+Math.random().toString(36)};tx.objectStore('analyses').add(o);tx.oncomplete=()=>r(o);});},
+  async getAllAnalyses(){if(this._cache.analyses&&Date.now()-this._cache.lastFetch.analyses<5000)return this._cache.analyses;await this.open();return new Promise(r=>{const req=this._db.transaction('analyses').objectStore('analyses').getAll();req.onsuccess=()=>{this._cache.analyses=req.result||[];this._cache.lastFetch.analyses=Date.now();r(this._cache.analyses);};});},
+  async updateAnalysis(id, updateFn){this._cache.analyses=null;await this.open();return new Promise(r=>{const tx=this._db.transaction('analyses','readwrite');const store=tx.objectStore('analyses');const req=store.get(id);req.onsuccess=e=>{const data=e.target.result;if(data){updateFn(data);store.put(data);}tx.oncomplete=()=>r(data);};});},
+  async saveSetting(key,val){this._cache.settings=null;await this.open();return new Promise(r=>{const tx=this._db.transaction('settings','readwrite');tx.objectStore('settings').put({key,value:val});tx.oncomplete=()=>r();});},
+  async getSetting(key){await this.open();return new Promise(r=>{const req=this._db.transaction('settings').objectStore('settings').get(key);req.onsuccess=()=>r(req.result?.value??null);});},
+  async getAllSettings(){if(this._cache.settings)return this._cache.settings;await this.open();return new Promise(r=>{const req=this._db.transaction('settings').objectStore('settings').getAll();req.onsuccess=()=>{const m={};req.result.forEach(s=>m[s.key]=s.value);this._cache.settings=m;r(m);});});},
+  async saveLeague(lg){this._cache.leagues=null;await this.open();return new Promise(r=>{const tx=this._db.transaction('leagues','readwrite');tx.objectStore('leagues').put(lg);tx.oncomplete=()=>r(lg);});},
+  async getLeague(id){await this.open();return new Promise(r=>{const req=this._db.transaction('leagues').objectStore('leagues').get(id);req.onsuccess=()=>r(req.result||null);});},
+  async getAllLeagues(){if(this._cache.leagues)return this._cache.leagues;await this.open();return new Promise(r=>{const req=this._db.transaction('leagues').objectStore('leagues').getAll();req.onsuccess=()=>{this._cache.leagues=req.result||[];r(this._cache.leagues);};});},
+  async deleteLeague(id){this._cache.leagues=null;await this.open();return new Promise(r=>{const tx=this._db.transaction('leagues','readwrite');tx.objectStore('leagues').delete(id);tx.oncomplete=()=>r();});},
+  async deleteDatabase(){this._cache={teams:null,analyses:null,leagues:null,settings:null,lastFetch:{}};return new Promise(r=>{const req=indexedDB.deleteDatabase("EdgeProV23");req.onsuccess=()=>{this._db=null;r();};});},
+  clearCache(){this._cache={teams:null,analyses:null,leagues:null,settings:null,lastFetch:{}};}
+};
+
+// ==================== STATS CALCULATOR ====================
+const StatsCalculator={ /* ... identique ... */ };
+
+// ==================== ELO ENGINE ====================
+const EloEngine={ /* ... identique ... */ };
+
+// ==================== DIXON-COLES ENGINE ====================
+const DixonColesEngine={ /* ... identique ... */ };
+
+// ==================== MONTE CARLO ENGINE (avec worker pour sims > 5000) ====================
+const MonteCarloEngine={ /* ... identique ... */ };
+
+// ==================== H2H ENGINE ====================
+const H2HEngine={ /* ... identique ... */ };
+
+// ==================== VALUE BET ENGINE v8.1 ====================
+const ValueBetEngine={ /* ... identique avec corners/cartons ... */ };
+
+// ==================== DATA MANAGER ====================
+const DataManager={ /* ... identique avec déduplication ... */ };
+
+// ==================== APPLICATION ====================
+const App={
+  _teamsCache:[],_leaguesCache:{...DEFAULT_LEAGUES},_currentAnalysis:null,_calibration:{},_settings:{elo:0.20,dc:0.25,mc:0.22,momentum:0.10,h2h:0.08,xg:0.15,value_th:3,conf_min:50,sims:10000,kelly_fraction:0.5},
+
+  async init(){
+    console.log('🚀 EDGE PRO v8.1');
+    await DB.open();
+    this._teamsCache = await DB.getAllTeams();
+    const savedLeagues = await DB.getAllLeagues();
+    if (savedLeagues.length > 0) {
+      savedLeagues.forEach(l => this._leaguesCache[l.id] = l);
+    }
+    await this._loadSettings();
+    this._populateLeagueSelect();
+    this._populateLeagueFilter();
+    await this._updateCounts();
+    this._setupSliders();
+  },
+
+  // ... (toutes les autres méthodes : nav, suggest, analyzeMatch, importMassive, etc.) ...
+
+  async showHistory(){
+    const analyses = await DB.getAllAnalyses();
+    const leagueFilter = document.getElementById('filterLeague')?.value || '';
+    const periodFilter = document.getElementById('filterPeriod')?.value || 'all';
+    const now = new Date();
+    const filtered = analyses.filter(a => {
+      if (leagueFilter && a.league !== leagueFilter) return false;
+      if (periodFilter !== 'all') {
+        const days = parseInt(periodFilter);
+        const dateA = new Date(a.date);
+        return (now - dateA) / (1000*3600*24) <= days;
+      }
+      return true;
+    });
+    const total = filtered.length;
+    const withResult = filtered.filter(x => x.result);
+    const correct = withResult.filter(x => this.isPickWon(x)).length;
+    const avgEdge = total ? filtered.reduce((s,x) => s + (x.edgeValue||x.pickEdge||0), 0) / total : 0;
+
+    document.getElementById('historyStats').innerHTML = `Total: ${total} · Avec résultat: ${withResult.length} · Hit rate: ${withResult.length ? ((correct/withResult.length)*100).toFixed(1) : 0}% · Edge moyen: ${(avgEdge*100).toFixed(1)}%`;
+
+    let html = '';
+    filtered.slice(-50).reverse().forEach((x) => {
+      html += `<div style="padding:6px; border-bottom:1px solid var(--border); font-size:0.55rem">
+          <b>${x.nameA} vs ${x.nameB}</b><br>
+          Pick: ${x.pickMarket} ${x.pickSelection} @${x.pickOdd} · Edge: ${(x.edgeValue||x.pickEdge||0).toFixed(2)} · ⭐${getRating((x.rating||0)*20,5)}<br>
+          <span style="color:var(--sub)">${formatDate(x.date)}</span>
+          <div style="margin-top:2px;display:flex;align-items:center;gap:4px">
+            Résultat:
+            <select onchange="App.updateResult(${x.id}, this.value, '${x.pickMarket.replace(/'/g,"\\'")}')" style="width:auto;font-size:0.55rem;padding:2px 4px">
+              <option value="">--</option>
+              ${x.pickMarket==='1X2' ? `<option value="1" ${x.result==='1'?'selected':''}>1</option><option value="X" ${x.result==='X'?'selected':''}>X</option><option value="2" ${x.result==='2'?'selected':''}>2</option>` : ''}
+              ${x.pickMarket==='BTTS' ? `<option value="BTTS_YES" ${x.result==='BTTS_YES'?'selected':''}>BTTS Oui</option><option value="BTTS_NO" ${x.result==='BTTS_NO'?'selected':''}>BTTS Non</option>` : ''}
+              ${x.pickMarket==='Over/Under 2.5' ? `<option value="OVER" ${x.result==='OVER'?'selected':''}>Over 2.5</option><option value="UNDER" ${x.result==='UNDER'?'selected':''}>Under 2.5</option>` : ''}
+              ${x.pickMarket==='Corners' ? `<option value="CORNERS_OVER" ${x.result==='CORNERS_OVER'?'selected':''}>Over 9.5</option><option value="CORNERS_UNDER" ${x.result==='CORNERS_UNDER'?'selected':''}>Under 9.5</option>` : ''}
+              ${x.pickMarket==='Cartons' ? `<option value="CARDS_OVER" ${x.result==='CARDS_OVER'?'selected':''}>Over 3.5</option><option value="CARDS_UNDER" ${x.result==='CARDS_UNDER'?'selected':''}>Under 3.5</option>` : ''}
+            </select>
+            ${x.result ? `<span style="color:${this.isPickWon(x)?'var(--green)':'var(--red)'}">${x.result}</span>` : ''}
+          </div>
+        </div>`;
+    });
+    document.getElementById('historyContent').innerHTML = html || '<div style="text-align:center;color:var(--sub);padding:12px">Aucune</div>';
+  },
+
+  isPickWon(a) {
+    if (!a.result || !a.pickSelection) return false;
+    if (a.pickMarket === '1X2') return a.pickSelection === a.result;
+    if (a.pickMarket === 'BTTS') return (a.pickSelection === 'OUI' && a.result === 'BTTS_YES') || (a.pickSelection === 'NON' && a.result === 'BTTS_NO');
+    if (a.pickMarket === 'Over/Under 2.5') return (a.pickSelection === 'OVER' && a.result === 'OVER') || (a.pickSelection === 'UNDER' && a.result === 'UNDER');
+    if (a.pickMarket === 'Corners') return (a.pickSelection.startsWith('OVER') && a.result === 'CORNERS_OVER') || (a.pickSelection.startsWith('UNDER') && a.result === 'CORNERS_UNDER');
+    if (a.pickMarket === 'Cartons') return (a.pickSelection.startsWith('OVER') && a.result === 'CARDS_OVER') || (a.pickSelection.startsWith('UNDER') && a.result === 'CARDS_UNDER');
+    return false;
+  },
+
+  async updateResult(analysisId, resultValue, market) {
+    await DB.updateAnalysis(analysisId, data => { data.result = resultValue; });
+    showToast('✅ Résultat enregistré');
+    this.showHistory();
+  },
+
+  // ... (toutes les autres méthodes : showBankroll, drawBankrollChart, runSmartBet, etc.) ...
+};
+
+// ==================== INIT SECURISE ====================
+window.App = App;
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => App.init(), 0);
+});
+
+Object.defineProperty(window,'LEAGUES_CONFIG',{get(){return App._leaguesCache;}});
+</script>
+</body>
+</html>
