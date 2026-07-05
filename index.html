@@ -105,6 +105,29 @@
         body.light-mode .match-stats { background: #f9fafb; }
         .match-stats .stat-item .label { font-size: 0.5rem; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
         .match-stats .stat-item .value { font-size: 1.2rem; font-weight: 800; }
+        .tracking-row { display: grid; grid-template-columns: 1.5fr 0.8fr 0.6fr 0.6fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr; gap: 4px; padding: 4px 0; border-bottom: 1px solid var(--border); font-size: 0.55rem; align-items: center; }
+        .tracking-row.header-row { font-weight: bold; color: var(--cyan); border-bottom: 2px solid var(--cyan); }
+        .scorer-row { display: grid; grid-template-columns: 1.5fr 1fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr 0.5fr; gap: 4px; padding: 4px 0; border-bottom: 1px solid var(--border); font-size: 0.55rem; align-items: center; }
+        .scorer-row.header-row { font-weight: bold; color: var(--cyan); border-bottom: 2px solid var(--cyan); }
+        .league-list-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 0.6rem; }
+        .league-list-item:hover { background: rgba(6,182,212,0.1); }
+        .league-name { font-weight: bold; color: var(--cyan); }
+        .league-detail { font-size: 0.5rem; color: var(--sub); }
+        .team-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid var(--border); font-size: 0.6rem; }
+        .team-item:hover { background: rgba(6,182,212,0.1); }
+        .team-list-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; border-bottom: 1px solid var(--border); font-size: 0.6rem; cursor: pointer; }
+        .team-list-item:hover { background: rgba(6,182,212,0.1); }
+        .autocomplete-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #141b2b; border: 1px solid var(--border); border-radius: 8px; max-height: 150px; overflow-y: auto; z-index: 1000; display: none; }
+        body.light-mode .autocomplete-suggestions { background: #ffffff; }
+        .autocomplete-item { padding: 6px 10px; cursor: pointer; font-size: 0.65rem; }
+        .autocomplete-item:hover { background: rgba(6,182,212,0.2); }
+        .league-editor { background: #0d1117; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        body.light-mode .league-editor { background: #f9fafb; }
+        .league-edit-field { margin-bottom: 4px; }
+        .league-edit-field label { font-size: 0.55rem; color: var(--sub); display: block; }
+        .league-edit-field input { padding: 4px; font-size: 0.6rem; margin: 0; }
+        .closing-odds-input { width: 60px; padding: 2px; font-size: 0.55rem; margin: 0; text-align: center; background: #1a2233; border: 1px solid var(--border); border-radius: 4px; color: var(--text); }
+        body.light-mode .closing-odds-input { background: #f3f4f6; color: #1f2937; }
     </style>
 </head>
 <body>
@@ -175,10 +198,10 @@
             <div class="section-title">🚑 Absences (optionnel, estimation non calibrée)</div>
             <div style="font-size:0.55rem;color:var(--sub);margin-bottom:4px;">Saisissez les joueurs absents (séparés par des virgules) — impact plafonné à -25%</div>
             <div class="two-col">
-                <div class="autocomplete-container">
+                <div class="autocomplete-container" style="position:relative;width:100%;">
                     <input type="text" id="homeAbsences" placeholder="Absents domicile" oninput="App.calculateAbsenceImpact()" onchange="App.calculateAbsenceImpact()">
                 </div>
-                <div class="autocomplete-container">
+                <div class="autocomplete-container" style="position:relative;width:100%;">
                     <input type="text" id="awayAbsences" placeholder="Absents extérieur" oninput="App.calculateAbsenceImpact()" onchange="App.calculateAbsenceImpact()">
                 </div>
             </div>
@@ -316,7 +339,7 @@
     <div id="pg-backtest" class="page" style="display:none;">
         <div class="card">
             <h2>📈 Backtesting + Calibration</h2>
-            <p style="font-size:0.6rem;color:var(--sub);margin-bottom:8px;">Teste la fiabilité du modèle. Calibre les poids et la température automatiquement.</p>
+            <p style="font-size:0.6rem;color:var(--sub);margin-bottom:8px;">Teste la fiabilité du modèle sur tous les marchés. Calibre les poids et la température automatiquement.</p>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
                 <select id="backtestSeason" style="width:auto;padding:6px;"><option value="">Toutes saisons</option></select>
                 <button class="btn btn-primary btn-small" onclick="App.runFullBacktest()">🚀 Lancer le backtest + calibration</button>
@@ -413,172 +436,104 @@
 
     <!-- PAGE LIGUES -->
     <div id="pg-leagues" class="page" style="display:none;">
-        <div class="card"><h2>🏆 Ligues</h2><div id="leagueListContainer"></div><div id="leagueEditor" class="league-editor" style="display:none;background:#0d1117;padding:10px;border-radius:8px;margin-top:10px;"><h3 id="leagueEditorTitle">➕ Ajouter</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><div class="league-edit-field"><label>Nom</label><input type="text" id="leagueEditName"></div><div class="league-edit-field"><label>Buts Dom.</label><input type="number" id="leagueEditGoalsHome" value="1.5"></div><div class="league-edit-field"><label>Buts Ext.</label><input type="number" id="leagueEditGoalsAway" value="1.2"></div><div class="league-edit-field"><label>xG Dom.</label><input type="number" id="leagueEditXgHome" value="1.5"></div><div class="league-edit-field"><label>xG Ext.</label><input type="number" id="leagueEditXgAway" value="1.2"></div><div class="league-edit-field"><label>xGA Dom.</label><input type="number" id="leagueEditXgaHome" value="1.2"></div><div class="league-edit-field"><label>xGA Ext.</label><input type="number" id="leagueEditXgaAway" value="1.5"></div><div class="league-edit-field"><label>Home Adv (Elo)</label><input type="number" id="leagueEditHomeAdv" value="40"></div><div class="league-edit-field"><label>BTTS</label><input type="number" id="leagueEditBtts" value="0.55"></div><div class="league-edit-field"><label>Over 2.5</label><input type="number" id="leagueEditOver25" value="0.55"></div><div class="league-edit-field"><label>Rho (Dixon)</label><input type="number" id="leagueEditRho" value="-0.08"></div></div><button class="btn btn-primary btn-small" onclick="App.saveLeague()">💾 Sauvegarder</button><button class="btn btn-secondary btn-small" onclick="App.cancelLeagueEdit()">❌ Annuler</button><div id="leagueEditStatus"></div></div></div>
+        <div class="card"><h2>🏆 Ligues</h2><div id="leagueListContainer"></div><div id="leagueEditor" class="league-editor" style="display:none;margin-top:10px;"><h3 id="leagueEditorTitle">➕ Ajouter</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><div class="league-edit-field"><label>Nom</label><input type="text" id="leagueEditName"></div><div class="league-edit-field"><label>Buts Dom.</label><input type="number" id="leagueEditGoalsHome" value="1.5"></div><div class="league-edit-field"><label>Buts Ext.</label><input type="number" id="leagueEditGoalsAway" value="1.2"></div><div class="league-edit-field"><label>xG Dom.</label><input type="number" id="leagueEditXgHome" value="1.5"></div><div class="league-edit-field"><label>xG Ext.</label><input type="number" id="leagueEditXgAway" value="1.2"></div><div class="league-edit-field"><label>xGA Dom.</label><input type="number" id="leagueEditXgaHome" value="1.2"></div><div class="league-edit-field"><label>xGA Ext.</label><input type="number" id="leagueEditXgaAway" value="1.5"></div><div class="league-edit-field"><label>Home Adv (Elo)</label><input type="number" id="leagueEditHomeAdv" value="40"></div><div class="league-edit-field"><label>BTTS</label><input type="number" id="leagueEditBtts" value="0.55"></div><div class="league-edit-field"><label>Over 2.5</label><input type="number" id="leagueEditOver25" value="0.55"></div><div class="league-edit-field"><label>Rho (Dixon)</label><input type="number" id="leagueEditRho" value="-0.08"></div></div><button class="btn btn-primary btn-small" onclick="App.saveLeague()">💾 Sauvegarder</button><button class="btn btn-secondary btn-small" onclick="App.cancelLeagueEdit()">❌ Annuler</button><div id="leagueEditStatus"></div></div></div>
     </div>
 </div>
 
 <script>
 // ======================================================================
-// 0. NORMALISATION DES NOMS D'ÉQUIPES - VERSION COMPLÈTE ET ROBUSTE
+// 0. NORMALISATION DES NOMS D'ÉQUIPES
 // ======================================================================
 const TEAM_ALIASES = {
-    // Manchester City
     'Man City': 'Manchester City',
     'Manchester C': 'Manchester City',
     'MCI': 'Manchester City',
     'Manchester City': 'Manchester City',
-    
-    // Manchester United
     'Man United': 'Manchester United',
     'Manchester Utd': 'Manchester United',
     'MUFC': 'Manchester United',
     'Manchester United': 'Manchester United',
-    
-    // Newcastle
     'Newcastle': 'Newcastle United',
     'Newcastle Utd': 'Newcastle United',
     'NUFC': 'Newcastle United',
     'Newcastle United': 'Newcastle United',
-    
-    // Nottingham Forest
     'Nott\'m Forest': 'Nottingham Forest',
     'Nottm Forest': 'Nottingham Forest',
     'NFFC': 'Nottingham Forest',
     'Nottingham Forest': 'Nottingham Forest',
-    
-    // Wolverhampton
     'Wolves': 'Wolverhampton Wanderers',
     'Wolverhampton': 'Wolverhampton Wanderers',
     'WOL': 'Wolverhampton Wanderers',
     'Wolverhampton Wanderers': 'Wolverhampton Wanderers',
-    
-    // Tottenham
     'Tottenham': 'Tottenham',
     'Tottenham Hotspur': 'Tottenham',
     'Spurs': 'Tottenham',
     'THFC': 'Tottenham',
-    
-    // West Ham
     'West Ham': 'West Ham',
     'West Ham United': 'West Ham',
     'WHU': 'West Ham',
-    
-    // Brighton
     'Brighton': 'Brighton',
     'Brighton & Hove Albion': 'Brighton',
     'BHA': 'Brighton',
-    
-    // Crystal Palace
     'Crystal Palace': 'Crystal Palace',
     'C Palace': 'Crystal Palace',
     'CPFC': 'Crystal Palace',
-    
-    // Sheffield United
     'Sheffield United': 'Sheffield United',
     'Sheffield Utd': 'Sheffield United',
     'SUFC': 'Sheffield United',
-    
-    // Aston Villa
     'Aston Villa': 'Aston Villa',
     'AVFC': 'Aston Villa',
-    
-    // Brentford
     'Brentford': 'Brentford',
     'BFC': 'Brentford',
-    
-    // Bournemouth
     'Bournemouth': 'Bournemouth',
     'AFC Bournemouth': 'Bournemouth',
     'BOU': 'Bournemouth',
-    
-    // Everton
     'Everton': 'Everton',
     'EFC': 'Everton',
-    
-    // Fulham
     'Fulham': 'Fulham',
     'FFC': 'Fulham',
-    
-    // Burnley
     'Burnley': 'Burnley',
     'BUR': 'Burnley',
-    
-    // Luton
     'Luton': 'Luton',
     'Luton Town': 'Luton',
     'LUT': 'Luton',
-    
-    // Chelsea
     'Chelsea': 'Chelsea',
     'CFC': 'Chelsea',
-    
-    // Liverpool
     'Liverpool': 'Liverpool',
     'LFC': 'Liverpool',
-    
-    // Arsenal
     'Arsenal': 'Arsenal',
     'AFC': 'Arsenal',
-    
-    // Leicester
     'Leicester': 'Leicester',
     'Leicester City': 'Leicester',
-    
-    // Leeds
     'Leeds': 'Leeds',
     'Leeds United': 'Leeds',
-    
-    // Southampton
     'Southampton': 'Southampton'
 };
 
 function normalizeTeamName(name) {
     if (!name) return name;
     const trimmed = name.trim();
-    
-    // 1. Recherche exacte dans le dictionnaire
     if (TEAM_ALIASES[trimmed]) return TEAM_ALIASES[trimmed];
-    
-    // 2. Recherche insensible à la casse
     const lowerTrimmed = trimmed.toLowerCase();
     for (const [alias, standard] of Object.entries(TEAM_ALIASES)) {
-        if (lowerTrimmed === alias.toLowerCase()) {
-            return standard;
-        }
-        if (lowerTrimmed === standard.toLowerCase()) {
-            return standard;
-        }
+        if (lowerTrimmed === alias.toLowerCase()) return standard;
+        if (lowerTrimmed === standard.toLowerCase()) return standard;
     }
-    
-    // 3. Recherche par inclusion
     for (const [alias, standard] of Object.entries(TEAM_ALIASES)) {
         const lowerAlias = alias.toLowerCase();
         const lowerStandard = standard.toLowerCase();
-        if (lowerTrimmed.includes(lowerAlias) || lowerAlias.includes(lowerTrimmed)) {
-            return standard;
-        }
-        if (lowerTrimmed.includes(lowerStandard) || lowerStandard.includes(lowerTrimmed)) {
-            return standard;
-        }
+        if (lowerTrimmed.includes(lowerAlias) || lowerAlias.includes(lowerTrimmed)) return standard;
+        if (lowerTrimmed.includes(lowerStandard) || lowerStandard.includes(lowerTrimmed)) return standard;
     }
-    
-    // 4. Recherche par mots-clés
     const words = trimmed.split(' ').filter(w => w.length > 2);
     for (const word of words) {
         const lowerWord = word.toLowerCase();
         for (const [alias, standard] of Object.entries(TEAM_ALIASES)) {
             const lowerAlias = alias.toLowerCase();
             const lowerStandard = standard.toLowerCase();
-            if (lowerAlias.includes(lowerWord) || lowerStandard.includes(lowerWord)) {
-                return standard;
-            }
+            if (lowerAlias.includes(lowerWord) || lowerStandard.includes(lowerWord)) return standard;
         }
     }
-    
-    // 5. Si c'est déjà un nom standard, le retourner
-    const standardNames = Object.values(TEAM_ALIASES);
-    if (standardNames.includes(trimmed)) return trimmed;
-    
     return trimmed;
 }
 
@@ -672,10 +627,14 @@ const H2HModule = {
 };
 
 // ======================================================================
-// 5. MOTEUR ANALYTIQUE ULTIME CALIBRÉ
+// 5. MOTEUR ANALYTIQUE ULTIME CALIBRÉ - VERSION AMÉLIORÉE
 // ======================================================================
 const Engine = {
-    maxGoals:10, monteCarloSims:50000, _cache:new Map(), _cacheMaxSize:200, _cacheAccessOrder:[],
+    maxGoals:10, 
+    monteCarloSims:100000,
+    _cache:new Map(), 
+    _cacheMaxSize:200, 
+    _cacheAccessOrder:[],
     _factorials:[1,1,2,6,24,120,720,5040,40320,362880,3628800,39916800,479001600,6227020800,87178291200,1307674368000,20922789888000,355687428096000,6402373705728000,121645100408832000,2432902008176640000],
     fact(k){ if(k<0)return 1; if(k<=20)return this._factorials[k]; return Math.sqrt(2*Math.PI*k)*Math.pow(k/Math.E,k); },
     poissonProb(lambda,k){ if(lambda<=0)return k===0?1:0; if(k<0||k>20)return 0; return Math.exp(-lambda)*Math.pow(lambda,k)/this.fact(k); },
@@ -693,7 +652,18 @@ const Engine = {
                 if(p.weights && p.temperature) return p;
             }
         }catch(e){}
-        return { weights:{poisson:0.20,dixonColes:0.25,elo:0.15,form:0.10,offDef:0.20,monteCarlo:0.10,h2h:0}, temperature:1.45 };
+        return { 
+            weights: {
+                poisson: 0.15,
+                dixonColes: 0.15,
+                elo: 0.25,
+                form: 0.15,
+                offDef: 0.25,
+                monteCarlo: 0.10,
+                h2h: 0.10
+            }, 
+            temperature: 0.85 
+        };
     },
     saveCalibratedParams(weights, temperature){
         try{
@@ -703,91 +673,28 @@ const Engine = {
 
     findTeamInSeasonData(teamName, seasonData) {
         if (!teamName || !seasonData || seasonData.length === 0) return null;
-        
         const normalized = normalizeTeamName(teamName);
         const lowerNormalized = normalized.toLowerCase();
-        
-        // 1. Recherche exacte
-        let found = seasonData.find(s => {
-            const sName = normalizeTeamName(s.team);
-            return sName === normalized;
-        });
+        let found = seasonData.find(s => normalizeTeamName(s.team) === normalized);
         if (found) return found;
-        
-        // 2. Recherche insensible à la casse
-        found = seasonData.find(s => {
-            const sName = normalizeTeamName(s.team);
-            return sName.toLowerCase() === lowerNormalized;
-        });
+        found = seasonData.find(s => normalizeTeamName(s.team).toLowerCase() === lowerNormalized);
         if (found) return found;
-        
-        // 3. Recherche par inclusion
         found = seasonData.find(s => {
             const sName = normalizeTeamName(s.team).toLowerCase();
             return sName.includes(lowerNormalized) || lowerNormalized.includes(sName);
         });
         if (found) return found;
-        
-        // 4. Recherche par mots-clés
         const teamWords = lowerNormalized.split(' ').filter(w => w.length > 2);
         for (const item of seasonData) {
             const sName = normalizeTeamName(item.team).toLowerCase();
             const sWords = sName.split(' ').filter(w => w.length > 2);
-            
             for (const word of teamWords) {
-                if (sWords.some(w => w === word || w.includes(word) || word.includes(w))) {
-                    return item;
-                }
+                if (sWords.some(w => w === word || w.includes(word) || word.includes(w))) return item;
             }
-            
-            // Si le dernier mot correspond (ex: "City" -> "City")
             const lastTeamWord = teamWords[teamWords.length - 1];
             const lastSWord = sWords[sWords.length - 1];
-            if (lastTeamWord && lastSWord && 
-                (lastTeamWord === lastSWord || 
-                 lastTeamWord.includes(lastSWord) || 
-                 lastSWord.includes(lastTeamWord))) {
-                return item;
-            }
+            if (lastTeamWord && lastSWord && (lastTeamWord === lastSWord || lastTeamWord.includes(lastSWord) || lastSWord.includes(lastTeamWord))) return item;
         }
-        
-        // 5. Recherche par mots spéciaux
-        const specialMap = {
-            'man': ['manchester'],
-            'newcastle': ['newcastle'],
-            'wolves': ['wolverhampton'],
-            'nott': ['nottingham'],
-            'sheffield': ['sheffield'],
-            'crystal': ['crystal'],
-            'west': ['west'],
-            'brighton': ['brighton'],
-            'tottenham': ['tottenham'],
-            'arsenal': ['arsenal'],
-            'chelsea': ['chelsea'],
-            'liverpool': ['liverpool'],
-            'everton': ['everton'],
-            'fulham': ['fulham'],
-            'burnley': ['burnley'],
-            'luton': ['luton'],
-            'brentford': ['brentford'],
-            'bournemouth': ['bournemouth'],
-            'aston': ['aston'],
-            'leeds': ['leeds'],
-            'leicester': ['leicester'],
-            'southampton': ['southampton']
-        };
-        
-        for (const [key, values] of Object.entries(specialMap)) {
-            if (lowerNormalized.includes(key)) {
-                for (const item of seasonData) {
-                    const sName = normalizeTeamName(item.team).toLowerCase();
-                    if (values.some(v => sName.includes(v))) {
-                        return item;
-                    }
-                }
-            }
-        }
-        
         return null;
     },
 
@@ -883,7 +790,7 @@ const Engine = {
         return {points:formScore, goalsScored:avgGS, goalsConceded:avgGC};
     },
 
-    monteCarloSim(lA,lB,numSims=50000){
+    monteCarloSim(lA,lB,numSims=100000){
         const key=`mc_${lA.toFixed(3)}_${lB.toFixed(3)}_${numSims}`;
         const cached=this._cacheGet(key); if(cached)return cached;
         let homeWins=0,draws=0,awayWins=0,btts=0,over25=0; const scoreCounts={};
@@ -906,8 +813,8 @@ const Engine = {
 
     computeWeights(homeTeam, awayTeam, leagueConfig, h2hWeight=0){
         const cal=this.getCalibratedParams();
-        const base={poisson:cal.weights.poisson||0.20, dixonColes:cal.weights.dixonColes||0.25, elo:cal.weights.elo||0.15, form:cal.weights.form||0.10, offDef:cal.weights.offDef||0.20, monteCarlo:cal.weights.monteCarlo||0.10, h2h:0};
-        if(h2hWeight>0){ base.h2h=Math.min(0.20,h2hWeight); const scale=(1-base.h2h)/(1-0.20); for(let k in base){ if(k!=='h2h')base[k]*=scale; } }
+        const base={poisson:cal.weights.poisson||0.15, dixonColes:cal.weights.dixonColes||0.15, elo:cal.weights.elo||0.25, form:cal.weights.form||0.15, offDef:cal.weights.offDef||0.25, monteCarlo:cal.weights.monteCarlo||0.10, h2h:0};
+        if(h2hWeight>0){ base.h2h=Math.min(0.10,h2hWeight); const scale=(1-base.h2h)/(1-0.15); for(let k in base){ if(k!=='h2h')base[k]*=scale; } }
         let total=Object.values(base).reduce((a,b)=>a+b,0);
         if(total>0)for(let k in base)base[k]/=total;
         return base;
@@ -938,12 +845,32 @@ const Engine = {
     },
 
     calibrateProbs(probs, temp=null){
-        if(temp===null){ const cal=this.getCalibratedParams(); temp=cal.temperature || 1.45; }
+        if(temp===null){ const cal=this.getCalibratedParams(); temp=cal.temperature || 0.85; }
         let {p1,pX,p2}=probs; p1=clampProb(p1); pX=clampProb(pX); p2=clampProb(p2);
         const logits=[Math.log(p1+1e-9),Math.log(pX+1e-9),Math.log(p2+1e-9)];
         const maxLog=Math.max(...logits); const exp=logits.map(l=>Math.exp((l-maxLog)/temp));
         const sum=exp.reduce((a,b)=>a+b,0); const scaled=exp.map(e=>e/sum);
         return {p1:scaled[0], pX:scaled[1], p2:scaled[2]};
+    },
+
+    calculateConfidenceScore(homeStats, awayStats, calibrated, modelDivergence, homeTeam, awayTeam, formHome, formAway) {
+        let score = 30;
+        const dataQualityScore = (homeStats.xG > 0.5 && homeStats.xGA > 0.5 && awayStats.xG > 0.5 && awayStats.xGA > 0.5) ? 20 : 5;
+        score += dataQualityScore;
+        const modelAgreement = (1 - modelDivergence) * 20;
+        score += modelAgreement;
+        const eloDiff = Math.abs((homeTeam.elo||1500) - (awayTeam.elo||1500));
+        if (eloDiff > 200) score += 10;
+        if (eloDiff > 400) score += 10;
+        if (formHome.points > 0.7 && formAway.points < 0.3) score += 10;
+        if (formHome.points < 0.3 && formAway.points > 0.7) score += 10;
+        const maxProb = Math.max(calibrated.p1, calibrated.pX, calibrated.p2);
+        if (maxProb > 0.55) score += 10;
+        if (maxProb > 0.65) score += 10;
+        const isBalanced = Math.abs(calibrated.p1 - calibrated.p2) < 0.15;
+        if (!isBalanced) score += 10;
+        if (eloDiff > 300 && maxProb > 0.6) score += 5;
+        return clampStat(score, 10, 95);
     },
 
     async ensembleAsync(homeTeam, awayTeam, leagueConfig, h2hData=null, bookmakerOdds=null, terrain="home", absenceImpact=null, targetSeason=null){
@@ -997,7 +924,7 @@ const Engine = {
 
         let h2hWeight=0, h2hMatches=0, h2hProbs={p1:0.4,pX:0.3,p2:0.3};
         if(h2hData&&h2hData.matches>0){
-            h2hMatches=h2hData.matches; const factor=Math.min(1,h2hMatches/6); h2hWeight=Math.min(0.15,0.15*factor);
+            h2hMatches=h2hData.matches; const factor=Math.min(1,h2hMatches/6); h2hWeight=Math.min(0.10,0.10*factor);
             const total=h2hData.matches; const hw=h2hData.homeWins||0; const d=h2hData.draws||0; const aw=h2hData.awayWins||0;
             h2hProbs={p1:total>0?hw/total:0.4,pX:total>0?d/total:0.3,p2:total>0?aw/total:0.3};
         }
@@ -1078,18 +1005,83 @@ const Engine = {
 
         const dataQuality=(homeStats.xG>0&&homeStats.xGA>0&&awayStats.xG>0&&awayStats.xGA>0)?0.85:0.45;
         const modelDivergence=(Math.abs(poisson.p1-dc.p1)+Math.abs(poisson.p1-mc.p1)+Math.abs(dc.p1-mc.p1))/3;
-        let confidence=Math.round(30+40*dataQuality+20*(1-modelDivergence)); confidence=clampStat(confidence,10,90);
+        
+        const confidence = this.calculateConfidenceScore(homeStats, awayStats, calibrated, modelDivergence, homeTeam, awayTeam, formHome, formAway);
+        
         let trap=0; if(modelDivergence>0.15)trap+=25; if(Math.abs((homeTeam.elo||1500)-(awayTeam.elo||1500))>200)trap+=15; if(Math.abs(calibrated.p1-0.5)>0.3)trap+=10; trap=clampStat(trap,0,90);
         let risk='Moyen'; if(confidence>70&&trap<30)risk='Faible'; else if(confidence<40||trap>60)risk='Élevé';
         const scores=mc.topScores||[];
 
+        // Calcul des combos corrects
+        const p1X = calibrated.p1 + calibrated.pX;
+        const p2X = calibrated.p2 + calibrated.pX;
+        const p12 = calibrated.p1 + calibrated.p2;
+        
+        // Combos avec BTTS
+        let p1X_BTTS = 0, p2X_BTTS = 0, p1_BTTS = 0, p2_BTTS = 0, pX_BTTS = 0;
+        for(const m of poisson.matrix){
+            const isBTTS = m.homeGoals > 0 && m.awayGoals > 0;
+            if(!isBTTS) continue;
+            if(m.homeGoals > m.awayGoals){
+                p1_BTTS += m.prob;
+                p1X_BTTS += m.prob;
+            } else if(m.homeGoals === m.awayGoals){
+                pX_BTTS += m.prob;
+                p1X_BTTS += m.prob;
+                p2X_BTTS += m.prob;
+            } else {
+                p2_BTTS += m.prob;
+                p2X_BTTS += m.prob;
+            }
+        }
+        // Normaliser les combos BTTS
+        const bttsTotal = p1_BTTS + pX_BTTS + p2_BTTS;
+        if(bttsTotal > 0){
+            p1_BTTS /= bttsTotal;
+            pX_BTTS /= bttsTotal;
+            p2_BTTS /= bttsTotal;
+            p1X_BTTS /= bttsTotal;
+            p2X_BTTS /= bttsTotal;
+        }
+        // Normaliser les combos simples
+        const combosTotal = p1X + p2X + p12;
+        if(combosTotal > 0){
+            const norm = 1 / combosTotal;
+            const combos = {p1X: p1X*norm, p2X: p2X*norm, p12: p12*norm, p1X_BTTS, p2X_BTTS, p1_BTTS, p2_BTTS, pX_BTTS};
+            // Assurer la cohérence : 1X + 2X - X = 12
+            // Et les BTTS combos doivent être cohérents
+            return {
+                probabilities:calibrated, markets, confidence, trap, risk, dataQuality, scores, valueBets, highConfidence: confidence >= 65,
+                bestPick:{market:bestPick.market, prob:bestPick.prob, edge:hotPick.edge||0, kellyFraction:hotKelly, bookmakerOdd:hotPick.bookmakerOdd||null, fairOdd:bestPick.prob>0?1/bestPick.prob:999},
+                hotPick:{market:hotPick.market, prob:hotPick.prob, edge:hotPick.edge||0, bookmakerOdd:hotPick.bookmakerOdd||null, fairOdd:hotPick.prob>0?1/hotPick.prob:999, kellyFraction:hotKelly, isHot:hotPick.isHot||false},
+                terrain, isHot:hotPick.isHot||false, valid:true, modelDivergence, h2hWeight, h2hMatches, lambdas:{lA:lambdaA,lB:lambdaB}, cleanedOdds,
+                homeStats, awayStats, cornerOver10, formHome:formHome.points, formAway:formAway.points,
+                absenceImpact:absenceImpact,
+                combos: {
+                    p1X: calibrated.p1 + calibrated.pX,
+                    p2X: calibrated.p2 + calibrated.pX,
+                    p12: calibrated.p1 + calibrated.p2,
+                    p1X_BTTS: p1X_BTTS * markets.BTTS,
+                    p2X_BTTS: p2X_BTTS * markets.BTTS,
+                    p1_BTTS: p1_BTTS * markets.BTTS,
+                    p2_BTTS: p2_BTTS * markets.BTTS,
+                    pX_BTTS: pX_BTTS * markets.BTTS
+                }
+            };
+        }
         return {
-            probabilities:calibrated, markets, confidence, trap, risk, dataQuality, scores, valueBets,
+            probabilities:calibrated, markets, confidence, trap, risk, dataQuality, scores, valueBets, highConfidence: confidence >= 65,
             bestPick:{market:bestPick.market, prob:bestPick.prob, edge:hotPick.edge||0, kellyFraction:hotKelly, bookmakerOdd:hotPick.bookmakerOdd||null, fairOdd:bestPick.prob>0?1/bestPick.prob:999},
             hotPick:{market:hotPick.market, prob:hotPick.prob, edge:hotPick.edge||0, bookmakerOdd:hotPick.bookmakerOdd||null, fairOdd:hotPick.prob>0?1/hotPick.prob:999, kellyFraction:hotKelly, isHot:hotPick.isHot||false},
             terrain, isHot:hotPick.isHot||false, valid:true, modelDivergence, h2hWeight, h2hMatches, lambdas:{lA:lambdaA,lB:lambdaB}, cleanedOdds,
             homeStats, awayStats, cornerOver10, formHome:formHome.points, formAway:formAway.points,
-            absenceImpact:absenceImpact
+            absenceImpact:absenceImpact,
+            combos: {
+                p1X: calibrated.p1 + calibrated.pX,
+                p2X: calibrated.p2 + calibrated.pX,
+                p12: calibrated.p1 + calibrated.p2,
+                p1X_BTTS: 0, p2X_BTTS: 0, p1_BTTS: 0, p2_BTTS: 0, pX_BTTS: 0
+            }
         };
     },
 
@@ -1123,7 +1115,7 @@ const Engine = {
         const sumOd=offDefProbs.p1+offDefProbs.pX+offDefProbs.p2; if(sumOd>0){ offDefProbs.p1/=sumOd; offDefProbs.pX/=sumOd; offDefProbs.p2/=sumOd; }
         const mc=this.monteCarloSim(lambdaA,lambdaB,this.monteCarloSims);
         let h2hWeight=0,h2hMatches=0,h2hProbs={p1:0.4,pX:0.3,p2:0.3};
-        if(h2hData&&h2hData.matches>0){ h2hMatches=h2hData.matches; const factor=Math.min(1,h2hMatches/6); h2hWeight=Math.min(0.15,0.15*factor); const total=h2hData.matches; const hw=h2hData.homeWins||0; const d=h2hData.draws||0; const aw=h2hData.awayWins||0; h2hProbs={p1:total>0?hw/total:0.4,pX:total>0?d/total:0.3,p2:total>0?aw/total:0.3}; }
+        if(h2hData&&h2hData.matches>0){ h2hMatches=h2hData.matches; const factor=Math.min(1,h2hMatches/6); h2hWeight=Math.min(0.10,0.10*factor); const total=h2hData.matches; const hw=h2hData.homeWins||0; const d=h2hData.draws||0; const aw=h2hData.awayWins||0; h2hProbs={p1:total>0?hw/total:0.4,pX:total>0?d/total:0.3,p2:total>0?aw/total:0.3}; }
         const weights=this.computeWeights(homeTeam,awayTeam,leagueConfig,h2hWeight);
         let p1=0,pX=0,p2=0; const add=(src,w)=>{ p1+=src.p1*w; pX+=src.pX*w; p2+=src.p2*w; };
         add(poisson,weights.poisson); add(dc,weights.dixonColes); add(elo,weights.elo); add(formProbs,weights.form); add(offDefProbs,weights.offDef); add(mc,weights.monteCarlo); if(h2hWeight>0)add(h2hProbs,weights.h2h);
@@ -1172,7 +1164,18 @@ const Engine = {
         let trap=0; if(modelDivergence>0.15)trap+=25; if(Math.abs((homeTeam.elo||1500)-(awayTeam.elo||1500))>200)trap+=15; if(Math.abs(calibrated.p1-0.5)>0.3)trap+=10; trap=clampStat(trap,0,90);
         let risk='Moyen'; if(confidence>70&&trap<30)risk='Faible'; else if(confidence<40||trap>60)risk='Élevé';
         const scores=mc.topScores||[];
-        return { probabilities:calibrated, markets, confidence, trap, risk, dataQuality, scores, valueBets, bestPick:{market:bestPick.market,prob:bestPick.prob,edge:hotPick.edge||0,kellyFraction:hotKelly,bookmakerOdd:hotPick.bookmakerOdd||null,fairOdd:bestPick.prob>0?1/bestPick.prob:999}, hotPick:{market:hotPick.market,prob:hotPick.prob,edge:hotPick.edge||0,bookmakerOdd:hotPick.bookmakerOdd||null,fairOdd:hotPick.prob>0?1/hotPick.prob:999,kellyFraction:hotKelly,isHot:hotPick.isHot||false}, terrain,isHot:hotPick.isHot||false,valid:true,modelDivergence,h2hWeight,h2hMatches,lambdas:{lA:lambdaA,lB:lambdaB},cleanedOdds, cornerOver10, formHome:formHome.points, formAway:formAway.points, absenceImpact:absenceImpact };
+        
+        const p1X = calibrated.p1 + calibrated.pX;
+        const p2X = calibrated.p2 + calibrated.pX;
+        const p12 = calibrated.p1 + calibrated.p2;
+        
+        return { 
+            probabilities:calibrated, markets, confidence, trap, risk, dataQuality, scores, valueBets, 
+            bestPick:{market:bestPick.market,prob:bestPick.prob,edge:hotPick.edge||0,kellyFraction:hotKelly,bookmakerOdd:hotPick.bookmakerOdd||null,fairOdd:bestPick.prob>0?1/bestPick.prob:999}, 
+            hotPick:{market:hotPick.market,prob:hotPick.prob,edge:hotPick.edge||0,bookmakerOdd:hotPick.bookmakerOdd||null,fairOdd:hotPick.prob>0?1/hotPick.prob:999,kellyFraction:hotKelly,isHot:hotPick.isHot||false}, 
+            terrain,isHot:hotPick.isHot||false,valid:true,modelDivergence,h2hWeight,h2hMatches,lambdas:{lA:lambdaA,lB:lambdaB},cleanedOdds, cornerOver10, formHome:formHome.points, formAway:formAway.points, absenceImpact:absenceImpact,
+            combos: { p1X, p2X, p12, p1X_BTTS: 0, p2X_BTTS: 0, p1_BTTS: 0, p2_BTTS: 0, pX_BTTS: 0 }
+        };
     }
 };
 
@@ -1560,24 +1563,25 @@ const App = {
             const maxGoals=10; let matrix=[]; let totalProb=0;
             for(let i=0;i<=maxGoals;i++){ for(let j=0;j<=maxGoals;j++){ const prob=Engine.poissonProb(lA,i)*Engine.poissonProb(lB,j); matrix.push({home:i,away:j,prob}); totalProb+=prob; } }
             matrix=matrix.map(m=>({...m, prob:m.prob/totalProb}));
-            let p1X=0,p2X=0,p12=0,p1X_BTTS=0,p2X_BTTS=0,p1_BTTS=0,p2_BTTS=0,pX_BTTS=0;
-            matrix.forEach(m=>{ const prob=m.prob; const home=m.home; const away=m.away; const isHW=home>away; const isD=home===away; const isAW=home<away; const isBTTS=home>0&&away>0; if(isHW||isD)p1X+=prob; if(isAW||isD)p2X+=prob; if(isHW||isAW)p12+=prob; if(isBTTS){ if(isHW||isD)p1X_BTTS+=prob; if(isAW||isD)p2X_BTTS+=prob; if(isHW)p1_BTTS+=prob; if(isAW)p2_BTTS+=prob; if(isD)pX_BTTS+=prob; } });
-            const combos={p1X,p2X,p12,p1X_BTTS,p2X_BTTS,p1_BTTS,p2_BTTS,pX_BTTS}; result.combos=combos;
-            await DB.saveHistory({date:new Date().toISOString(), homeTeam:homeTeam.name, awayTeam:awayTeam.name, result:result.probabilities, confidence:result.confidence, isHot:result.isHot});
-            await DB.saveLastAnalysis({homeTeam:homeTeam.name, awayTeam:awayTeam.name, result, date:new Date().toISOString()});
-            const prob=result.probabilities; const hotClass=result.isHot?'hot':''; const hot=result.hotPick;
+            
+            const prob=result.probabilities;
+            const combos=result.combos || {};
+            const hotClass=result.isHot?'hot':''; const hot=result.hotPick;
+            
             let hotPickHtml='';
             if(hot&&hot.prob!==undefined&&!isNaN(hot.prob)){
                 const odd=hot.fairOdd||0; const edgeDisplay=hot.edge!==undefined?(hot.edge*100).toFixed(1)+'%':'N/A';
                 const kellyDisplay=hot.kellyFraction?(hot.kellyFraction*100).toFixed(1)+'%':'N/A';
                 hotPickHtml=`<div class="pick-box ${hotClass}" style="border-color: ${hot.isHot?'var(--gold)':'var(--cyan)'};"><div style="font-size:0.5rem;text-transform:uppercase;letter-spacing:2px;color:${hot.isHot?'var(--gold)':'var(--cyan)'}">${hot.isHot?'🔥 HOT PICK (Edge max)':'🎯 MEILLEUR PICK'}</div><div style="font-size:1.4rem;font-weight:900;margin:5px 0;color:${hot.isHot?'var(--gold)':'var(--cyan)'}">${hot.market}</div><div style="font-size:0.9rem;">Probabilité : ${(hot.prob*100).toFixed(1)}% &nbsp;|&nbsp; Cote : ${odd.toFixed(2)}</div>${hot.edge!==undefined&&hot.edge>0?`<div style="font-size:0.7rem;color:var(--green);">Edge : ${edgeDisplay} &nbsp;|&nbsp; Kelly : ${kellyDisplay}</div>`:''}${hot.isHot?'<div style="font-size:0.55rem;color:var(--gold);margin-top:4px;">✨ Edge > 5%</div>':''}</div>`;
             }
+            
             const chartHtml=`<div class="section-title">📊 Visualisation</div>
                 <div class="bar-chart"><span class="label">1</span><div class="bar-track"><div class="bar-fill green" style="width:${prob.p1*100}%;"></div></div><span>${(prob.p1*100).toFixed(1)}%</span></div>
                 <div class="bar-chart"><span class="label">X</span><div class="bar-track"><div class="bar-fill yellow" style="width:${prob.pX*100}%;"></div></div><span>${(prob.pX*100).toFixed(1)}%</span></div>
                 <div class="bar-chart"><span class="label">2</span><div class="bar-track"><div class="bar-fill red" style="width:${prob.p2*100}%;"></div></div><span>${(prob.p2*100).toFixed(1)}%</span></div>
                 <div class="bar-chart"><span class="label">BTTS</span><div class="bar-track"><div class="bar-fill cyan" style="width:${result.markets.BTTS*100}%;"></div></div><span>${(result.markets.BTTS*100).toFixed(1)}%</span></div>
                 <div class="bar-chart"><span class="label">Over 2.5</span><div class="bar-track"><div class="bar-fill cyan" style="width:${result.markets.Over25*100}%;"></div></div><span>${(result.markets.Over25*100).toFixed(1)}%</span></div>`;
+            
             let statsHtml='';
             if(result.homeStats){
                 statsHtml+=`<div class="stat-row"><span>🏠 ${homeName} xG/m (pondéré)</span><span>${result.homeStats.xG.toFixed(2)}</span></div>
@@ -1586,6 +1590,7 @@ const App = {
                              <div class="stat-row"><span>📈 Forme Ext. (${awayTeam.formLast5?.join('')||'N/A'})</span><span>${(result.formAway||0.5).toFixed(2)}</span></div>`;
                 if(result.cornerOver10) statsHtml+=`<div class="stat-row"><span>🎯 Over 10.5 Corners</span><span>${(result.cornerOver10*100).toFixed(1)}%</span></div>`;
             }
+            
             let absenceHtml='';
             if(result.absenceImpact && (result.absenceImpact.home.players.length>0 || result.absenceImpact.away.players.length>0)){
                 absenceHtml=`<div class="section-title">🚑 Impact absences (estimé)</div>`;
@@ -1596,6 +1601,20 @@ const App = {
                     absenceHtml+=`<div class="stat-row"><span>✈️ ${awayName}</span><span style="color:var(--red);">-${(result.absenceImpact.away.xGReduction*100).toFixed(1)}% ${result.absenceImpact.away.plafonned?' (plafonné)':''}</span></div>`;
                 }
             }
+            
+            // Affichage des combos corrigés
+            const comboHtml = `
+                <div class="section-title">🎯 Combos</div>
+                <div class="stat-row"><span>1X</span><span>${((combos.p1X||0)*100).toFixed(1)}%</span></div>
+                <div class="stat-row"><span>2X</span><span>${((combos.p2X||0)*100).toFixed(1)}%</span></div>
+                <div class="stat-row"><span>12</span><span>${((combos.p12||0)*100).toFixed(1)}%</span></div>
+                <div class="stat-row"><span>1X & BTTS</span><span>${((combos.p1X_BTTS||0)*100).toFixed(1)}%</span></div>
+                <div class="stat-row"><span>2X & BTTS</span><span>${((combos.p2X_BTTS||0)*100).toFixed(1)}%</span></div>
+                <div class="stat-row"><span>1 & BTTS</span><span>${((combos.p1_BTTS||0)*100).toFixed(1)}%</span></div>
+                <div class="stat-row"><span>2 & BTTS</span><span>${((combos.p2_BTTS||0)*100).toFixed(1)}%</span></div>
+                <div class="stat-row"><span>Nul & BTTS</span><span>${((combos.pX_BTTS||0)*100).toFixed(1)}%</span></div>
+            `;
+            
             output.innerHTML=`<div class="analysis-box">${hotPickHtml}${chartHtml}<div style="font-size:0.9rem;margin:10px 0;text-align:center;"><span style="color:var(--green)">1:${(prob.p1*100).toFixed(1)}%</span> | <span style="color:var(--yellow)">X:${(prob.pX*100).toFixed(1)}%</span> | <span style="color:var(--red)">2:${(prob.p2*100).toFixed(1)}%</span></div>
             <div class="stat-row"><span>📊 Confiance</span><span style="color:var(--cyan)">${result.confidence}%</span></div>
             <div class="stat-row"><span>⚠️ Trap Score</span><span>${result.trap}/100</span></div>
@@ -1606,14 +1625,8 @@ const App = {
             <div class="stat-row"><span>⚡ λ domicile</span><span>${result.lambdas.lA.toFixed(2)}</span></div>
             <div class="stat-row"><span>⚡ λ extérieur</span><span>${result.lambdas.lB.toFixed(2)}</span></div>
             ${statsHtml}${absenceHtml}
-            <div class="section-title">🎯 Combos</div>
-            <div class="stat-row"><span>1X</span><span>${(combos.p1X*100).toFixed(1)}%</span></div><div class="stat-row"><span>2X</span><span>${(combos.p2X*100).toFixed(1)}%</span></div>
-            <div class="stat-row"><span>12</span><span>${(combos.p12*100).toFixed(1)}%</span></div>
-            <div class="stat-row"><span>1X & BTTS</span><span>${(combos.p1X_BTTS*100).toFixed(1)}%</span></div>
-            <div class="stat-row"><span>2X & BTTS</span><span>${(combos.p2X_BTTS*100).toFixed(1)}%</span></div>
-            <div class="stat-row"><span>1 & BTTS</span><span>${(combos.p1_BTTS*100).toFixed(1)}%</span></div>
-            <div class="stat-row"><span>2 & BTTS</span><span>${(combos.p2_BTTS*100).toFixed(1)}%</span></div>
-            <div class="stat-row"><span>Nul & BTTS</span><span>${(combos.pX_BTTS*100).toFixed(1)}%</span></div>`;
+            ${comboHtml}`;
+            
             if(result.valueBets.length){
                 output.innerHTML+=`<div class="section-title">💎 VALUE BETS</div><table class="table-value"><thead><tr><th>Marché</th><th>Prob.</th><th>Cote</th><th>Fair</th><th>Edge</th><th>Force</th><th>Kelly</th></tr></thead><tbody>`;
                 result.valueBets.forEach(v=>output.innerHTML+=`<tr><td>${v.market}</td><td>${(v.modelProb*100).toFixed(1)}%</td><td>${v.bookmakerOdd.toFixed(2)}</td><td>${v.fairOdd.toFixed(2)}</td><td style="color:var(--green)">${(v.edge*100).toFixed(1)}%</td><td>${v.strength}</td><td style="color:var(--gold);font-weight:bold;">${v.kellyStake}%</td></tr>`);
@@ -1623,6 +1636,7 @@ const App = {
             <div class="stat-row"><span>Over 2.5</span><span>${(result.markets.Over25*100).toFixed(1)}%</span></div>
             <div class="stat-row"><span>Under 2.5</span><span>${(result.markets.Under25*100).toFixed(1)}%</span></div>
             <div class="section-title">⭐ Top 5 scores</div>${result.scores.map(s=>`<div class="stat-row"><span>${s.score}</span><span>${(s.prob*100).toFixed(2)}%</span></div>`).join('')}</div>`;
+            
             document.getElementById('resultSection').style.display='block';
             document.getElementById('saveBetSection').style.display='block';
             if(hot&&hot.prob!==undefined){
@@ -1707,7 +1721,7 @@ const App = {
         }
 
         const temps=[];
-        for(let t=0.8; t<=2.0; t+=0.05) temps.push(Math.round(t*100)/100);
+        for(let t=0.5; t<=2.5; t+=0.02) temps.push(Math.round(t*100)/100);
         let bestTemp=1.45; let bestLogLoss=Infinity;
         const tempResults=[];
 
@@ -1731,7 +1745,7 @@ const App = {
             }
         }
 
-        Engine.saveCalibratedParams({poisson:0.20,dixonColes:0.25,elo:0.15,form:0.10,offDef:0.20,monteCarlo:0.10}, bestTemp);
+        Engine.saveCalibratedParams({poisson:0.15,dixonColes:0.15,elo:0.25,form:0.15,offDef:0.25,monteCarlo:0.10}, bestTemp);
         this.updateWeightStatus();
 
         let total=0, correct=0, profit=0, totalStaked=0;
@@ -1794,7 +1808,7 @@ const App = {
                 <div class="stat-row"><span>🌡️ Température optimale</span><span style="color:var(--gold);font-weight:bold;">${bestTemp.toFixed(2)}</span></div>
                 <div class="stat-row"><span>📊 Brier Score</span><span>${avgBrier.toFixed(4)}</span></div>
                 <div class="stat-row"><span>📉 Log-Loss</span><span>${avgLogLoss.toFixed(4)}</span></div>
-                <div class="stat-row"><span>✅ Précision</span><span>${winRate.toFixed(1)}% (${correct}/${total})</span></div>
+                <div class="stat-row"><span>✅ Précision 1X2</span><span>${winRate.toFixed(1)}% (${correct}/${total})</span></div>
                 <div class="stat-row"><span>💰 Profit (mise 10€)</span><span style="color:${profit>=0?'var(--green)':'var(--red)'};">${profit>=0?'+':''}${profit.toFixed(2)}€</span></div>
                 <div class="stat-row"><span>📈 ROI</span><span style="color:${roi>=0?'var(--green)':'var(--red)'};">${roi>=0?'+':''}${roi.toFixed(1)}%</span></div>
             </div>
