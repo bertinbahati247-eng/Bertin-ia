@@ -52,13 +52,8 @@
         .risk-slider { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: linear-gradient(90deg, var(--green), var(--gold), var(--red)); border-radius: 3px; outline: none; } .risk-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--cyan); cursor: pointer; border: 2px solid var(--bg-card); }
         .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.8s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
         .import-preview { background: var(--bg); border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 300px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; }
-        .import-preview table { width: 100%; border-collapse: collapse; }
-        .import-preview th, .import-preview td { padding: 4px 8px; border-bottom: 1px solid var(--border); text-align: left; }
-        .import-preview th { color: var(--cyan); position: sticky; top: 0; background: var(--bg-card); }
-        .mapping-status { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
-        .mapping-badge { padding: 4px 12px; border-radius: 12px; font-size: 0.55rem; font-weight: 600; }
-        .mapping-badge.found { background: rgba(34,197,94,0.15); color: var(--green); }
-        .mapping-badge.missing { background: rgba(239,68,68,0.15); color: var(--red); }
+        .import-preview table { width: 100%; border-collapse: collapse; } .import-preview th, .import-preview td { padding: 4px 8px; border-bottom: 1px solid var(--border); text-align: left; } .import-preview th { color: var(--cyan); position: sticky; top: 0; background: var(--bg-card); }
+        .mapping-status { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; } .mapping-badge { padding: 4px 12px; border-radius: 12px; font-size: 0.55rem; font-weight: 600; } .mapping-badge.found { background: rgba(34,197,94,0.15); color: var(--green); } .mapping-badge.missing { background: rgba(239,68,68,0.15); color: var(--red); }
         @media (max-width: 768px) { .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; } .header h1 { font-size: 0.9rem; } .header .stats { font-size: 0.55rem; gap: 10px; } .nav-item { font-size: 0.55rem; padding: 6px 10px; } .card { padding: 14px 16px; } }
         @media (max-width: 480px) { .app { padding: 8px; } .header { padding: 12px 16px; flex-direction: column; align-items: stretch; } .header-actions { justify-content: space-between; } }
         .flex { display: flex; } .flex-center { display: flex; align-items: center; justify-content: center; } .flex-between { display: flex; justify-content: space-between; align-items: center; } .gap-1 { gap: 6px; } .gap-2 { gap: 12px; } .mt-1 { margin-top: 6px; } .mt-2 { margin-top: 12px; } .mb-1 { margin-bottom: 6px; } .mb-2 { margin-bottom: 12px; } .text-center { text-align: center; } .text-sub { color: var(--sub); } .text-cyan { color: var(--cyan); } .text-gold { color: var(--gold); } .text-green { color: var(--green); } .text-red { color: var(--red); } .fw-700 { font-weight: 700; } .fs-06 { font-size: 0.6rem; } .fs-07 { font-size: 0.7rem; } .fs-08 { font-size: 0.8rem; } .fs-09 { font-size: 0.9rem; } .fs-1 { font-size: 1rem; } .fs-12 { font-size: 1.2rem; } .fs-14 { font-size: 1.4rem; } .scroll-table { max-height: 500px; overflow-y: auto; } .hidden { display: none !important; } .w-full { width: 100%; }
@@ -74,6 +69,7 @@
     <nav class="nav-bar">
         <button class="nav-item active" data-page="analyse">🧠 Analyse</button><button class="nav-item" data-page="import">📥 Importer</button><button class="nav-item" data-page="backtest">📈 Backtest</button><button class="nav-item" data-page="calibration">📊 Calibration</button><button class="nav-item" data-page="leagues">🏆 Ligues</button><button class="nav-item" data-page="compare">📊 Comparaison</button><button class="nav-item" data-page="tracking">📋 Suivi</button><button class="nav-item" data-page="value">💎 Value Bets</button><button class="nav-item" data-page="teams">🔍 Équipes</button>
     </nav>
+    <!-- PAGES : analyse, import, backtest, calibration, leagues, compare, tracking, value, teams -->
     <section id="page-analyse" class="page">
         <div class="card" id="historyCard"><div class="card-header"><div class="card-title"><span class="icon">📜</span> Dernières analyses</div><button class="btn btn-sm btn-secondary" onclick="App.clearHistory()">🗑️</button></div><div id="historyList" class="scroll-table" style="max-height:150px;"><div class="text-sub fs-06" style="padding:12px;">Aucune analyse récente</div></div></div>
         <div class="card">
@@ -94,13 +90,25 @@
         </div>
         <div class="card" id="comparatorCard"><div class="card-header"><div class="card-title"><span class="icon">🔬</span> Comparateur de configurations</div><button class="btn btn-sm btn-primary" onclick="App.runComparator()">🔄 Comparer</button></div><div id="comparatorOutput" class="fs-06"><div class="text-sub">Sélectionnez deux ligues différentes pour comparer les prédictions.</div></div></div>
     </section>
-    <section id="page-import" class="page hidden"><div class="card"><div class="card-header"><div class="card-title"><span class="icon">📥</span> Importer les données</div></div><p class="text-sub fs-06 mb-2">Importez vos fichiers CSV. Colonnes détectées automatiquement : Home/HomeTeam, Away/AwayTeam, HG/FTHG, AG/FTAG, Res/FTR, Date/date, League/Div.</p>
-        <div id="importMappingStatus" class="mapping-status"></div>
-        <textarea id="matchesInput" placeholder="Collez les données CSV... (max 50 000 lignes)" style="min-height:200px;"></textarea>
-        <div class="flex gap-2 mt-1 flex-wrap"><button class="btn btn-primary" onclick="App.importCSV()">📥 Importer</button><button class="btn btn-secondary" onclick="App.previewCSV()">👁️ Prévisualiser</button><button class="btn btn-secondary" onclick="document.getElementById('csvFileInput').click()">📁 Choisir fichier</button><input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="App.handleCSVFile(this)"></div>
-        <div id="importStatus" class="fs-06 mt-1"></div>
-        <div id="importPreviewContainer" class="hidden import-preview"></div>
-        <div class="card-title mt-2"><span class="icon">📤</span> Exporter JSON</div><div class="flex gap-2 flex-wrap"><button class="btn btn-gold btn-sm" onclick="App.exportAllData()">📤 Exporter tout</button><button class="btn btn-danger btn-sm" onclick="App.deleteAllData()">🗑️ Tout supprimer</button></div></div></section>
+    <section id="page-import" class="page hidden">
+        <div class="card">
+            <div class="card-header"><div class="card-title"><span class="icon">📥</span> Importer les données</div></div>
+            <p class="text-sub fs-06 mb-2">Importez vos fichiers CSV ou JSON. Colonnes détectées automatiquement.</p>
+            <div id="importMappingStatus" class="mapping-status"></div>
+            <textarea id="matchesInput" placeholder="Collez les données CSV ou JSON..." style="min-height:200px;"></textarea>
+            <div class="flex gap-2 mt-1 flex-wrap">
+                <button class="btn btn-primary" onclick="App.importData()">📥 Importer</button>
+                <button class="btn btn-secondary" onclick="App.previewData()">👁️ Prévisualiser</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('csvFileInput').click()">📁 Fichier CSV</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('jsonFileInput').click()">📄 Fichier JSON</button>
+                <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="App.handleFile(this, 'csv')">
+                <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="App.handleFile(this, 'json')">
+            </div>
+            <div id="importStatus" class="fs-06 mt-1"></div>
+            <div id="importPreviewContainer" class="hidden import-preview"></div>
+            <div class="card-title mt-2"><span class="icon">📤</span> Exporter JSON</div><div class="flex gap-2 flex-wrap"><button class="btn btn-gold btn-sm" onclick="App.exportAllData()">📤 Exporter tout</button><button class="btn btn-danger btn-sm" onclick="App.deleteAllData()">🗑️ Tout supprimer</button></div>
+        </div>
+    </section>
     <section id="page-backtest" class="page hidden"><div class="card"><div class="card-header"><div class="card-title"><span class="icon">📈</span> Backtest multi-ligues V17</div><span class="text-sub fs-06">Sans filtres — Tous les paris sont testés.</span></div><div class="league-selector" id="backtestLeagueSelector"></div><div class="flex gap-2 flex-wrap mb-2"><select id="backtestSeason" style="width:auto;padding:6px;"><option value="">Toutes saisons</option></select><select id="backtestMarket" style="width:auto;padding:6px;"><option value="all">Tous marchés</option><option value="1X2">1X2</option><option value="Over">Over 2.5</option><option value="Under">Under 2.5</option><option value="BTTS">BTTS</option><option value="AH">Asian Handicap</option></select><button class="btn btn-primary btn-sm" onclick="App.runFullBacktest()">🚀 Lancer</button><button class="btn btn-gold btn-sm" onclick="App.exportBacktestCSV()">📤 Export CSV</button></div><div id="backtestProgress" class="hidden mb-2"><div class="spinner"></div> <span class="text-sub fs-06">Backtest en cours...</span></div><div id="backtestStats" class="hidden grid-5 text-center mb-2"></div><div id="backtestMarketStats" class="hidden market-grid mb-2"></div><div id="backtestResults" class="fs-07 scroll-table" style="max-height:600px;"></div></div></section>
     <section id="page-calibration" class="page hidden"><div class="card"><div class="card-header"><div class="card-title"><span class="icon">📊</span> Diagramme de fiabilité V17</div></div><div class="flex gap-2 flex-wrap mb-2"><select id="calibrationSeason" style="width:auto;padding:6px;"><option value="">Toutes saisons</option></select><select id="calibrationMarket" style="width:auto;padding:6px;"><option value="1X2">1X2</option><option value="Over">Over 2.5</option><option value="Under">Under 2.5</option><option value="BTTS">BTTS</option><option value="AH">Asian Handicap</option></select><button class="btn btn-primary btn-sm" onclick="App.runCalibration()">📊 Générer</button></div><div id="calibrationResults" class="fs-07"></div></div><div class="card"><div class="card-header"><div class="card-title"><span class="icon">📊</span> Comparaison Modèle vs Marché</div></div><div id="marketComparison" class="fs-06 scroll-table" style="max-height:400px;"></div></div><div class="card"><div class="card-header"><div class="card-title"><span class="icon">📊</span> Analyse des erreurs</div></div><div id="errorAnalysis" class="fs-06"></div></div></section>
     <section id="page-leagues" class="page hidden"><div class="card"><div class="card-header"><div class="card-title"><span class="icon">🏆</span> Ligues détectées</div></div><div id="leagueListContainer" class="scroll-table"></div></div></section>
@@ -112,6 +120,7 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
+// ========== UTILS ==========
 const Utils = {
     clamp(v, min, max) { return Math.min(max, Math.max(min, Number(v) || 0)); },
     clampProb(v) { return this.clamp(v, 0.001, 0.999); },
@@ -132,21 +141,29 @@ const Utils = {
     poissonRand(lambda) { if (lambda <= 0) return 0; const L = Math.exp(-lambda); let k = 0, p = 1; do { k++; p *= Math.random(); } while (p > L && k < 50); return k - 1; }
 };
 
+// ========== COLUMN MAPPING (détection automatique) ==========
 const COLUMN_MAPPING = {
-    home: ['HomeTeam', 'Home', 'homeTeam', 'home', 'Hometeam', 'H'],
-    away: ['AwayTeam', 'Away', 'awayTeam', 'away', 'Awayteam', 'A'],
-    hg: ['FTHG', 'HG', 'homeGoals', 'home_goals', 'HTHG', 'HomeGoals', 'homegoals'],
-    ag: ['FTAG', 'AG', 'awayGoals', 'away_goals', 'HTAG', 'AwayGoals', 'awaygoals'],
-    res: ['FTR', 'Res', 'result', 'FullTimeResult', 'Result', 'FTR'],
-    date: ['Date', 'date', 'MatchDate', 'match_date', 'DateMatch'],
-    league: ['Div', 'League', 'division', 'league', 'LeagueName', 'div'],
-    season: ['Season', 'season', 'Saison'],
-    time: ['Time', 'time', 'KickOff', 'kick_off', 'Hour'],
-    psh: ['PSH', 'B365H', 'B365CH', 'MaxCH', 'AvgCH', 'HomeOdd', 'home_odd'],
-    psd: ['PSD', 'B365D', 'B365CD', 'MaxCD', 'AvgCD', 'DrawOdd', 'draw_odd'],
-    psa: ['PSA', 'B365A', 'B365CA', 'MaxCA', 'AvgCA', 'AwayOdd', 'away_odd'],
-    over25: ['P>2.5', 'Over25', 'over25', 'O25', 'Over'],
-    under25: ['P<2.5', 'Under25', 'under25', 'U25', 'Under']
+    home: ['HomeTeam', 'Home', 'homeTeam', 'home', 'Hometeam', 'H', 'HT'],
+    away: ['AwayTeam', 'Away', 'awayTeam', 'away', 'Awayteam', 'A', 'AT'],
+    hg: ['FTHG', 'HG', 'homeGoals', 'home_goals', 'HTHG', 'HomeGoals', 'homegoals', 'FTH'],
+    ag: ['FTAG', 'AG', 'awayGoals', 'away_goals', 'HTAG', 'AwayGoals', 'awaygoals', 'FTA'],
+    res: ['FTR', 'Res', 'result', 'FullTimeResult', 'Result', 'FTR', 'FT'],
+    date: ['Date', 'date', 'MatchDate', 'match_date', 'DateMatch', 'DT'],
+    league: ['Div', 'League', 'division', 'league', 'LeagueName', 'div', 'LG'],
+    season: ['Season', 'season', 'Saison', 'SS'],
+    time: ['Time', 'time', 'KickOff', 'kick_off', 'Hour', 'TM'],
+    psh: ['PSH', 'B365H', 'B365CH', 'MaxCH', 'AvgCH', 'HomeOdd', 'home_odd', 'PH', 'PinnacleH', 'PSCH'],
+    psd: ['PSD', 'B365D', 'B365CD', 'MaxCD', 'AvgCD', 'DrawOdd', 'draw_odd', 'PD', 'PinnacleD', 'PSCD'],
+    psa: ['PSA', 'B365A', 'B365CA', 'MaxCA', 'AvgCA', 'AwayOdd', 'away_odd', 'PA', 'PinnacleA', 'PSCA'],
+    over25: ['P>2.5', 'Over25', 'over25', 'O25', 'Over', 'PO2.5', 'P>2.5'],
+    under25: ['P<2.5', 'Under25', 'under25', 'U25', 'Under', 'PU2.5', 'P<2.5'],
+    ahh: ['AHh', 'AH', 'AsianHandicap', 'handicap', 'AHH', 'AH1'],
+    pahh: ['PAHH', 'AHHome', 'ah_home', 'PAH', 'PinnacleAHH'],
+    paha: ['PAHA', 'AHAway', 'ah_away', 'PAA', 'PinnacleAHA'],
+    hs: ['HS', 'HomeShots', 'home_shots', 'HShots'],
+    as: ['AS', 'AwayShots', 'away_shots', 'AShots'],
+    hst: ['HST', 'HomeShotsOnTarget', 'home_shots_on_target', 'HSOT'],
+    ast: ['AST', 'AwayShotsOnTarget', 'away_shots_on_target', 'ASOT']
 };
 
 function findColumn(headers, possibleNames) {
@@ -157,6 +174,7 @@ function findColumn(headers, possibleNames) {
     return null;
 }
 
+// ========== LIGUES ==========
 const LEAGUE_MAP = {
     'E0': { name: 'Premier League', homeAdv: 42, rho: -0.07, temp1X2: 0.85, tempOver: 1.0, tempBTTS: 0.85, tempAH: 0.75, avgGoals: 2.85, avgXgHome: 1.65, avgXgAway: 1.20, avgXGA_home: 1.10, avgXGA_away: 1.55 },
     'E1': { name: 'Championship', homeAdv: 38, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.90, tempAH: 0.80, avgGoals: 2.55, avgXgHome: 1.45, avgXgAway: 1.10, avgXGA_home: 1.00, avgXGA_away: 1.35 },
@@ -174,6 +192,7 @@ function getLeagueCode(divOrName) { if (!divOrName) return null; const clean = d
 function getLeagueInfo(div) { if (!div) return { name: 'Inconnu', homeAdv: 40, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.95, tempAH: 0.80, avgGoals: 2.70, avgXgHome: 1.50, avgXgAway: 1.20, avgXGA_home: 1.10, avgXGA_away: 1.50 }; const code = getLeagueCode(div) || div.trim().toUpperCase(); return LEAGUE_MAP[code] || { name: div, homeAdv: 40, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.95, tempAH: 0.80, avgGoals: 2.70, avgXgHome: 1.50, avgXgAway: 1.20, avgXGA_home: 1.10, avgXGA_away: 1.50 }; }
 function getLeagueConfig(div) { const info = getLeagueInfo(div); return { name: info.name, homeAdv: info.homeAdv || 40, rho: info.rho || -0.08, temperature1X2: info.temp1X2 || 0.85, temperatureOver: info.tempOver || 1.1, temperatureBTTS: info.tempBTTS || 0.95, temperatureAH: info.tempAH || 0.80, goalsHome: info.avgXgHome || 1.5, goalsAway: info.avgXgAway || 1.2, xgHome: info.avgXgHome || 1.5, xgAway: info.avgXgAway || 1.2, xGA_home: info.avgXGA_home || 1.2, xGA_away: info.avgXGA_away || 1.5 }; }
 
+// ========== DB ==========
 const DB = {
     _db: null,
     async open() { if (this._db) return this._db; return new Promise((res, rej) => { const req = indexedDB.open('RedProV17', 2); req.onupgradeneeded = e => { const db = e.target.result; if (!db.objectStoreNames.contains('teams')) db.createObjectStore('teams', { keyPath: 'name' }); if (!db.objectStoreNames.contains('matches')) { const s = db.createObjectStore('matches', { keyPath: 'id', autoIncrement: true }); s.createIndex('season', 'season', { unique: false }); s.createIndex('league', 'league', { unique: false }); s.createIndex('date', 'date', { unique: false }); } if (!db.objectStoreNames.contains('tracking')) db.createObjectStore('tracking', { keyPath: 'id', autoIncrement: true }); if (!db.objectStoreNames.contains('leagues')) db.createObjectStore('leagues', { keyPath: 'name' }); }; req.onsuccess = e => { this._db = e.target.result; res(this._db); }; req.onerror = () => rej(new Error('IndexedDB')); }); },
@@ -193,6 +212,7 @@ const DB = {
 
 function showToast(message, type = 'info') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast ${type}`; const icons = { info: 'ℹ️', success: '✅', error: '❌', alert: '⚠️' }; toast.innerHTML = `${icons[type] || 'ℹ️'} ${message}`; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3500); }
 
+// ========== ENGINE V17 (identique à la version corrigée précédente) ==========
 const EngineV17 = {
     maxGoals: 8, monteCarloSims: 30000, _cache: new Map(), _maxCacheSize: 5000,
     _cacheGet(key) { return this._cache.get(key) || null; },
@@ -266,6 +286,7 @@ const EngineV17 = {
     updateElo(hT, aT, hG, aG, kF = 20) { const eA = hT.elo || 1500, eB = aT.elo || 1500; const ha = 40; const exA = 1 / (1 + Math.pow(10, (eB - (eA + ha)) / 400)); const exB = 1 - exA; let sA, sB; if (hG > aG) { sA = 1; sB = 0; } else if (hG === aG) { sA = 0.5; sB = 0.5; } else { sA = 0; sB = 1; } const gd = Math.abs(hG - aG); const mm = gd <= 1 ? 1 : (gd === 2 ? 1.5 : (1.75 + (gd - 3) * 0.25)); const aK = kF * mm; return { homeNewElo: Math.round(eA + aK * (sA - exA)), awayNewElo: Math.round(eB + aK * (sB - exB)), homeChange: Math.round(aK * (sA - exA)), awayChange: Math.round(aK * (sB - exB)) }; }
 };
 
+// ========== APP ==========
 const App = {
     teams: [], matches: [], trackingData: [], currentPage: 'analyse', trackingFilter: 'all', bankroll: 100000, riskLevel: 5, maxStakePercent: 0.05, stopLossPercent: 0.20, _backtestData: null, analysisHistory: [],
     async init() { await DB.open(); this.teams = await DB.getAllTeams(); this.matches = await DB.getMatches(); this.trackingData = await DB.getAllTracking(); this.loadTheme(); this.loadHistory(); this.refreshUI(); document.querySelectorAll('.nav-item').forEach(el => el.addEventListener('click', () => this.navigateTo(el.dataset.page))); document.addEventListener('click', (e) => { if (!e.target.closest('.autocomplete-wrapper')) document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.add('hidden')); }); await this.populateSelectors(); this.navigateTo('analyse'); this.updateRiskDisplay(); this.renderTracking(); this.renderClvChart(); this.renderHistory(); },
@@ -295,9 +316,10 @@ const App = {
     clearHistory() { if (confirm('Effacer l\'historique ?')) { this.analysisHistory = []; localStorage.removeItem('rp_history'); this.renderHistory(); showToast('Historique effacé', 'info'); } },
     async runComparator() { const hn = document.getElementById('analysisHome').value.trim(), an = document.getElementById('analysisAway').value.trim(); if (!hn || !an) { showToast('Saisissez les équipes', 'error'); return; } const cl = document.getElementById('analysisLeagueFilter').value || 'E0'; const terrain = document.getElementById('terrainSelect').value; const ac = Object.keys(LEAGUE_MAP).filter(c => c !== cl).slice(0, 2); if (ac.length < 2) { document.getElementById('comparatorOutput').innerHTML = '<div class="text-sub">Pas assez de ligues</div>'; return; } const leagues = [cl, ...ac]; const results = []; for (const code of leagues) { const cfg = getLeagueConfig(code); const hT = await DB.getTeam(hn) || { name: hn, elo: 1500, matches: 10, stats: { xG: cfg.xgHome, xGA: cfg.xGA_home, goalsPerMatch: cfg.goalsHome, shotsOnTargetPerMatch: 0 }, formLast5: ['D','D','D','D','D'] }; const aT = await DB.getTeam(an) || { name: an, elo: 1500, matches: 10, stats: { xG: cfg.xgAway, xGA: cfg.xGA_away, goalsPerMatch: cfg.goalsAway, shotsOnTargetPerMatch: 0 }, formLast5: ['D','D','D','D','D'] }; const odds = { home: parseFloat(document.getElementById('bookOdd1').value) || 0, draw: parseFloat(document.getElementById('bookOddX').value) || 0, away: parseFloat(document.getElementById('bookOdd2').value) || 0 }; try { const r = EngineV17.predict(hT, aT, cfg, null, odds.home > 1.01 ? odds : null, terrain); results.push({ league: cfg.name, code, cfg, result: r }); } catch(e) { continue; } } const ctr = document.getElementById('comparatorOutput'); let html = `<div class="grid-${Math.min(3, results.length)}">`; for (const r of results) { const p = r.result.probabilities; html += `<div style="background:var(--bg);border-radius:10px;padding:12px;border:1px solid var(--border);"><div class="fw-700 text-cyan">${Utils.escapeHTML(r.league)}</div><div class="text-sub fs-06">homeAdv: ${r.cfg.homeAdv} | rho: ${r.cfg.rho}</div><div class="stat-row"><span class="label">1</span><span class="value">${(p.p1*100).toFixed(1)}%</span></div><div class="stat-row"><span class="label">X</span><span class="value">${(p.pX*100).toFixed(1)}%</span></div><div class="stat-row"><span class="label">2</span><span class="value">${(p.p2*100).toFixed(1)}%</span></div><div class="stat-row"><span class="label">Confiance</span><span class="value">${r.result.confidence}%</span></div></div>`; } html += `</div>`; ctr.innerHTML = html; },
     async submitMatchResult() { const hg = parseInt(document.getElementById('resultHomeGoals').value), ag = parseInt(document.getElementById('resultAwayGoals').value); if (isNaN(hg) || isNaN(ag) || hg < 0 || ag < 0) { showToast('Score invalide', 'error'); return; } const hn = document.getElementById('analysisHome').value.trim(), an = document.getElementById('analysisAway').value.trim(); if (!hn || !an) return; let hT = await DB.getTeam(hn), aT = await DB.getTeam(an); const lv = document.getElementById('analysisLeagueFilter').value || 'E0'; const lc = getLeagueConfig(lv); if (!hT) hT = { name: hn, elo: 1500, matches: 0, goalsScored: 0, goalsConceded: 0, xG: 0, xGA: 0, stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, formLast5: ['D','D','D','D','D'] }; if (!aT) aT = { name: an, elo: 1500, matches: 0, goalsScored: 0, goalsConceded: 0, xG: 0, xGA: 0, stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, formLast5: ['D','D','D','D','D'] }; const er = EngineV17.updateElo(hT, aT, hg, ag); hT.elo = er.homeNewElo; aT.elo = er.awayNewElo; hT.matches = (hT.matches || 0) + 1; aT.matches = (aT.matches || 0) + 1; hT.goalsScored = (hT.goalsScored || 0) + hg; hT.goalsConceded = (hT.goalsConceded || 0) + ag; aT.goalsScored = (aT.goalsScored || 0) + ag; aT.goalsConceded = (aT.goalsConceded || 0) + hg; hT.xG = hT.goalsScored / Math.max(1, hT.matches); hT.xGA = hT.goalsConceded / Math.max(1, hT.matches); aT.xG = aT.goalsScored / Math.max(1, aT.matches); aT.xGA = aT.goalsConceded / Math.max(1, aT.matches); hT.stats = { xG: hT.xG, xGA: hT.xGA, goalsPerMatch: hT.xG, shotsOnTargetPerMatch: 0 }; aT.stats = { xG: aT.xG, xGA: aT.xGA, goalsPerMatch: aT.xG, shotsOnTargetPerMatch: 0 }; const hR = hg > ag ? 'W' : (hg === ag ? 'D' : 'L'), aR = ag > hg ? 'W' : (ag === hg ? 'D' : 'L'); hT.formLast5 = [...(hT.formLast5 || []), hR].slice(-5); aT.formLast5 = [...(aT.formLast5 || []), aR].slice(-5); await DB.saveTeam(hT); await DB.saveTeam(aT); const me = { season: Utils.extractSeason(new Date().toISOString()) || 'Inconnu', league: lc.name, div: lv, date: new Date().toISOString().slice(0, 10), homeTeam: hn, awayTeam: an, FTHG: hg, FTAG: ag, FTR: hR === 'W' ? 'H' : (hR === 'D' ? 'D' : 'A'), PSH: parseFloat(document.getElementById('bookOdd1').value) || 0, PSD: parseFloat(document.getElementById('bookOddX').value) || 0, PSA: parseFloat(document.getElementById('bookOdd2').value) || 0, 'P>2.5': parseFloat(document.getElementById('bookOver25').value) || 0, 'P<2.5': parseFloat(document.getElementById('bookUnder25').value) || 0, AHh: parseFloat(document.getElementById('bookAHHandicap').value) || 0, PAHH: parseFloat(document.getElementById('bookAHHome').value) || 0, PAHA: parseFloat(document.getElementById('bookAHAway').value) || 0 }; await DB.saveMatch(me); this.matches = await DB.getMatches(); this.teams = await DB.getAllTeams(); this.refreshUI(); await this.populateSelectors(); showToast(`Résultat enregistré | Elo ${hn}: ${er.homeNewElo} (${er.homeChange >= 0 ? '+' : ''}${er.homeChange})`, 'success'); },
-    async runFullBacktest() { const league = document.querySelector('#backtestLeagueSelector .league-btn.active')?.dataset.league || null; const season = document.getElementById('backtestSeason').value || null; const mf = document.getElementById('backtestMarket').value || 'all'; let matches = this.matches; if (league) matches = matches.filter(m => m.league === league); if (season) matches = matches.filter(m => m.season === season); if (matches.length === 0) { showToast('Aucun match', 'error'); return; } matches.sort((a, b) => { const dA = Utils.parseDate(a.date) || new Date(0); const dB = Utils.parseDate(b.date) || new Date(0); return dA - dB; }); const container = document.getElementById('backtestResults'); document.getElementById('backtestProgress').classList.remove('hidden'); container.innerHTML = '<div class="text-cyan">⏳ Backtest en cours...</div>'; const markets = ['1X2', 'Over', 'Under', 'BTTS', 'AH']; const md = {}; for (const m of markets) md[m] = { preds: [], actuals: [], matches: [], odds: [], profits: [], stakes: [], edges: [] }; let tm = matches.length, um = 0; const BS = 100; for (let bs = 0; bs < matches.length; bs += BS) { const batch = matches.slice(bs, bs + BS); for (const match of batch) { const hn = match.homeTeam, an = match.awayTeam; const prev = matches.slice(0, matches.indexOf(match)); const hP = prev.filter(m => m.homeTeam === hn || m.awayTeam === hn); const aP = prev.filter(m => m.homeTeam === an || m.awayTeam === an); let hS = { matches: 0, goalsScored: 0, goalsConceded: 0, shotsOnTarget: 0, formLast5: [], elo: 1500 }, aS = { matches: 0, goalsScored: 0, goalsConceded: 0, shotsOnTarget: 0, formLast5: [], elo: 1500 }; for (const pm of hP) { hS.matches++; if (pm.homeTeam === hn) { hS.goalsScored += pm.FTHG || 0; hS.goalsConceded += pm.FTAG || 0; hS.shotsOnTarget += pm.HST || 0; hS.formLast5.push(pm.FTHG > pm.FTAG ? 'W' : pm.FTHG === pm.FTAG ? 'D' : 'L'); } else { hS.goalsScored += pm.FTAG || 0; hS.goalsConceded += pm.FTHG || 0; hS.shotsOnTarget += pm.AST || 0; hS.formLast5.push(pm.FTAG > pm.FTHG ? 'W' : pm.FTAG === pm.FTHG ? 'D' : 'L'); } } for (const pm of aP) { aS.matches++; if (pm.awayTeam === an) { aS.goalsScored += pm.FTAG || 0; aS.goalsConceded += pm.FTHG || 0; aS.shotsOnTarget += pm.AST || 0; aS.formLast5.push(pm.FTAG > pm.FTHG ? 'W' : pm.FTAG === pm.FTHG ? 'D' : 'L'); } else { aS.goalsScored += pm.FTHG || 0; aS.goalsConceded += pm.FTAG || 0; aS.shotsOnTarget += pm.HST || 0; aS.formLast5.push(pm.FTHG > pm.FTAG ? 'W' : pm.FTHG === pm.FTAG ? 'D' : 'L'); } } hS.formLast5 = hS.formLast5.slice(-5); aS.formLast5 = aS.formLast5.slice(-5); const hm = hS.matches || 0, am = aS.matches || 0; const lc = getLeagueConfig(match.div || match.league); const hSt = hm > 0 ? { xG: hS.goalsScored / hm, xGA: hS.goalsConceded / hm, goalsPerMatch: hS.goalsScored / hm, shotsOnTargetPerMatch: hS.shotsOnTarget / hm || 0 } : { xG: lc.xgHome || 1.5, xGA: lc.xGA_home || 1.2, goalsPerMatch: lc.goalsHome || 1.5, shotsOnTargetPerMatch: 0 }; const aSt = am > 0 ? { xG: aS.goalsScored / am, xGA: aS.goalsConceded / am, goalsPerMatch: aS.goalsScored / am, shotsOnTargetPerMatch: aS.shotsOnTarget / am || 0 } : { xG: lc.xgAway || 1.2, xGA: lc.xGA_away || 1.5, goalsPerMatch: lc.goalsAway || 1.2, shotsOnTargetPerMatch: 0 }; const hO = { name: hn, elo: hS.elo || 1500, formLast5: hS.formLast5 || ['D','D','D','D','D'], stats: hSt, matches: hm }; const aO = { name: an, elo: aS.elo || 1500, formLast5: aS.formLast5 || ['D','D','D','D','D'], stats: aSt, matches: am }; const odds = { home: match.PSH || 0, draw: match.PSD || 0, away: match.PSA || 0, over25: match['P>2.5'] || 0, under25: match['P<2.5'] || 0, ahHome: match.PAHH || 0, ahAway: match.PAHA || 0 }; try { const result = EngineV17.predict(hO, aO, lc, null, odds.home > 1.01 ? odds : null, 'home'); um++; const a1X2 = match.FTHG > match.FTAG ? '1' : (match.FTHG === match.FTAG ? 'X' : '2'); const pp = result.probabilities; const pr1 = pp.p1 > pp.pX && pp.p1 > pp.p2 ? '1' : (pp.pX > pp.p2 ? 'X' : '2'); const od1 = pr1 === '1' ? odds.home : (pr1 === 'X' ? odds.draw : odds.away); const st1 = 10; let pf1 = 0; if (od1 > 1.01) pf1 = pr1 === a1X2 ? st1 * (od1 - 1) : -st1; md['1X2'].preds.push(pp); md['1X2'].actuals.push(a1X2); md['1X2'].matches.push(match); md['1X2'].odds.push({ home: odds.home, draw: odds.draw, away: odds.away }); md['1X2'].profits.push(pf1); md['1X2'].stakes.push(st1); md['1X2'].edges.push((pr1 === '1' ? pp.p1 : pr1 === 'X' ? pp.pX : pp.p2) - (od1 > 1.01 ? 1 / od1 : 0)); const aOv = (match.FTHG + match.FTAG) > 2.5 ? 'Yes' : 'No'; const pOv = result.markets.Over25 > 0.5 ? 'Yes' : 'No'; const odOv = match['P>2.5'] || 0; let pfOv = 0; if (odOv > 1.01) pfOv = pOv === aOv ? st1 * (odOv - 1) : -st1; md['Over'].preds.push(result.markets.Over25); md['Over'].actuals.push(aOv); md['Over'].matches.push(match); md['Over'].odds.push({ over: odOv }); md['Over'].profits.push(pfOv); md['Over'].stakes.push(st1); md['Over'].edges.push(result.markets.Over25 - (odOv > 1.01 ? 1 / odOv : 0)); const aUn = (match.FTHG + match.FTAG) <= 2.5 ? 'Yes' : 'No'; const pUn = result.markets.Under25 > 0.5 ? 'Yes' : 'No'; const odUn = match['P<2.5'] || 0; let pfUn = 0; if (odUn > 1.01) pfUn = pUn === aUn ? st1 * (odUn - 1) : -st1; md['Under'].preds.push(result.markets.Under25); md['Under'].actuals.push(aUn); md['Under'].matches.push(match); md['Under'].odds.push({ under: odUn }); md['Under'].profits.push(pfUn); md['Under'].stakes.push(st1); md['Under'].edges.push(result.markets.Under25 - (odUn > 1.01 ? 1 / odUn : 0)); const aBt = (match.FTHG > 0 && match.FTAG > 0) ? 'Yes' : 'No'; const pBt = result.markets.BTTS > 0.5 ? 'Yes' : 'No'; const odBt = match['P>2.5'] ? 1.80 : 0; let pfBt = 0; if (odBt > 1.01) pfBt = pBt === aBt ? st1 * (odBt - 1) : -st1; md['BTTS'].preds.push(result.markets.BTTS); md['BTTS'].actuals.push(aBt); md['BTTS'].matches.push(match); md['BTTS'].odds.push({ yes: odBt }); md['BTTS'].profits.push(pfBt); md['BTTS'].stakes.push(st1); md['BTTS'].edges.push(result.markets.BTTS - (odBt > 1.01 ? 1 / odBt : 0)); if (match.AHh !== undefined && match.AHh !== null && match.PAHH > 1.01) { const ahR = result.ahResults[`AH${match.AHh}`]; if (ahR) { const aAH = (match.FTHG + match.AHh > match.FTAG) ? 'Home' : ((match.FTHG + match.AHh === match.FTAG) ? 'Push' : 'Away'); if (aAH === 'Push') { md['AH'].preds.push(ahR); md['AH'].actuals.push('Push'); md['AH'].matches.push(match); md['AH'].odds.push({ home: match.PAHH || 0, away: match.PAHA || 0 }); md['AH'].profits.push(0); md['AH'].stakes.push(0); md['AH'].edges.push(0); } else { const pAH = ahR.home > 0.5 ? 'Home' : 'Away'; const odAH = pAH === 'Home' ? match.PAHH : match.PAHA; let pfAH = 0; if (odAH > 1.01) pfAH = pAH === aAH ? st1 * (odAH - 1) : -st1; md['AH'].preds.push(ahR); md['AH'].actuals.push(aAH); md['AH'].matches.push(match); md['AH'].odds.push({ home: match.PAHH || 0, away: match.PAHA || 0 }); md['AH'].profits.push(pfAH); md['AH'].stakes.push(st1); md['AH'].edges.push((pAH === 'Home' ? ahR.home : ahR.away) - (odAH > 1.01 ? 1 / odAH : 0)); } } } } catch(e) { continue; } } await new Promise(r => setTimeout(r, 10)); } document.getElementById('backtestProgress').classList.add('hidden'); const sc = document.getElementById('backtestStats'); sc.classList.remove('hidden'); sc.innerHTML = `<div><div class="text-sub fs-06">Matchs</div><div class="fs-1 fw-700 text-cyan">${tm}</div></div><div><div class="text-sub fs-06">Utilisés</div><div class="fs-1 fw-700 text-green">${um}</div></div><div><div class="text-sub fs-06">Ignorés</div><div class="fs-1 fw-700 text-red">${tm - um}</div></div><div><div class="text-sub fs-06">Taux</div><div class="fs-1 fw-700 text-gold">${tm > 0 ? (um/tm*100).toFixed(1) : 0}%</div></div><div><div class="text-sub fs-06">Ligue</div><div class="fs-07 fw-700 text-cyan">${league || 'Toutes'}</div></div>`; if (um === 0) { container.innerHTML = '<div class="text-red">❌ Aucune prédiction valide.</div>'; return; } const mr = {}; const abr = []; for (const [mn, data] of Object.entries(md)) { if (data.preds.length === 0 || (mf !== 'all' && mn !== mf)) continue; let tot = data.preds.length, cor = 0, set = 0, tP = data.profits.reduce((a, b) => a + b, 0), tS = data.stakes.reduce((a, b) => a + b, 0), bS = 0, lS = 0, pc = 0; for (let i = 0; i < data.preds.length; i++) { const pred = data.preds[i], act = data.actuals[i]; let ic = false, mp = 0; if (mn === '1X2') { const cal = pred; const pf = cal.p1 > cal.pX && cal.p1 > cal.p2 ? '1' : (cal.pX > cal.p2 ? 'X' : '2'); ic = pf === act; mp = pf === '1' ? cal.p1 : (pf === 'X' ? cal.pX : cal.p2); if (act !== 'Push') set++; if (ic) cor++; } else if (mn === 'AH') { if (act === 'Push') { pc++; continue; } const pf = pred.home > 0.5 ? 'Home' : 'Away'; ic = pf === act; mp = pf === 'Home' ? pred.home : pred.away; set++; if (ic) cor++; } else { const pf = pred > 0.5 ? 'Yes' : 'No'; ic = pf === act; mp = pred; set++; if (ic) cor++; } const bin = (act === 'Yes' || act === 'Home') ? 1 : 0; const eps = 1e-9; bS += (mp - bin) ** 2; lS += -(bin * Math.log(mp + eps) + (1 - bin) * Math.log(1 - mp + eps)); abr.push({ market: mn, match: data.matches[i], prediction: mn === '1X2' ? (pred.p1 > pred.pX && pred.p1 > pred.p2 ? '1' : (pred.pX > pred.p2 ? 'X' : '2')) : (pred > 0.5 ? 'Yes' : 'No'), modelProb: mp, edge: data.edges[i] || 0, actual: act, profit: data.profits[i] || 0, odds: data.odds[i] }); } const et = mn === 'AH' ? tot - pc : tot; const wr = et > 0 ? cor / et * 100 : 0; const roi = tS > 0 ? tP / tS * 100 : 0; const aB = set > 0 ? bS / set : 0; const aL = set > 0 ? lS / set : 0; mr[mn] = { total: et, correct: cor, winRate: wr, profit: tP, roi, avgBrier: aB, avgLogLoss: aL, pushCount: pc, totalStaked: tS }; } this._backtestData = { marketResults: mr, allRows: abr }; const msc = document.getElementById('backtestMarketStats'); msc.classList.remove('hidden'); let h = ''; for (const [mn, st] of Object.entries(mr)) { const col = st.roi > 5 ? 'var(--green)' : (st.roi > 0 ? 'var(--gold)' : 'var(--red)'); const wc = st.winRate > 55 ? 'var(--green)' : st.winRate > 50 ? 'var(--gold)' : 'var(--orange)'; h += `<div class="market-card"><div class="name">${mn}</div><div class="stat text-cyan">${st.total} paris</div><div>Précision: <span style="color:${wc};">${st.winRate.toFixed(1)}%</span></div><div>ROI: <span style="color:${col};">${st.roi > 0 ? '+' : ''}${st.roi.toFixed(1)}%</span></div><div>Profit: <span style="color:${st.profit >= 0 ? 'var(--green)' : 'var(--red)'};">${st.profit >= 0 ? '+' : ''}${st.profit.toFixed(2)}€</span></div><div class="sub">Brier: ${st.avgBrier.toFixed(4)} | LogLoss: ${st.avgLogLoss.toFixed(4)}</div>${st.pushCount > 0 ? `<div class="sub text-gold">Push: ${st.pushCount}</div>` : ''}</div>`; } msc.innerHTML = h; container.innerHTML = `<div class="text-green fw-700">✅ Backtest terminé — ${um} matchs utilisés sur ${tm}</div><div class="text-sub fs-06 mt-1">Profits calculés avec stake × (odd - 1), base 10€.</div>`; showToast(`Backtest: ${um}/${tm} matchs`, 'success'); },
+    async runFullBacktest() { const league = document.querySelector('#backtestLeagueSelector .league-btn.active')?.dataset.league || null; const season = document.getElementById('backtestSeason').value || null; const mf = document.getElementById('backtestMarket').value || 'all'; let matches = this.matches; if (league) matches = matches.filter(m => m.league === league); if (season) matches = matches.filter(m => m.season === season); if (matches.length === 0) { showToast('Aucun match', 'error'); return; } matches.sort((a, b) => { const dA = Utils.parseDate(a.date) || new Date(0); const dB = Utils.parseDate(b.date) || new Date(0); return dA - dB; }); const container = document.getElementById('backtestResults'); document.getElementById('backtestProgress').classList.remove('hidden'); container.innerHTML = '<div class="text-cyan">⏳ Backtest en cours...</div>'; const markets = ['1X2', 'Over', 'Under', 'BTTS', 'AH']; const md = {}; for (const m of markets) md[m] = { preds: [], actuals: [], matches: [], odds: [], profits: [], stakes: [], edges: [] }; let tm = matches.length, um = 0; const BS = 100; for (let bs = 0; bs < matches.length; bs += BS) { const batch = matches.slice(bs, bs + BS); for (const match of batch) { const hn = match.homeTeam, an = match.awayTeam; const prev = matches.slice(0, matches.indexOf(match)); const hP = prev.filter(m => m.homeTeam === hn || m.awayTeam === hn); const aP = prev.filter(m => m.homeTeam === an || m.awayTeam === an); let hS = { matches: 0, goalsScored: 0, goalsConceded: 0, shotsOnTarget: 0, formLast5: [], elo: 1500 }, aS = { matches: 0, goalsScored: 0, goalsConceded: 0, shotsOnTarget: 0, formLast5: [], elo: 1500 }; for (const pm of hP) { hS.matches++; if (pm.homeTeam === hn) { hS.goalsScored += pm.FTHG || 0; hS.goalsConceded += pm.FTAG || 0; hS.shotsOnTarget += pm.HST || 0; hS.formLast5.push(pm.FTHG > pm.FTAG ? 'W' : pm.FTHG === pm.FTAG ? 'D' : 'L'); } else { hS.goalsScored += pm.FTAG || 0; hS.goalsConceded += pm.FTHG || 0; hS.shotsOnTarget += pm.AST || 0; hS.formLast5.push(pm.FTAG > pm.FTHG ? 'W' : pm.FTAG === pm.FTHG ? 'D' : 'L'); } } for (const pm of aP) { aS.matches++; if (pm.awayTeam === an) { aS.goalsScored += pm.FTAG || 0; aS.goalsConceded += pm.FTHG || 0; aS.shotsOnTarget += pm.AST || 0; aS.formLast5.push(pm.FTAG > pm.FTHG ? 'W' : pm.FTAG === pm.FTHG ? 'D' : 'L'); } else { aS.goalsScored += pm.FTHG || 0; aS.goalsConceded += pm.FTAG || 0; aS.shotsOnTarget += pm.HST || 0; aS.formLast5.push(pm.FTHG > pm.FTAG ? 'W' : pm.FTHG === pm.FTAG ? 'D' : 'L'); } } hS.formLast5 = hS.formLast5.slice(-5); aS.formLast5 = aS.formLast5.slice(-5); const hm = hS.matches || 0, am = aS.matches || 0; const lc = getLeagueConfig(match.div || match.league); const hSt = hm > 0 ? { xG: hS.goalsScored / hm, xGA: hS.goalsConceded / hm, goalsPerMatch: hS.goalsScored / hm, shotsOnTargetPerMatch: hS.shotsOnTarget / hm || 0 } : { xG: lc.xgHome || 1.5, xGA: lc.xGA_home || 1.2, goalsPerMatch: lc.goalsHome || 1.5, shotsOnTargetPerMatch: 0 }; const aSt = am > 0 ? { xG: aS.goalsScored / am, xGA: aS.goalsConceded / am, goalsPerMatch: aS.goalsScored / am, shotsOnTargetPerMatch: aS.shotsOnTarget / am || 0 } : { xG: lc.xgAway || 1.2, xGA: lc.xGA_away || 1.5, goalsPerMatch: lc.goalsAway || 1.2, shotsOnTargetPerMatch: 0 }; const hO = { name: hn, elo: hS.elo || 1500, formLast5: hS.formLast5 || ['D','D','D','D','D'], stats: hSt, matches: hm }; const aO = { name: an, elo: aS.elo || 1500, formLast5: aS.formLast5 || ['D','D','D','D','D'], stats: aSt, matches: am }; const odds = { home: match.PSH || match.PSCH || 0, draw: match.PSD || match.PSCD || 0, away: match.PSA || match.PSCA || 0, over25: match['P>2.5'] || match['PC>2.5'] || 0, under25: match['P<2.5'] || match['PC<2.5'] || 0, ahHome: match.PAHH || match.PCAHH || 0, ahAway: match.PAHA || match.PCAHA || 0 }; try { const result = EngineV17.predict(hO, aO, lc, null, odds.home > 1.01 ? odds : null, 'home'); um++; const a1X2 = match.FTHG > match.FTAG ? '1' : (match.FTHG === match.FTAG ? 'X' : '2'); const pp = result.probabilities; const pr1 = pp.p1 > pp.pX && pp.p1 > pp.p2 ? '1' : (pp.pX > pp.p2 ? 'X' : '2'); const od1 = pr1 === '1' ? odds.home : (pr1 === 'X' ? odds.draw : odds.away); const st1 = 10; let pf1 = 0; if (od1 > 1.01) pf1 = pr1 === a1X2 ? st1 * (od1 - 1) : -st1; md['1X2'].preds.push(pp); md['1X2'].actuals.push(a1X2); md['1X2'].matches.push(match); md['1X2'].odds.push({ home: odds.home, draw: odds.draw, away: odds.away }); md['1X2'].profits.push(pf1); md['1X2'].stakes.push(st1); md['1X2'].edges.push((pr1 === '1' ? pp.p1 : pr1 === 'X' ? pp.pX : pp.p2) - (od1 > 1.01 ? 1 / od1 : 0)); const aOv = (match.FTHG + match.FTAG) > 2.5 ? 'Yes' : 'No'; const pOv = result.markets.Over25 > 0.5 ? 'Yes' : 'No'; const odOv = odds.over25; let pfOv = 0; if (odOv > 1.01) pfOv = pOv === aOv ? st1 * (odOv - 1) : -st1; md['Over'].preds.push(result.markets.Over25); md['Over'].actuals.push(aOv); md['Over'].matches.push(match); md['Over'].odds.push({ over: odOv }); md['Over'].profits.push(pfOv); md['Over'].stakes.push(st1); md['Over'].edges.push(result.markets.Over25 - (odOv > 1.01 ? 1 / odOv : 0)); const aUn = (match.FTHG + match.FTAG) <= 2.5 ? 'Yes' : 'No'; const pUn = result.markets.Under25 > 0.5 ? 'Yes' : 'No'; const odUn = odds.under25; let pfUn = 0; if (odUn > 1.01) pfUn = pUn === aUn ? st1 * (odUn - 1) : -st1; md['Under'].preds.push(result.markets.Under25); md['Under'].actuals.push(aUn); md['Under'].matches.push(match); md['Under'].odds.push({ under: odUn }); md['Under'].profits.push(pfUn); md['Under'].stakes.push(st1); md['Under'].edges.push(result.markets.Under25 - (odUn > 1.01 ? 1 / odUn : 0)); const aBt = (match.FTHG > 0 && match.FTAG > 0) ? 'Yes' : 'No'; const pBt = result.markets.BTTS > 0.5 ? 'Yes' : 'No'; const odBt = odds.over25 ? 1.80 : 0; let pfBt = 0; if (odBt > 1.01) pfBt = pBt === aBt ? st1 * (odBt - 1) : -st1; md['BTTS'].preds.push(result.markets.BTTS); md['BTTS'].actuals.push(aBt); md['BTTS'].matches.push(match); md['BTTS'].odds.push({ yes: odBt }); md['BTTS'].profits.push(pfBt); md['BTTS'].stakes.push(st1); md['BTTS'].edges.push(result.markets.BTTS - (odBt > 1.01 ? 1 / odBt : 0)); if (match.AHh !== undefined && match.AHh !== null && odds.ahHome > 1.01) { const ahR = result.ahResults[`AH${match.AHh}`]; if (ahR) { const aAH = (match.FTHG + match.AHh > match.FTAG) ? 'Home' : ((match.FTHG + match.AHh === match.FTAG) ? 'Push' : 'Away'); if (aAH === 'Push') { md['AH'].preds.push(ahR); md['AH'].actuals.push('Push'); md['AH'].matches.push(match); md['AH'].odds.push({ home: odds.ahHome, away: odds.ahAway }); md['AH'].profits.push(0); md['AH'].stakes.push(0); md['AH'].edges.push(0); } else { const pAH = ahR.home > 0.5 ? 'Home' : 'Away'; const odAH = pAH === 'Home' ? odds.ahHome : odds.ahAway; let pfAH = 0; if (odAH > 1.01) pfAH = pAH === aAH ? st1 * (odAH - 1) : -st1; md['AH'].preds.push(ahR); md['AH'].actuals.push(aAH); md['AH'].matches.push(match); md['AH'].odds.push({ home: odds.ahHome, away: odds.ahAway }); md['AH'].profits.push(pfAH); md['AH'].stakes.push(st1); md['AH'].edges.push((pAH === 'Home' ? ahR.home : ahR.away) - (odAH > 1.01 ? 1 / odAH : 0)); } } } } catch(e) { continue; } } await new Promise(r => setTimeout(r, 10)); } document.getElementById('backtestProgress').classList.add('hidden'); const sc = document.getElementById('backtestStats'); sc.classList.remove('hidden'); sc.innerHTML = `<div><div class="text-sub fs-06">Matchs</div><div class="fs-1 fw-700 text-cyan">${tm}</div></div><div><div class="text-sub fs-06">Utilisés</div><div class="fs-1 fw-700 text-green">${um}</div></div><div><div class="text-sub fs-06">Ignorés</div><div class="fs-1 fw-700 text-red">${tm - um}</div></div><div><div class="text-sub fs-06">Taux</div><div class="fs-1 fw-700 text-gold">${tm > 0 ? (um/tm*100).toFixed(1) : 0}%</div></div><div><div class="text-sub fs-06">Ligue</div><div class="fs-07 fw-700 text-cyan">${league || 'Toutes'}</div></div>`; if (um === 0) { container.innerHTML = '<div class="text-red">❌ Aucune prédiction valide.</div>'; return; } const mr = {}; const abr = []; for (const [mn, data] of Object.entries(md)) { if (data.preds.length === 0 || (mf !== 'all' && mn !== mf)) continue; let tot = data.preds.length, cor = 0, set = 0, tP = data.profits.reduce((a, b) => a + b, 0), tS = data.stakes.reduce((a, b) => a + b, 0), bS = 0, lS = 0, pc = 0; for (let i = 0; i < data.preds.length; i++) { const pred = data.preds[i], act = data.actuals[i]; let ic = false, mp = 0; if (mn === '1X2') { const cal = pred; const pf = cal.p1 > cal.pX && cal.p1 > cal.p2 ? '1' : (cal.pX > cal.p2 ? 'X' : '2'); ic = pf === act; mp = pf === '1' ? cal.p1 : (pf === 'X' ? cal.pX : cal.p2); if (act !== 'Push') set++; if (ic) cor++; } else if (mn === 'AH') { if (act === 'Push') { pc++; continue; } const pf = pred.home > 0.5 ? 'Home' : 'Away'; ic = pf === act; mp = pf === 'Home' ? pred.home : pred.away; set++; if (ic) cor++; } else { const pf = pred > 0.5 ? 'Yes' : 'No'; ic = pf === act; mp = pred; set++; if (ic) cor++; } const bin = (act === 'Yes' || act === 'Home') ? 1 : 0; const eps = 1e-9; bS += (mp - bin) ** 2; lS += -(bin * Math.log(mp + eps) + (1 - bin) * Math.log(1 - mp + eps)); abr.push({ market: mn, match: data.matches[i], prediction: mn === '1X2' ? (pred.p1 > pred.pX && pred.p1 > pred.p2 ? '1' : (pred.pX > pred.p2 ? 'X' : '2')) : (pred > 0.5 ? 'Yes' : 'No'), modelProb: mp, edge: data.edges[i] || 0, actual: act, profit: data.profits[i] || 0, odds: data.odds[i] }); } const et = mn === 'AH' ? tot - pc : tot; const wr = et > 0 ? cor / et * 100 : 0; const roi = tS > 0 ? tP / tS * 100 : 0; const aB = set > 0 ? bS / set : 0; const aL = set > 0 ? lS / set : 0; mr[mn] = { total: et, correct: cor, winRate: wr, profit: tP, roi, avgBrier: aB, avgLogLoss: aL, pushCount: pc, totalStaked: tS }; } this._backtestData = { marketResults: mr, allRows: abr }; const msc = document.getElementById('backtestMarketStats'); msc.classList.remove('hidden'); let h = ''; for (const [mn, st] of Object.entries(mr)) { const col = st.roi > 5 ? 'var(--green)' : (st.roi > 0 ? 'var(--gold)' : 'var(--red)'); const wc = st.winRate > 55 ? 'var(--green)' : st.winRate > 50 ? 'var(--gold)' : 'var(--orange)'; h += `<div class="market-card"><div class="name">${mn}</div><div class="stat text-cyan">${st.total} paris</div><div>Précision: <span style="color:${wc};">${st.winRate.toFixed(1)}%</span></div><div>ROI: <span style="color:${col};">${st.roi > 0 ? '+' : ''}${st.roi.toFixed(1)}%</span></div><div>Profit: <span style="color:${st.profit >= 0 ? 'var(--green)' : 'var(--red)'};">${st.profit >= 0 ? '+' : ''}${st.profit.toFixed(2)}€</span></div><div class="sub">Brier: ${st.avgBrier.toFixed(4)} | LogLoss: ${st.avgLogLoss.toFixed(4)}</div>${st.pushCount > 0 ? `<div class="sub text-gold">Push: ${st.pushCount}</div>` : ''}</div>`; } msc.innerHTML = h; container.innerHTML = `<div class="text-green fw-700">✅ Backtest terminé — ${um} matchs utilisés sur ${tm}</div><div class="text-sub fs-06 mt-1">Profits calculés avec stake × (odd - 1), base 10€.</div>`; showToast(`Backtest: ${um}/${tm} matchs`, 'success'); },
     exportBacktestCSV() { if (!this._backtestData || !this._backtestData.allRows || this._backtestData.allRows.length === 0) { showToast('Lancez d\'abord un backtest', 'error'); return; } const rows = this._backtestData.allRows; let csv = 'Marché;Date;Domicile;Extérieur;Prédiction;Probabilité;Edge;Cote;Résultat;Profit (€)\n'; for (const r of rows) { const date = r.match.date || '', home = r.match.homeTeam || '', away = r.match.awayTeam || ''; const odds = r.odds ? Object.values(r.odds).find(v => v > 0) || '' : ''; csv += `${r.market};${date};${home};${away};${r.prediction};${(r.modelProb*100).toFixed(1)}%;${(r.edge*100).toFixed(1)}%;${odds};${r.actual};${r.profit.toFixed(2)}\n`; } const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `backtest_${new Date().toISOString().slice(0,10)}.csv`; a.click(); URL.revokeObjectURL(url); showToast('Export CSV terminé', 'success'); },
     async runCalibration() { const season = document.getElementById('calibrationSeason').value || null; const market = document.getElementById('calibrationMarket').value || '1X2'; let matches = this.matches; if (season) matches = matches.filter(m => m.season === season); if (matches.length < 10) { showToast('Pas assez de matchs', 'error'); return; } matches.sort((a, b) => { const dA = Utils.parseDate(a.date) || new Date(0); const dB = Utils.parseDate(b.date) || new Date(0); return dA - dB; }); const ctr = document.getElementById('calibrationResults'); ctr.innerHTML = '<div class="text-cyan">⏳ Calcul...</div>'; const preds = [], actuals = [], profits = [], edges = []; for (let idx = 0; idx < matches.length; idx++) { const match = matches[idx]; const hn = match.homeTeam, an = match.awayTeam; const prev = matches.slice(0, idx); const hP = prev.filter(m => m.homeTeam === hn || m.awayTeam === hn); const aP = prev.filter(m => m.homeTeam === an || m.awayTeam === an); let hS = { matches: 0, goalsScored: 0, goalsConceded: 0, shotsOnTarget: 0, formLast5: [], elo: 1500 }, aS = { matches: 0, goalsScored: 0, goalsConceded: 0, shotsOnTarget: 0, formLast5: [], elo: 1500 }; for (const pm of hP) { hS.matches++; if (pm.homeTeam === hn) { hS.goalsScored += pm.FTHG || 0; hS.goalsConceded += pm.FTAG || 0; hS.shotsOnTarget += pm.HST || 0; hS.formLast5.push(pm.FTHG > pm.FTAG ? 'W' : pm.FTHG === pm.FTAG ? 'D' : 'L'); } else { hS.goalsScored += pm.FTAG || 0; hS.goalsConceded += pm.FTHG || 0; hS.shotsOnTarget += pm.AST || 0; hS.formLast5.push(pm.FTAG > pm.FTHG ? 'W' : pm.FTAG === pm.FTHG ? 'D' : 'L'); } } for (const pm of aP) { aS.matches++; if (pm.awayTeam === an) { aS.goalsScored += pm.FTAG || 0; aS.goalsConceded += pm.FTHG || 0; aS.shotsOnTarget += pm.AST || 0; aS.formLast5.push(pm.FTAG > pm.FTHG ? 'W' : pm.FTAG === pm.FTHG ? 'D' : 'L'); } else { aS.goalsScored += pm.FTHG || 0; aS.goalsConceded += pm.FTAG || 0; aS.shotsOnTarget += pm.HST || 0; aS.formLast5.push(pm.FTHG > pm.FTAG ? 'W' : pm.FTHG === pm.FTAG ? 'D' : 'L'); } } hS.formLast5 = hS.formLast5.slice(-5); aS.formLast5 = aS.formLast5.slice(-5); const hm = hS.matches || 0, am = aS.matches || 0; const lc = getLeagueConfig(match.div || match.league); const hSt = hm > 0 ? { xG: hS.goalsScored / hm, xGA: hS.goalsConceded / hm, goalsPerMatch: hS.goalsScored / hm, shotsOnTargetPerMatch: hS.shotsOnTarget / hm || 0 } : { xG: lc.xgHome || 1.5, xGA: lc.xGA_home || 1.2, goalsPerMatch: lc.goalsHome || 1.5, shotsOnTargetPerMatch: 0 }; const aSt = am > 0 ? { xG: aS.goalsScored / am, xGA: aS.goalsConceded / am, goalsPerMatch: aS.goalsScored / am, shotsOnTargetPerMatch: aS.shotsOnTarget / am || 0 } : { xG: lc.xgAway || 1.2, xGA: lc.xGA_away || 1.5, goalsPerMatch: lc.goalsAway || 1.2, shotsOnTargetPerMatch: 0 }; const hO = { name: hn, elo: hS.elo || 1500, formLast5: hS.formLast5 || ['D','D','D','D','D'], stats: hSt, matches: hm }; const aO = { name: an, elo: aS.elo || 1500, formLast5: aS.formLast5 || ['D','D','D','D','D'], stats: aSt, matches: am }; const odds = { home: match.PSH || 0, draw: match.PSD || 0, away: match.PSA || 0, over25: match['P>2.5'] || 0, under25: match['P<2.5'] || 0 }; try { const result = EngineV17.predict(hO, aO, lc, null, odds.home > 1.01 ? odds : null, 'home'); let prob = 0, act = 0, odd = 0, edge = 0; if (market === '1X2') { const p = result.probabilities; const pf = p.p1 > p.pX && p.p1 > p.p2 ? '1' : (p.pX > p.p2 ? 'X' : '2'); prob = pf === '1' ? p.p1 : (pf === 'X' ? p.pX : p.p2); act = (match.FTHG > match.FTAG) ? 1 : 0; odd = pf === '1' ? odds.home : (pf === 'X' ? odds.draw : odds.away); edge = odd > 1.01 ? prob - (1 / odd) : 0; } else if (market === 'Over') { prob = result.markets.Over25; act = (match.FTHG + match.FTAG) > 2.5 ? 1 : 0; odd = odds.over25 || match['P>2.5'] || 0; edge = odd > 1.01 ? prob - (1 / odd) : 0; } else if (market === 'Under') { prob = result.markets.Under25; act = (match.FTHG + match.FTAG) <= 2.5 ? 1 : 0; odd = odds.under25 || match['P<2.5'] || 0; edge = odd > 1.01 ? prob - (1 / odd) : 0; } else if (market === 'BTTS') { prob = result.markets.BTTS; act = (match.FTHG > 0 && match.FTAG > 0) ? 1 : 0; odd = match['P>2.5'] ? 1.80 : 0; edge = odd > 1.01 ? prob - (1 / odd) : 0; } else if (market === 'AH' && match.AHh !== undefined && match.AHh !== null) { const ahR = result.ahResults[`AH${match.AHh}`]; if (ahR) { prob = ahR.home; const diff = match.FTHG + (match.AHh || 0) - match.FTAG; act = diff > 0 ? 1 : (diff === 0 ? 0.5 : 0); odd = match.PAHH || 0; edge = odd > 1.01 ? prob - (1 / odd) : 0; } } if (prob > 0.01 && prob < 0.99 && act !== 0.5) { preds.push(prob); actuals.push(act); edges.push(edge); if (odd > 1.01) profits.push(act ? odd - 1 : -1); } } catch(e) { continue; } } if (preds.length < 10) { ctr.innerHTML = '<div class="text-red">❌ Pas assez de prédictions.</div>'; return; } const bins = 10, bs = 1 / bins; const bd = Array.from({ length: bins }, (_, i) => ({ count: 0, correct: 0, predSum: 0, obsSum: 0, binLabel: `${(i * bs * 100).toFixed(0)}-${((i + 1) * bs * 100).toFixed(0)}%` })); for (let i = 0; i < preds.length; i++) { const bi = Math.min(bins - 1, Math.floor(preds[i] / bs)); bd[bi].count++; bd[bi].predSum += preds[i]; bd[bi].obsSum += actuals[i]; if (actuals[i] === 1) bd[bi].correct++; } let h2 = `<div class="fw-700 mb-2">📊 Diagramme — ${market} (${preds.length} prédictions)</div>`; let tB = 0; const ub = bd.filter(d => d.count > 0); for (const d of ub) { const ap = d.count > 0 ? d.predSum / d.count : 0; const of = d.count > 0 ? d.obsSum / d.count : 0; h2 += `<div class="calibration-bar"><span class="bin-label">${d.binLabel}</span><div class="bin-track"><div class="bin-fill pred" style="width:${ap*100}%;"></div><div class="bin-fill obs" style="width:${of*100}%;"></div></div><span class="bin-count">${d.count}</span></div>`; tB += (ap - of) ** 2; } const aB = ub.length > 0 ? tB / ub.length : 0; h2 += `<div style="background:var(--bg);border-radius:10px;padding:12px;margin-top:12px;"><div class="stat-row"><span class="label">📊 Brier Score</span><span class="value">${aB.toFixed(4)}</span></div><div class="stat-row"><span class="label">📈 Prédictions</span><span class="value">${preds.length}</span></div></div>`; ctr.innerHTML = h2; showToast('Calibration terminée', 'success'); },
+    // Tracking, Leagues, Comparison, Value Bets, Teams (identiques)
     renderTracking() { const list = document.getElementById('trackingList'); const filtered = this.trackingFilter === 'all' ? this.trackingData : this.trackingData.filter(b => b.result === this.trackingFilter); if (filtered.length === 0) { list.innerHTML = '<div class="text-sub fs-06" style="padding:12px;">Aucun pari</div>'; return; } let h = `<div class="tracking-grid header"><span>Match</span><span>Type</span><span>Cote</span><span>Mise</span><span>Statut</span><span>Profit</span><span>Clôture</span><span>CLV</span><span>Actions</span></div>`; filtered.forEach(bet => { const sb = bet.result === 'win' ? '<span class="badge badge-green">✅</span>' : bet.result === 'loss' ? '<span class="badge badge-red">❌</span>' : bet.result === 'push' ? '<span class="badge badge-gold">🔄</span>' : '<span class="badge badge-cyan">⏳</span>'; const pc = bet.profit > 0 ? 'var(--green)' : bet.profit < 0 ? 'var(--red)' : 'var(--sub)'; let cd = '-', cc = 'var(--sub)'; if (bet.closingOdds && bet.closingOdds > 1.01 && bet.odds > 1.01) { const clv = ((1 / bet.closingOdds) - (1 / bet.odds)) * 100; cd = (clv >= 0 ? '+' : '') + clv.toFixed(2) + '%'; cc = clv > 0 ? 'var(--green)' : (clv < 0 ? 'var(--red)' : 'var(--sub)'); } h += `<div class="tracking-grid"><span class="fw-700 text-cyan">${Utils.escapeHTML(bet.homeTeam)} vs ${Utils.escapeHTML(bet.awayTeam)}</span><span>${Utils.escapeHTML(bet.betType)}</span><span>${bet.odds?.toFixed(2) || '?'}</span><span>${bet.stake || 0} CDF</span><span>${sb}</span><span style="color:${pc};font-weight:700;">${bet.profit >= 0 ? '+' : ''}${bet.profit?.toFixed(2) || 0} CDF</span><span><input type="number" step="0.01" min="1.01" style="width:50px;padding:2px;font-size:0.45rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);" value="${bet.closingOdds || ''}" placeholder="Clôture" onchange="App.updateClosingOdds(${bet.id}, this.value)"></span><span style="color:${cc};font-weight:700;font-size:0.5rem;">${cd}</span><span class="flex gap-1"><select onchange="App.updateBetResult(${bet.id}, this.value)" style="padding:2px 4px;font-size:0.45rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);width:auto;"><option value="pending" ${bet.result === 'pending' ? 'selected' : ''}>⏳</option><option value="win" ${bet.result === 'win' ? 'selected' : ''}>✅</option><option value="loss" ${bet.result === 'loss' ? 'selected' : ''}>❌</option><option value="push" ${bet.result === 'push' ? 'selected' : ''}>🔄</option></select><button class="btn btn-sm btn-danger" onclick="App.deleteBet(${bet.id})" style="padding:1px 6px;font-size:0.4rem;">✕</button></span></div>`; }); list.innerHTML = h; this.updateTrackingSummary(); },
     async updateClosingOdds(id, v) { const val = parseFloat(v); if (!isNaN(val) && val > 1.01) await DB.updateTracking(id, { closingOdds: val }); else if (v === '') await DB.updateTracking(id, { closingOdds: null }); this.trackingData = await DB.getAllTracking(); this.renderTracking(); this.renderClvChart(); },
     async updateBetResult(id, r) { const bet = this.trackingData.find(b => b.id === id); if (!bet) return; let p = 0; if (r === 'win') p = bet.stake * (bet.odds - 1); else if (r === 'loss') p = -bet.stake; await DB.updateTracking(id, { result: r, profit: p }); this.trackingData = await DB.getAllTracking(); this.renderTracking(); this.renderClvChart(); showToast('Pari mis à jour', 'success'); },
@@ -317,28 +339,32 @@ const App = {
     async deleteAllData() { if (!confirm('⚠️ Supprimer toutes les données ?')) return; await DB.deleteAllData(); this.teams = []; this.matches = []; this.trackingData = []; this._backtestData = null; this.analysisHistory = []; localStorage.removeItem('rp_history'); EngineV17.clearCache(); this.refreshUI(); await this.populateSelectors(); this.renderHistory(); showToast('Toutes les données supprimées', 'info'); },
     async recalculateAllElo() { const am = this.matches.slice().sort((a, b) => (Utils.parseDate(a.date) || new Date(0)) - (Utils.parseDate(b.date) || new Date(0))); const em = {}; for (const m of am) { if (!em[m.homeTeam]) em[m.homeTeam] = 1500; if (!em[m.awayTeam]) em[m.awayTeam] = 1500; const r = EngineV17.updateElo({ name: m.homeTeam, elo: em[m.homeTeam] }, { name: m.awayTeam, elo: em[m.awayTeam] }, m.FTHG, m.FTAG); em[m.homeTeam] = r.homeNewElo; em[m.awayTeam] = r.awayNewElo; } for (const [n, e] of Object.entries(em)) { const t = await DB.getTeam(n); if (t) { t.elo = e; await DB.saveTeam(t); } } },
 
-    // === NOUVELLE FONCTION : Prévisualisation CSV avec mapping ===
-    previewCSV() {
+    // ========== NOUVEAU : Prévisualisation & Import amélioré ==========
+    previewData() {
         const raw = document.getElementById('matchesInput').value.trim();
-        if (!raw) { showToast('Collez des données CSV', 'error'); return; }
-        const lines = raw.split('\n').filter(l => l.trim());
-        if (lines.length < 2) { showToast('Format invalide', 'error'); return; }
-        const sep = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
-        const headers = lines[0].split(sep).map(h => h.trim());
+        if (!raw) { showToast('Collez des données CSV ou JSON', 'error'); return; }
+        
+        // Détecter si c'est du JSON
+        if (raw.startsWith('{') || raw.startsWith('[')) {
+            this._previewJSON(raw);
+            return;
+        }
+        this._previewCSV(raw);
+    },
 
-        // Détecter les colonnes trouvées
+    _previewCSV(raw) {
+        const lines = raw.split('\n').filter(l => l.trim());
+        if (lines.length < 2) { showToast('Format CSV invalide', 'error'); return; }
+        const sep = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
+        const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+
         let found = {};
         let missing = [];
         for (const [key, names] of Object.entries(COLUMN_MAPPING)) {
             const foundCol = findColumn(headers, names);
-            if (foundCol) {
-                found[key] = foundCol;
-            } else {
-                missing.push(key);
-            }
+            if (foundCol) { found[key] = foundCol; } else { missing.push(key); }
         }
 
-        // Afficher le statut
         const statusDiv = document.getElementById('importMappingStatus');
         let statusHtml = '';
         const required = ['home', 'away', 'hg', 'ag'];
@@ -352,58 +378,130 @@ const App = {
         }
         statusDiv.innerHTML = statusHtml;
 
-        // Afficher un aperçu des données
         const previewContainer = document.getElementById('importPreviewContainer');
         previewContainer.classList.remove('hidden');
-
         const sample = lines.slice(1, 21);
         let tableHtml = `<table><thead><tr>`;
-        for (const h of headers) {
-            tableHtml += `<th>${Utils.escapeHTML(h)}</th>`;
-        }
+        for (const h of headers) { tableHtml += `<th>${Utils.escapeHTML(h)}</th>`; }
         tableHtml += `</tr></thead><tbody>`;
         for (const line of sample) {
             const cols = line.split(sep);
             tableHtml += `<tr>`;
-            for (const col of cols) {
-                tableHtml += `<td>${Utils.escapeHTML(col)}</td>`;
-            }
+            for (const col of cols) { tableHtml += `<td>${Utils.escapeHTML(col)}</td>`; }
             tableHtml += `</tr>`;
         }
         tableHtml += `</tbody></table>`;
         previewContainer.innerHTML = `
             <div class="flex-between mb-1">
-                <span class="fw-700 text-cyan">Aperçu (${Math.min(lines.length-1, 20)} lignes sur ${lines.length-1})</span>
+                <span class="fw-700 text-cyan">Aperçu CSV (${Math.min(lines.length-1, 20)} lignes sur ${lines.length-1})</span>
                 <span class="text-sub fs-06">Séparateur: ${sep === ';' ? ';' : ','}</span>
             </div>
             ${tableHtml}
         `;
-
-        showToast(`Mapping détecté — ${Object.keys(found).length} colonnes trouvées`, 'info');
+        showToast(`CSV détecté — ${Object.keys(found).length} colonnes trouvées`, 'info');
     },
 
-    // === NOUVELLE FONCTION : Import CSV améliorée ===
-    async importCSV() {
+    _previewJSON(raw) {
+        try {
+            const data = JSON.parse(raw);
+            const previewContainer = document.getElementById('importPreviewContainer');
+            previewContainer.classList.remove('hidden');
+            
+            let matchCount = 0;
+            let teamCount = 0;
+            if (data.matches && Array.isArray(data.matches)) matchCount = data.matches.length;
+            if (data.teams && Array.isArray(data.teams)) teamCount = data.teams.length;
+            
+            previewContainer.innerHTML = `
+                <div class="fw-700 text-cyan mb-1">📄 Aperçu JSON</div>
+                <div class="grid-3 text-center mb-1">
+                    <div><div class="text-sub fs-06">Matchs</div><div class="fw-700 text-cyan">${matchCount}</div></div>
+                    <div><div class="text-sub fs-06">Équipes</div><div class="fw-700 text-green">${teamCount}</div></div>
+                    <div><div class="text-sub fs-06">Version</div><div class="fw-700 text-gold">${data.version || 'N/A'}</div></div>
+                </div>
+                <div class="text-sub fs-06">Exporté le: ${data.exportedAt || 'Inconnu'}</div>
+            `;
+
+            const statusDiv = document.getElementById('importMappingStatus');
+            statusDiv.innerHTML = `
+                <span class="mapping-badge found">📄 Format JSON</span>
+                <span class="mapping-badge ${matchCount > 0 ? 'found' : 'missing'}">Matches: ${matchCount}</span>
+                <span class="mapping-badge ${teamCount > 0 ? 'found' : 'missing'}">Équipes: ${teamCount}</span>
+            `;
+            showToast(`JSON détecté — ${matchCount} matchs, ${teamCount} équipes`, 'info');
+        } catch(e) {
+            showToast('JSON invalide', 'error');
+        }
+    },
+
+    async importData() {
         const raw = document.getElementById('matchesInput').value.trim();
-        if (!raw) { showToast('Collez des données CSV', 'error'); return; }
+        if (!raw) { showToast('Collez des données', 'error'); return; }
+        
+        if (raw.startsWith('{') || raw.startsWith('[')) {
+            await this._importJSON(raw);
+            return;
+        }
+        await this._importCSV(raw);
+    },
+
+    async _importJSON(raw) {
+        try {
+            const data = JSON.parse(raw);
+            let imported = 0;
+            
+            // Importer les équipes
+            if (data.teams && Array.isArray(data.teams)) {
+                for (const team of data.teams) {
+                    await DB.saveTeam(team);
+                }
+            }
+            
+            // Importer les matchs
+            if (data.matches && Array.isArray(data.matches)) {
+                await DB.saveMatches(data.matches);
+                imported = data.matches.length;
+            }
+            
+            // Importer le tracking
+            if (data.tracking && Array.isArray(data.tracking)) {
+                for (const t of data.tracking) {
+                    await DB.saveTracking(t);
+                }
+            }
+            
+            this.matches = await DB.getMatches();
+            this.teams = await DB.getAllTeams();
+            this.trackingData = await DB.getAllTracking();
+            await this.recalculateAllElo();
+            this.refreshUI();
+            await this.populateSelectors();
+            
+            document.getElementById('importStatus').innerHTML = `<span style="color:var(--green)">✅ JSON importé — ${imported} matchs</span>`;
+            showToast(`JSON importé avec succès`, 'success');
+            document.getElementById('matchesInput').value = '';
+        } catch(e) {
+            console.error('JSON import error:', e);
+            document.getElementById('importStatus').innerHTML = `<span style="color:var(--red)">❌ Erreur JSON: ${e.message}</span>`;
+            showToast('Erreur import JSON', 'error');
+        }
+    },
+
+    async _importCSV(raw) {
         if (raw.length > 50 * 1024 * 1024) { showToast('Fichier trop volumineux (max 50 Mo)', 'error'); return; }
         try {
             const lines = raw.split('\n').filter(l => l.trim());
-            if (lines.length < 2) { showToast('Format invalide', 'error'); return; }
+            if (lines.length < 2) { showToast('Format CSV invalide', 'error'); return; }
             if (lines.length > 50001) { showToast('Maximum 50 000 lignes', 'error'); return; }
             const sep = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
             const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
 
-            // Détection des colonnes avec mapping amélioré
             const columnMap = {};
             for (const [key, names] of Object.entries(COLUMN_MAPPING)) {
                 const found = findColumn(headers, names);
-                if (found) {
-                    columnMap[key] = found;
-                }
+                if (found) { columnMap[key] = found; }
             }
 
-            // Vérifier les colonnes obligatoires
             const required = ['home', 'away', 'hg', 'ag'];
             const missingRequired = required.filter(k => !columnMap[k]);
             if (missingRequired.length > 0) {
@@ -417,10 +515,8 @@ const App = {
             for (let i = 1; i < lines.length; i++) {
                 const rawLine = lines[i];
                 const parts = rawLine.split(sep).map(c => c.trim().replace(/^"|"$/g, ''));
-                if (parts.length < Math.max(...Object.values(columnMap).map(c => headers.indexOf(c))) + 1) {
-                    ign++;
-                    continue;
-                }
+                const maxIdx = Math.max(...Object.values(columnMap).map(c => headers.indexOf(c)));
+                if (parts.length < maxIdx + 1) { ign++; continue; }
 
                 const getValue = (key) => {
                     const colName = columnMap[key];
@@ -441,6 +537,13 @@ const App = {
                 const season = getValue('season') || Utils.extractSeason(date) || 'Inconnu';
                 const time = getValue('time') || '';
 
+                // Cotes : priorité Pinnacle, sinon fallback sur les autres disponibles
+                const psh = Utils.safeNumber(getValue('psh'));
+                const psd = Utils.safeNumber(getValue('psd'));
+                const psa = Utils.safeNumber(getValue('psa'));
+                const over25 = Utils.safeNumber(getValue('over25'));
+                const under25 = Utils.safeNumber(getValue('under25'));
+
                 const match = {
                     season,
                     league: getLeagueInfo(league).name || league,
@@ -452,26 +555,19 @@ const App = {
                     FTHG: hg,
                     FTAG: ag,
                     FTR: res,
-                    PSH: Utils.safeNumber(getValue('psh')),
-                    PSD: Utils.safeNumber(getValue('psd')),
-                    PSA: Utils.safeNumber(getValue('psa')),
-                    'P>2.5': Utils.safeNumber(getValue('over25')),
-                    'P<2.5': Utils.safeNumber(getValue('under25')),
-                    AHh: 0,
-                    PAHH: 0,
-                    PAHA: 0,
-                    HS: 0,
-                    AS: 0,
-                    HST: 0,
-                    AST: 0
+                    PSH: psh || Utils.safeNumber(getValue('psh_fallback')) || 0,
+                    PSD: psd || Utils.safeNumber(getValue('psd_fallback')) || 0,
+                    PSA: psa || Utils.safeNumber(getValue('psa_fallback')) || 0,
+                    'P>2.5': over25 || Utils.safeNumber(getValue('over25_fallback')) || 0,
+                    'P<2.5': under25 || Utils.safeNumber(getValue('under25_fallback')) || 0,
+                    AHh: Utils.safeNumber(getValue('ahh')),
+                    PAHH: Utils.safeNumber(getValue('pahh')),
+                    PAHA: Utils.safeNumber(getValue('paha')),
+                    HS: Utils.safeNumber(getValue('hs')),
+                    AS: Utils.safeNumber(getValue('as')),
+                    HST: Utils.safeNumber(getValue('hst')),
+                    AST: Utils.safeNumber(getValue('ast'))
                 };
-
-                // Tenter de récupérer plus de colonnes si disponibles
-                const extraCols = ['HS', 'AS', 'HST', 'AST', 'AHh', 'PAHH', 'PAHA'];
-                for (const ec of extraCols) {
-                    const val = getValue(ec.toLowerCase());
-                    if (val !== '') match[ec] = Utils.safeNumber(val);
-                }
 
                 matches.push(match);
                 imp++;
@@ -485,7 +581,6 @@ const App = {
             await DB.saveMatches(matches);
             this.matches = await DB.getMatches();
 
-            // Mise à jour des équipes
             for (const m of matches) {
                 for (const tn of [m.homeTeam, m.awayTeam]) {
                     let t = await DB.getTeam(tn);
@@ -495,13 +590,8 @@ const App = {
                               league: m.league, formLast5: ['D','D','D','D','D'] };
                     }
                     t.matches = (t.matches || 0) + 1;
-                    if (tn === m.homeTeam) {
-                        t.goalsScored += m.FTHG;
-                        t.goalsConceded += m.FTAG;
-                    } else {
-                        t.goalsScored += m.FTAG;
-                        t.goalsConceded += m.FTHG;
-                    }
+                    if (tn === m.homeTeam) { t.goalsScored += m.FTHG; t.goalsConceded += m.FTAG; }
+                    else { t.goalsScored += m.FTAG; t.goalsConceded += m.FTHG; }
                     t.xG = t.goalsScored / Math.max(1, t.matches);
                     t.xGA = t.goalsConceded / Math.max(1, t.matches);
                     t.stats = { xG: t.xG, xGA: t.xGA, goalsPerMatch: t.xG, shotsOnTargetPerMatch: 0 };
@@ -517,7 +607,7 @@ const App = {
             this.refreshUI();
             await this.populateSelectors();
 
-            document.getElementById('importStatus').innerHTML = `<span style="color:var(--green)">✅ ${imp} matchs importés (${ign} ignorés) — Colonnes détectées: ${Object.values(columnMap).join(', ')}</span>`;
+            document.getElementById('importStatus').innerHTML = `<span style="color:var(--green)">✅ ${imp} matchs importés (${ign} ignorés) — Colonnes: ${Object.values(columnMap).filter(Boolean).join(', ')}</span>`;
             showToast(`${imp} matchs importés`, 'success');
             document.getElementById('matchesInput').value = '';
 
@@ -528,8 +618,7 @@ const App = {
         }
     },
 
-    // === Gestion du fichier CSV ===
-    async handleCSVFile(input) {
+    async handleFile(input, type) {
         const file = input.files[0];
         if (!file) return;
         if (file.size > 50 * 1024 * 1024) {
@@ -540,8 +629,8 @@ const App = {
         try {
             const text = await file.text();
             document.getElementById('matchesInput').value = text;
-            showToast('Fichier chargé', 'success');
-            this.previewCSV(); // Afficher automatiquement l'aperçu
+            showToast(`Fichier ${type.toUpperCase()} chargé`, 'success');
+            this.previewData();
         } catch(e) {
             showToast('Erreur fichier', 'error');
         }
