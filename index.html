@@ -110,19 +110,6 @@
             background: rgba(6, 182, 212, 0.12);
             box-shadow: 0 0 20px rgba(6, 182, 212, 0.08);
         }
-        .nav-item .badge-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--green);
-            margin-left: 4px;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
         .card {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -261,18 +248,6 @@
             font-size: 0.4rem;
             color: var(--sub);
             white-space: nowrap;
-        }
-        .league-elo-ref {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 16px;
-            font-size: 0.6rem;
-        }
-        .league-elo-ref .item {
-            display: flex;
-            justify-content: space-between;
-            padding: 2px 0;
-            border-bottom: 1px solid rgba(31, 41, 55, 0.2);
         }
         .toast-container {
             position: fixed;
@@ -528,6 +503,90 @@
             color: var(--gold);
             font-weight: 700;
         }
+        .bar-chart {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 2px 0;
+        }
+        .bar-chart .label {
+            width: 90px;
+            font-size: 0.55rem;
+            color: var(--sub);
+            flex-shrink: 0;
+        }
+        .bar-chart .track {
+            flex: 1;
+            height: 12px;
+            background: rgba(31, 41, 55, 0.3);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .bar-chart .track .fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s ease;
+        }
+        .bar-chart .track .fill.green { background: var(--green); }
+        .bar-chart .track .fill.gold { background: var(--gold); }
+        .bar-chart .track .fill.red { background: var(--red); }
+        .bar-chart .track .fill.purple { background: var(--purple); }
+        .bar-chart .track .fill.pink { background: var(--pink); }
+        .bar-chart .track .fill.cyan { background: var(--cyan); }
+        .bar-chart .value-text {
+            width: 50px;
+            font-size: 0.55rem;
+            font-weight: 600;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .h2h-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 4px;
+            margin: 8px 0;
+        }
+        .h2h-item {
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 0.55rem;
+            border: 1px solid var(--border);
+        }
+        .h2h-item .score {
+            font-weight: 700;
+            font-size: 0.7rem;
+        }
+        .h2h-item .date {
+            color: var(--sub);
+            font-size: 0.45rem;
+        }
+        .tracking-grid {
+            display: grid;
+            gap: 6px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.55rem;
+            align-items: center;
+        }
+        .tracking-grid.header {
+            font-weight: 700;
+            color: var(--cyan);
+            border-bottom: 2px solid var(--cyan);
+        }
+        .league-btn {
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .league-btn:hover { border-color: var(--cyan); }
+        .league-btn.active { background: var(--cyan); color: #000; border-color: var(--cyan); }
 
         @media (max-width: 768px) {
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -537,12 +596,16 @@
             .card { padding: 14px 16px; }
             .value-row { grid-template-columns: 1fr; gap: 2px; }
             .elo-distribution { height: 80px; }
-            .league-elo-ref { grid-template-columns: 1fr; }
+            .bar-chart .label { width: 60px; font-size: 0.5rem; }
+            .bar-chart .value-text { width: 40px; font-size: 0.5rem; }
+            .h2h-list { grid-template-columns: 1fr 1fr 1fr; }
+            .tracking-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 480px) {
             .app { padding: 8px; }
             .header { padding: 12px 16px; flex-direction: column; align-items: stretch; }
             .header-actions { justify-content: space-between; }
+            .h2h-list { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -599,13 +662,13 @@
                 </div>
                 <div id="teamCheckError" class="trap-alert hidden">⚠️ Une équipe ne peut pas jouer contre elle-même</div>
                 <div class="grid-3">
-                    <select id="terrainSelect" onchange="App.onTerrainChange()">
+                    <select id="terrainSelect" onchange="App.saveUserPreferences()">
                         <option value="home">🏠 Domicile</option>
                         <option value="neutral">🌍 Neutre</option>
                         <option value="away">✈️ Extérieur</option>
                     </select>
-                    <select id="analysisSeasonFilter"></select>
-                    <select id="analysisLeagueFilter"></select>
+                    <select id="analysisSeasonFilter" onchange="App.saveUserPreferences()"></select>
+                    <select id="analysisLeagueFilter" onchange="App.saveUserPreferences()"></select>
                 </div>
 
                 <div class="card-title mt-2"><span class="icon">⚖️</span> Gestion du risque</div>
@@ -646,6 +709,8 @@
                 <div class="flex gap-2 mt-1 flex-wrap">
                     <button class="btn btn-primary" onclick="App.runAnalysis()">🚀 Analyser</button>
                     <button class="btn btn-purple btn-sm" onclick="App.runAutoCalibration()">🤖 Auto-calibrer</button>
+                    <button class="btn btn-danger btn-sm" onclick="App.fixXGNow()">🔧 Fix xG</button>
+                    <button class="btn btn-gold btn-sm" onclick="App.refreshAllData()">🔄 Sync</button>
                 </div>
                 <div id="analysisOutput" class="mt-2"></div>
                 <div id="resultSection" class="hidden mt-2">
@@ -697,6 +762,7 @@
                     <button class="btn btn-purple btn-sm" onclick="App.recalcElos()">🔄 Recalc Elo</button>
                     <button class="btn btn-gold btn-sm" onclick="App.exportAllData()">📤 Export tout</button>
                     <button class="btn btn-danger btn-sm" onclick="App.deleteAllData()">🗑️ Tout supprimer</button>
+                    <button class="btn btn-gold btn-sm" onclick="App.refreshAllData()">🔄 Sync</button>
                 </div>
             </div>
         </section>
@@ -730,6 +796,7 @@
                 <div class="card-header">
                     <div class="card-title"><span class="icon">🎯</span> Système Elo V18</div>
                     <button class="btn btn-purple btn-sm" onclick="App.recalcElos()">🔄 Recalc Elo</button>
+                    <button class="btn btn-gold btn-sm" onclick="App.refreshAllData()">🔄 Sync</button>
                 </div>
                 <div class="grid-3 text-center mb-2" style="background:var(--bg);border-radius:12px;padding:14px;">
                     <div>
@@ -766,6 +833,8 @@
                     <div class="flex gap-1">
                         <button class="btn btn-sm btn-gold" onclick="App.calibrateCapital()">⚙️ Calibrer</button>
                         <button class="btn btn-sm btn-secondary" onclick="App.resetCapital()">🔄 Réinitialiser</button>
+                        <button class="btn btn-sm btn-purple" onclick="App.exportTrackingCSV()">📤 CSV</button>
+                        <button class="btn btn-sm btn-gold" onclick="App.refreshAllData()">🔄 Sync</button>
                     </div>
                 </div>
                 <div class="grid-4 text-center mb-2" style="background:var(--bg);border-radius:12px;padding:14px;">
@@ -864,28 +933,46 @@
         escapeHTML(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; },
         parseDate(str) {
             if (!str) return null;
-            const partsDDMMYYYY = str.split('/');
+            const clean = str.replace(/^\uFEFF/, '').trim();
+            const partsDDMMYYYY = clean.split('/');
             if (partsDDMMYYYY.length === 3) { const d = parseInt(partsDDMMYYYY[0]), m = parseInt(partsDDMMYYYY[1]) - 1, y = parseInt(partsDDMMYYYY[2]); if (!isNaN(d) && !isNaN(m) && !isNaN(y)) return new Date(y, m, d); }
-            const partsISO = str.split('-');
+            const partsISO = clean.split('-');
             if (partsISO.length === 3 && partsISO[0].length === 4) { const y = parseInt(partsISO[0]), m = parseInt(partsISO[1]) - 1, d = parseInt(partsISO[2]); if (!isNaN(d) && !isNaN(m) && !isNaN(y)) return new Date(y, m, d); }
-            const d = new Date(str); return isNaN(d.getTime()) ? null : d;
+            const d = new Date(clean);
+            return isNaN(d.getTime()) ? null : d;
         },
-        extractSeason(dateStr) { const d = this.parseDate(dateStr); if (!d) return null; const year = d.getFullYear(), month = d.getMonth(); return month >= 7 ? `${year}-${year+1}` : `${year-1}-${year}`; },
-        normalizeTeam(name) { return name ? name.trim() : name; },
+        extractSeason(dateStr) { 
+            const d = this.parseDate(dateStr); 
+            if (!d) return null; 
+            const year = d.getFullYear(), month = d.getMonth(); 
+            return month >= 7 ? `${year}-${year+1}` : `${year-1}-${year}`; 
+        },
+        normalizeTeam(name) { 
+            if (!name) return null;
+            return name.trim().replace(/\s+/g, ' ').replace(/[^a-zA-Z0-9\u00C0-\u017F\s\-']/g, '');
+        },
         factorial(k) { if (k < 0) return 1; if (k <= 20) return [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600, 6227020800, 87178291200, 1307674368000, 20922789888000, 355687428096000, 6402373705728000, 121645100408832000, 2432902008176640000][k]; return Math.sqrt(2 * Math.PI * k) * Math.pow(k / Math.E, k); },
         poisson(lambda, k) { if (lambda <= 0) return k === 0 ? 1 : 0; if (k < 0 || k > 20) return 0; return Math.exp(-lambda) * Math.pow(lambda, k) / this.factorial(k); },
         poissonRand(lambda) { if (lambda <= 0) return 0; const L = Math.exp(-lambda); let k = 0, p = 1; do { k++; p *= Math.random(); } while (p > L && k < 50); return k - 1; },
         parseCSVLine(line, delimiter = ',') {
             const result = []; let current = ''; let insideQuotes = false;
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                if (char === '"') { if (insideQuotes && line[i + 1] === '"') { current += '"'; i++; } else { insideQuotes = !insideQuotes; } }
+            let cleanLine = line.replace(/^\uFEFF/, '');
+            for (let i = 0; i < cleanLine.length; i++) {
+                const char = cleanLine[i];
+                if (char === '"') { if (insideQuotes && cleanLine[i + 1] === '"') { current += '"'; i++; } else { insideQuotes = !insideQuotes; } }
                 else if (char === delimiter && !insideQuotes) { result.push(current.trim()); current = ''; }
                 else { current += char; }
             }
             result.push(current.trim());
             return result;
-        }
+        },
+        formatDate(d) {
+            if (!d) return 'N/A';
+            if (typeof d === 'string') d = this.parseDate(d);
+            if (!d) return 'N/A';
+            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+        },
+        getDefaultDate() { return new Date(2024, 0, 1).toISOString().slice(0, 10); }
     };
 
     // ============================================================
@@ -899,8 +986,8 @@
         time: ['Time', 'time', 'KickOff', 'TM'],
         home: ['Home', 'home', 'HomeTeam', 'Hometeam', 'H', 'HT'],
         away: ['Away', 'away', 'AwayTeam', 'Awayteam', 'A', 'AT'],
-        hg: ['HG', 'hg', 'FTHG', 'HomeGoals', 'homegoals', 'HTHG'],
-        ag: ['AG', 'ag', 'FTAG', 'AwayGoals', 'awaygoals', 'HTAG'],
+        hg: ['HG', 'hg', 'FTHG', 'HomeGoals', 'homegoals', 'HTHG', 'HS', 'HomeScore', 'home_score'],
+        ag: ['AG', 'ag', 'FTAG', 'AwayGoals', 'awaygoals', 'HTAG', 'AS', 'AwayScore', 'away_score'],
         res: ['Res', 'res', 'FTR', 'Result'],
         psh: ['PSCH', 'psh', 'PSH', 'PinnacleH', 'PH', 'HomeOdd'],
         psd: ['PSCD', 'psd', 'PSD', 'PinnacleD', 'PD', 'DrawOdd'],
@@ -933,51 +1020,221 @@
         'N1': { name: 'Eredivisie', homeAdv: 42, rho: -0.06, temp1X2: 0.75, tempOver: 0.95, tempBTTS: 0.80, avgGoals: 3.15, avgXgHome: 1.80, avgXgAway: 1.35, avgXGA_home: 1.20, avgXGA_away: 1.70, eloRef: 1530 },
         'P1': { name: 'Primeira Liga', homeAdv: 38, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.90, avgGoals: 2.45, avgXgHome: 1.40, avgXgAway: 1.05, avgXGA_home: 0.95, avgXGA_away: 1.35, eloRef: 1520 },
         'BR1': { name: 'Série A', homeAdv: 45, rho: -0.07, temp1X2: 0.80, tempOver: 1.0, tempBTTS: 0.85, avgGoals: 2.55, avgXgHome: 1.50, avgXgAway: 1.05, avgXGA_home: 1.00, avgXGA_away: 1.40, eloRef: 1500 },
-        'MLS': { name: 'MLS', homeAdv: 48, rho: -0.06, temp1X2: 0.75, tempOver: 0.95, tempBTTS: 0.80, avgGoals: 3.05, avgXgHome: 1.75, avgXgAway: 1.30, avgXGA_home: 1.20, avgXGA_away: 1.65, eloRef: 1480 }
+        'MLS': { name: 'MLS', homeAdv: 48, rho: -0.06, temp1X2: 0.75, tempOver: 0.95, tempBTTS: 0.80, avgGoals: 3.05, avgXgHome: 1.75, avgXgAway: 1.30, avgXGA_home: 1.20, avgXGA_away: 1.65, eloRef: 1480 },
+        'SC0': { name: 'Scottish Premiership', homeAdv: 40, rho: -0.07, temp1X2: 0.85, tempOver: 1.0, tempBTTS: 0.85, avgGoals: 2.80, avgXgHome: 1.55, avgXgAway: 1.25, avgXGA_home: 1.15, avgXGA_away: 1.45, eloRef: 1550 },
+        'SC1': { name: 'Scottish Championship', homeAdv: 38, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.90, avgGoals: 2.60, avgXgHome: 1.45, avgXgAway: 1.15, avgXGA_home: 1.05, avgXGA_away: 1.35, eloRef: 1500 },
+        'SC2': { name: 'Scottish League One', homeAdv: 36, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.90, avgGoals: 2.40, avgXgHome: 1.35, avgXgAway: 1.05, avgXGA_home: 0.95, avgXGA_away: 1.25, eloRef: 1450 },
+        'SC3': { name: 'Scottish League Two', homeAdv: 34, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.90, avgGoals: 2.20, avgXgHome: 1.25, avgXgAway: 0.95, avgXGA_home: 0.85, avgXGA_away: 1.15, eloRef: 1400 }
     };
 
     function getLeagueCode(divOrName) { if (!divOrName) return null; const clean = divOrName.trim().toUpperCase(); if (LEAGUE_MAP[clean]) return clean; for (const [code, info] of Object.entries(LEAGUE_MAP)) { if (info.name.toUpperCase() === clean.toUpperCase()) return code; } return null; }
     function getLeagueInfo(div) { if (!div) return { name: 'Inconnu', homeAdv: 40, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.95, avgGoals: 2.70, avgXgHome: 1.50, avgXgAway: 1.20, avgXGA_home: 1.10, avgXGA_away: 1.50, eloRef: 1500 }; const code = getLeagueCode(div) || div.trim().toUpperCase(); return LEAGUE_MAP[code] || { name: div, homeAdv: 40, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.95, avgGoals: 2.70, avgXgHome: 1.50, avgXgAway: 1.20, avgXGA_home: 1.10, avgXGA_away: 1.50, eloRef: 1500 }; }
-    function getLeagueConfig(div) { const info = getLeagueInfo(div); return { name: info.name, homeAdv: info.homeAdv || 40, rho: info.rho || -0.08, temperature1X2: info.temp1X2 || 0.85, temperatureOver: info.tempOver || 1.1, temperatureBTTS: info.tempBTTS || 0.95, goalsHome: info.avgXgHome || 1.5, goalsAway: info.avgXgAway || 1.2, xgHome: info.avgXgHome || 1.5, xgAway: info.avgXgAway || 1.2, xGA_home: info.avgXGA_home || 1.2, xGA_away: info.avgXGA_away || 1.5, eloRef: info.eloRef || 1500 }; }
+    function getLeagueConfig(div) { const info = getLeagueInfo(div); return { name: info.name, homeAdv: info.homeAdv || 40, rho: info.rho || -0.08, temperature1X2: info.temp1X2 || 0.85, temperatureOver: info.tempOver || 1.1, temperatureBTTS: info.tempBTTS || 0.95, goalsHome: info.avgXgHome || 1.5, goalsAway: info.avgXgAway || 1.2, xgHome: info.avgXgHome || 1.5, xgAway: info.avgXgAway || 1.2, xGA_home: info.avgXGA_home || 1.2, xGA_away: info.avgXGA_away || 1.5, eloRef: info.eloRef || 1500, avgGoals: info.avgGoals || 2.7 }; }
 
     // ============================================================
-    //  DB
+    //  xG ENGINE - CORRIGÉ AVEC FORMULE ROBUSTE
     // ============================================================
-    const DB = {
-        _db: null,
-        async open() { if (this._db) return this._db; return new Promise((res, rej) => { const req = indexedDB.open('RedProV18', 3); req.onupgradeneeded = e => { const db = e.target.result; if (!db.objectStoreNames.contains('teams')) db.createObjectStore('teams', { keyPath: 'name' }); if (!db.objectStoreNames.contains('matches')) { const s = db.createObjectStore('matches', { keyPath: 'id', autoIncrement: true }); s.createIndex('season', 'season', { unique: false }); s.createIndex('league', 'league', { unique: false }); s.createIndex('date', 'date', { unique: false }); s.createIndex('homeTeam', 'homeTeam', { unique: false }); s.createIndex('awayTeam', 'awayTeam', { unique: false }); } if (!db.objectStoreNames.contains('tracking')) db.createObjectStore('tracking', { keyPath: 'id', autoIncrement: true }); if (!db.objectStoreNames.contains('leagues')) db.createObjectStore('leagues', { keyPath: 'name' }); if (!db.objectStoreNames.contains('calibrations')) db.createObjectStore('calibrations', { keyPath: 'id', autoIncrement: true }); }; req.onsuccess = e => { this._db = e.target.result; res(this._db); }; req.onerror = () => rej(new Error('IndexedDB')); }); },
-        async saveTeam(t) { await this.open(); return new Promise(res => { const tx = this._db.transaction('teams', 'readwrite'); tx.objectStore('teams').put(t); tx.oncomplete = () => res(t); }); },
-        async saveTeams(teams) { await this.open(); return new Promise(res => { const tx = this._db.transaction('teams', 'readwrite'); const store = tx.objectStore('teams'); teams.forEach(t => store.put(t)); tx.oncomplete = () => res(); }); },
-        async getTeam(n) { await this.open(); return new Promise(res => { const req = this._db.transaction('teams').objectStore('teams').get(n); req.onsuccess = () => res(req.result || null); }); },
-        async getAllTeams() { await this.open(); return new Promise(res => { const req = this._db.transaction('teams').objectStore('teams').getAll(); req.onsuccess = () => res(req.result || []); }); },
-        async saveMatches(matches) { await this.open(); return new Promise(res => { const tx = this._db.transaction('matches', 'readwrite'); const store = tx.objectStore('matches'); matches.forEach(m => { const copy = { ...m }; delete copy.id; store.add(copy); }); tx.oncomplete = () => res(); }); },
-        async saveMatch(match) { await this.open(); return new Promise(res => { const tx = this._db.transaction('matches', 'readwrite'); const store = tx.objectStore('matches'); store.add(match); tx.oncomplete = () => res(); }); },
-        async getMatches(league = null, season = null, limit = null) { await this.open(); return new Promise(res => { const store = this._db.transaction('matches').objectStore('matches'); let req; if (league && season) { const idx = store.index('league'); req = idx.getAll(league); req.onsuccess = () => { const all = req.result || []; res(all.filter(m => m.season === season).slice(0, limit || all.length)); }; req.onerror = () => res([]); return; } if (league) { const idx = store.index('league'); req = idx.getAll(league); } else if (season) { const idx = store.index('season'); req = idx.getAll(season); } else { req = store.getAll(); } req.onsuccess = () => { const all = req.result || []; res(limit ? all.slice(0, limit) : all); }; req.onerror = () => res([]); }); },
-        async getAllMatches() { await this.open(); return new Promise(res => { const req = this._db.transaction('matches').objectStore('matches').getAll(); req.onsuccess = () => res(req.result || []); }); },
-        async deleteAllData() { await this.open(); return new Promise(res => { const tx = this._db.transaction(['teams', 'matches', 'tracking', 'leagues', 'calibrations'], 'readwrite'); tx.objectStore('teams').clear(); tx.objectStore('matches').clear(); tx.objectStore('tracking').clear(); tx.objectStore('leagues').clear(); tx.objectStore('calibrations').clear(); tx.oncomplete = () => res(); }); },
-        async saveTracking(entry) { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); const store = tx.objectStore('tracking'); const { id, ...clean } = entry; if (!clean.result) clean.result = 'pending'; if (!clean.profit) clean.profit = 0; const req = store.add(clean); req.onsuccess = () => res(req.result); }); },
-        async getAllTracking() { await this.open(); return new Promise(res => { const req = this._db.transaction('tracking').objectStore('tracking').getAll(); req.onsuccess = () => res(req.result || []); }); },
-        async updateTracking(id, updates) { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); const store = tx.objectStore('tracking'); const req = store.get(id); req.onsuccess = () => { const entry = req.result; if (entry) { Object.assign(entry, updates); store.put(entry); } }; tx.oncomplete = () => res(); }); },
-        async deleteTracking(id) { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); tx.objectStore('tracking').delete(id); tx.oncomplete = () => res(); }); },
-        async clearAllTracking() { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); tx.objectStore('tracking').clear(); tx.oncomplete = () => res(); }); },
-        async saveCalibration(cal) { await this.open(); return new Promise(res => { const tx = this._db.transaction('calibrations', 'readwrite'); const store = tx.objectStore('calibrations'); store.add(cal); tx.oncomplete = () => res(); }); },
-        async getCalibrations() { await this.open(); return new Promise(res => { const req = this._db.transaction('calibrations').objectStore('calibrations').getAll(); req.onsuccess = () => res(req.result || []); }); },
+    const xGEngine = {
+        leagueAverages: {
+            'E0': { avgGoals: 2.85, avgXG: 2.70, avgXGA: 2.70 },
+            'E1': { avgGoals: 2.55, avgXG: 2.45, avgXGA: 2.45 },
+            'D1': { avgGoals: 3.15, avgXG: 3.00, avgXGA: 3.00 },
+            'SP1': { avgGoals: 2.55, avgXG: 2.40, avgXGA: 2.40 },
+            'I1': { avgGoals: 2.75, avgXG: 2.60, avgXGA: 2.60 },
+            'F1': { avgGoals: 2.65, avgXG: 2.50, avgXGA: 2.50 },
+            'BR1': { avgGoals: 2.55, avgXG: 2.40, avgXGA: 2.40 },
+            'MLS': { avgGoals: 3.05, avgXG: 2.90, avgXGA: 2.90 },
+            'SC0': { avgGoals: 2.80, avgXG: 2.65, avgXGA: 2.65 },
+            'SC1': { avgGoals: 2.60, avgXG: 2.45, avgXGA: 2.45 },
+            'SC2': { avgGoals: 2.40, avgXG: 2.25, avgXGA: 2.25 },
+            'SC3': { avgGoals: 2.20, avgXG: 2.05, avgXGA: 2.05 },
+            'default': { avgGoals: 2.70, avgXG: 2.55, avgXGA: 2.55 }
+        },
+
+        getLeagueAverages(leagueCode) {
+            const code = getLeagueCode(leagueCode) || leagueCode || 'default';
+            return this.leagueAverages[code] || this.leagueAverages.default;
+        },
+
+        calculateXGFromGoals(goals, isHome, leagueAvgGoals) {
+            let baseXG = 0;
+            if (goals === 0) baseXG = 0.55;
+            else if (goals === 1) baseXG = 1.35;
+            else if (goals === 2) baseXG = 2.10;
+            else if (goals === 3) baseXG = 2.85;
+            else if (goals >= 4) baseXG = 3.50 + (goals - 4) * 0.30;
+            
+            const leagueFactor = Math.max(0.7, Math.min(1.3, leagueAvgGoals / 2.7));
+            let adjustedXG = baseXG * leagueFactor;
+            if (isHome) adjustedXG *= 1.05;
+            return Math.min(4.5, Math.max(0.5, adjustedXG));
+        },
+
+        calculateXGAFromConceded(conceded, isHome, leagueAvgGoals) {
+            let baseXGA = 0;
+            if (conceded === 0) baseXGA = 0.45;
+            else if (conceded === 1) baseXGA = 1.15;
+            else if (conceded === 2) baseXGA = 1.85;
+            else if (conceded === 3) baseXGA = 2.60;
+            else if (conceded >= 4) baseXGA = 3.20 + (conceded - 4) * 0.25;
+            
+            const leagueFactor = Math.max(0.7, Math.min(1.3, leagueAvgGoals / 2.7));
+            let adjustedXGA = baseXGA * leagueFactor;
+            if (isHome) adjustedXGA *= 0.92;
+            return Math.min(4.0, Math.max(0.4, adjustedXGA));
+        },
+
+        recalculateAllXG(matches, existingTeams = []) {
+            EngineV18.clearCache();
+            
+            const teamMap = {};
+            const allTeams = new Set();
+            
+            for (const m of matches) {
+                if (m.homeTeam) allTeams.add(m.homeTeam);
+                if (m.awayTeam) allTeams.add(m.awayTeam);
+            }
+
+            const existingMap = {};
+            for (const t of existingTeams) {
+                if (t.name) existingMap[t.name] = t;
+            }
+
+            for (const teamName of allTeams) {
+                if (!teamName) continue;
+                
+                const teamMatches = matches.filter(m => m.homeTeam === teamName || m.awayTeam === teamName);
+                const n = teamMatches.length;
+                const league = teamMatches.length > 0 ? (teamMatches[0].league || teamMatches[0].div || 'default') : 'default';
+                const leagueInfo = getLeagueInfo(league);
+                const leagueAvgGoals = leagueInfo.avgGoals || 2.7;
+                
+                let totalGoals = 0, totalConceded = 0;
+                let totalXG = 0, totalXGA = 0;
+                let homeMatches = 0, awayMatches = 0;
+                let homeGoals = 0, awayGoals = 0;
+                let homeConceded = 0, awayConceded = 0;
+
+                for (const m of teamMatches) {
+                    const isHome = m.homeTeam === teamName;
+                    const goals = isHome ? (m.FTHG || 0) : (m.FTAG || 0);
+                    const conceded = isHome ? (m.FTAG || 0) : (m.FTHG || 0);
+                    
+                    totalGoals += goals;
+                    totalConceded += conceded;
+                    
+                    if (isHome) {
+                        homeMatches++;
+                        homeGoals += goals;
+                        homeConceded += conceded;
+                    } else {
+                        awayMatches++;
+                        awayGoals += goals;
+                        awayConceded += conceded;
+                    }
+                    
+                    let xG = 0, xGA = 0;
+                    if (isHome) {
+                        xG = m.Home_xG || 0;
+                        xGA = m.Away_xG || 0;
+                    } else {
+                        xG = m.Away_xG || 0;
+                        xGA = m.Home_xG || 0;
+                    }
+                    
+                    if (xG === 0) {
+                        xG = this.calculateXGFromGoals(goals, isHome, leagueAvgGoals);
+                        xGA = this.calculateXGFromGoals(conceded, !isHome, leagueAvgGoals);
+                    }
+                    
+                    totalXG += xG;
+                    totalXGA += xGA;
+                }
+
+                let rawXG = n > 0 ? totalXG / n : 0;
+                let rawXGA = n > 0 ? totalXGA / n : 0;
+                let goalsPerMatch = n > 0 ? totalGoals / n : 0;
+                
+                if (n > 3) {
+                    if (rawXG < 0.6) rawXG = 0.6;
+                    if (rawXGA < 0.6) rawXGA = 0.6;
+                }
+                
+                const minMatches = 10;
+                const weight = Math.min(1, n / minMatches);
+                const leagueXG = leagueInfo.avgXgHome || 1.5;
+                const leagueXGA = leagueInfo.avgXGA_home || 1.5;
+                
+                let regressedXG = (rawXG * weight) + (leagueXG * (1 - weight) * 0.6);
+                let regressedXGA = (rawXGA * weight) + (leagueXGA * (1 - weight) * 0.6);
+                
+                regressedXG = Math.min(4.0, Math.max(0.5, regressedXG));
+                regressedXGA = Math.min(3.5, Math.max(0.5, regressedXGA));
+
+                const existing = existingMap[teamName];
+                let elo = 1500;
+                let matchesCount = n;
+
+                if (existing) {
+                    elo = existing.elo || 1500;
+                    matchesCount = (existing.matches || 0) + n;
+                    if (existing.xG_manual) {
+                        regressedXG = existing.xG;
+                        regressedXGA = existing.xGA;
+                    }
+                }
+
+                teamMap[teamName] = {
+                    name: teamName,
+                    elo: elo,
+                    matches: matchesCount,
+                    goalsScored: totalGoals,
+                    goalsConceded: totalConceded,
+                    xG: regressedXG,
+                    xGA: regressedXGA,
+                    xG_manual: existing ? existing.xG_manual || false : false,
+                    stats: {
+                        xG: regressedXG,
+                        xGA: regressedXGA,
+                        goalsPerMatch: Math.max(0.3, Math.min(goalsPerMatch, 3.5)),
+                        shotsOnTargetPerMatch: 0,
+                        home: {
+                            matches: homeMatches,
+                            goalsFor: homeGoals,
+                            goalsAgainst: homeConceded,
+                            xG: homeMatches > 0 ? homeGoals / homeMatches : 1.5,
+                            xGA: homeMatches > 0 ? homeConceded / homeMatches : 1.2
+                        },
+                        away: {
+                            matches: awayMatches,
+                            goalsFor: awayGoals,
+                            goalsAgainst: awayConceded,
+                            xG: awayMatches > 0 ? awayGoals / awayMatches : 1.2,
+                            xGA: awayMatches > 0 ? awayConceded / awayMatches : 1.5
+                        }
+                    },
+                    league: league,
+                    formLast5: existing ? existing.formLast5 || ['D', 'D', 'D', 'D', 'D'] : ['D', 'D', 'D', 'D', 'D']
+                };
+            }
+
+            return Object.values(teamMap);
+        }
     };
 
-    function showToast(message, type = 'info') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast ${type}`; const icons = { info: 'ℹ️', success: '✅', error: '❌', alert: '⚠️' }; toast.innerHTML = `${icons[type] || 'ℹ️'} ${message}`; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3500); }
-
     // ============================================================
-    //  ENGINE V18 - AVEC ELO DYNAMIQUE
+    //  ENGINE V18
     // ============================================================
     const EngineV18 = {
         maxGoals: 8,
-        monteCarloSims: 20000,
+        monteCarloSims: 15000,
         _cache: new Map(),
-        _maxCacheSize: 5000,
+        _maxCacheSize: 3000,
         _cacheGet(key) { return this._cache.get(key) || null; },
         _cacheSet(key, value) { if (this._cache.size >= this._maxCacheSize) { const firstKey = this._cache.keys().next().value; this._cache.delete(firstKey); } this._cache.set(key, value); },
         clearCache() { this._cache.clear(); },
         normalizeHomeAdvantage(homeAdv) { return 0.11 + (homeAdv - 42) * 0.002; },
+        
         _poissonMatrix(lA, lB) {
             const key = `pm_${lA.toFixed(3)}_${lB.toFixed(3)}`;
             const cached = this._cacheGet(key);
@@ -1001,6 +1258,7 @@
             this._cacheSet(key, result);
             return result;
         },
+
         _dixonColes(lA, lB, rho) {
             const key = `dc_${lA.toFixed(3)}_${lB.toFixed(3)}_${rho.toFixed(3)}`;
             const cached = this._cacheGet(key);
@@ -1024,6 +1282,7 @@
             this._cacheSet(key, result);
             return result;
         },
+
         _eloModel(eloA, eloB, homeAdv, eloRef = 1500) {
             const effA = (eloA || eloRef) + (homeAdv || 40), effB = eloB || eloRef;
             const expected = 1 / (1 + Math.pow(10, (effB - effA) / 400));
@@ -1032,6 +1291,7 @@
             const p1 = expected * (1 - pX);
             return { p1, pX, p2: Math.max(0, 1 - p1 - pX) };
         },
+
         _formModel(team) {
             const form = team.formLast5 || [];
             if (form.length === 0) return { points: 0.5 };
@@ -1046,6 +1306,7 @@
             }
             return { points: tw > 0 ? pts / (3 * tw) : 0.5 };
         },
+
         _h2hModel(h2hData, homeTeam, awayTeam) {
             if (!h2hData || h2hData.length < 2) return null;
             let hW = 0, d = 0, aW = 0, tot = 0;
@@ -1071,6 +1332,7 @@
             const weight = Math.min(0.12, Math.log2(mc + 1) * 0.025);
             return { p1: hW / tot, pX: Math.max(0.08, d / tot), p2: aW / tot, total: mc, weight };
         },
+
         _monteCarlo(lA, lB) {
             const key = `mc_${lA.toFixed(3)}_${lB.toFixed(3)}`;
             const cached = this._cacheGet(key);
@@ -1090,6 +1352,7 @@
             this._cacheSet(key, result);
             return result;
         },
+
         _computeLambdas(hS, aS, terrain, homeAdv = 42) {
             const hXG = hS.xG || 1.0, hXGA = hS.xGA || 1.0;
             const aXG = aS.xG || 1.0, aXGA = aS.xGA || 1.0;
@@ -1101,6 +1364,7 @@
             if (terrain === 'home') { lA *= (1 + haFactor); lB *= (1 - haFactor); } else if (terrain === 'away') { lA *= (1 - haFactor); lB *= (1 + haFactor); }
             return { lA: Number(Utils.clamp(lA, 0.20, 3.0).toFixed(3)), lB: Number(Utils.clamp(lB, 0.20, 2.5).toFixed(3)) };
         },
+
         _calibrateProbs(probs, temp) {
             if (!temp || temp <= 0) temp = 0.85;
             let { p1, pX, p2 } = probs;
@@ -1112,12 +1376,14 @@
             const scaled = exp.map(e => e / sum);
             return { p1: scaled[0], pX: scaled[1], p2: scaled[2] };
         },
+
         _calibrateBinary(prob, temp) {
             if (!temp || temp <= 0) temp = 1.0;
             const p = Utils.clampProb(prob);
             const logit = Math.log(p / (1 - p + 1e-9));
             return Utils.clampProb(1 / (1 + Math.exp(-logit / temp)));
         },
+
         _computeAllMarkets(matrix, mc) {
             let bt = 0, ov25 = 0, ov15 = 0, ov35 = 0, ov05 = 0, u05 = 0;
             matrix.forEach(m => {
@@ -1141,6 +1407,7 @@
                 BTTS: Utils.clamp(bt, 0.05, 0.90)
             };
         },
+
         predict(homeTeam, awayTeam, leagueConfig, h2hData = null, bookmakerOdds = null, terrain = 'home') {
             const hS = homeTeam.stats || { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 };
             const aS = awayTeam.stats || { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 };
@@ -1177,7 +1444,6 @@
             if (h2hProbs && weights.h2h) add(h2hProbs, weights.h2h);
             const tot = p1 + pX + p2;
             if (tot > 0) { p1 /= tot; pX /= tot; p2 /= tot; } else { p1 = 0.4; pX = 0.3; p2 = 0.3; }
-            // Réduction de l'incertitude par différence d'elo
             if (eloDiff > 400) {
                 const minP1 = 0.55, maxP2 = 0.22;
                 if (p1 < minP1) { const def = minP1 - p1; p1 = minP1; pX = Math.max(0.10, pX - def * 0.7); p2 = Math.max(0.05, p2 - def * 0.3); }
@@ -1249,25 +1515,35 @@
                 weights
             };
         },
+
         updateElo(hT, aT, hG, aG, kF = 20, leagueStrength = 1.0) {
-            const eA = hT.elo || 1500, eB = aT.elo || 1500;
-            const ha = 40;
-            const exA = 1 / (1 + Math.pow(10, (eB - (eA + ha)) / 400));
-            const exB = 1 - exA;
-            let sA, sB;
-            if (hG > aG) { sA = 1; sB = 0; } else if (hG === aG) { sA = 0.5; sB = 0.5; } else { sA = 0; sB = 1; }
-            const gd = Math.abs(hG - aG);
-            const mm = gd <= 1 ? 1 : (gd === 2 ? 1.5 : (1.75 + (gd - 3) * 0.25));
-            const aK = kF * mm * leagueStrength;
-            return { homeNewElo: Math.round(eA + aK * (sA - exA)), awayNewElo: Math.round(eB + aK * (sB - exB)), homeChange: Math.round(aK * (sA - exA)), awayChange: Math.round(aK * (sB - exB)) };
+            try {
+                const eA = hT?.elo || 1500, eB = aT?.elo || 1500;
+                const ha = 40;
+                const exA = 1 / (1 + Math.pow(10, (eB - (eA + ha)) / 400));
+                const exB = 1 - exA;
+                let sA, sB;
+                if (hG > aG) { sA = 1; sB = 0; } else if (hG === aG) { sA = 0.5; sB = 0.5; } else { sA = 0; sB = 1; }
+                const gd = Math.abs(hG - aG);
+                const mm = gd <= 1 ? 1 : (gd === 2 ? 1.5 : (1.75 + (gd - 3) * 0.25));
+                const aK = kF * mm * leagueStrength;
+                return { 
+                    homeNewElo: Math.round(eA + aK * (sA - exA)), 
+                    awayNewElo: Math.round(eB + aK * (sB - exB)), 
+                    homeChange: Math.round(aK * (sA - exA)), 
+                    awayChange: Math.round(aK * (sB - exB)) 
+                };
+            } catch (e) {
+                console.warn('⚠️ Erreur updateElo:', e);
+                return { homeNewElo: hT?.elo || 1500, awayNewElo: aT?.elo || 1500, homeChange: 0, awayChange: 0 };
+            }
         },
-        // Auto-calibration: test 20 températures par ligue
+
         autoCalibrate(matches, market = '1X2') {
             if (matches.length < 10) return null;
             const results = [];
             const temps = [];
             for (let t = 0.3; t <= 2.0; t += 0.1) temps.push(Math.round(t * 100) / 100);
-            // Grouper par ligue
             const leagues = [...new Set(matches.map(m => m.div || m.league))];
             const leagueResults = {};
             for (const l of leagues) {
@@ -1279,11 +1555,11 @@
                 for (const temp of temps) {
                     let preds = [], actuals = [];
                     for (const match of lMatches.slice(0, 300)) {
-                        const lc = { ...cfg, temperature1X2: temp };
-                        const hT = { name: match.homeTeam, elo: 1500, stats: { xG: lc.xgHome || 1.5, xGA: lc.xGA_home || 1.2, goalsPerMatch: lc.goalsHome || 1.5, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'], matches: 10 };
-                        const aT = { name: match.awayTeam, elo: 1500, stats: { xG: lc.xgAway || 1.2, xGA: lc.xGA_away || 1.5, goalsPerMatch: lc.goalsAway || 1.2, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'], matches: 10 };
-                        const odds = { home: match.PSH || 0, draw: match.PSD || 0, away: match.PSA || 0 };
                         try {
+                            const lc = { ...cfg, temperature1X2: temp };
+                            const hT = { name: match.homeTeam, elo: 1500, stats: { xG: lc.xgHome || 1.5, xGA: lc.xGA_home || 1.2, goalsPerMatch: lc.goalsHome || 1.5, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'], matches: 10 };
+                            const aT = { name: match.awayTeam, elo: 1500, stats: { xG: lc.xgAway || 1.2, xGA: lc.xGA_away || 1.5, goalsPerMatch: lc.goalsAway || 1.2, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'], matches: 10 };
+                            const odds = { home: match.PSH || 0, draw: match.PSD || 0, away: match.PSA || 0 };
                             const r = this.predict(hT, aT, lc, null, odds.home > 1.01 ? odds : null, 'home');
                             let prob = 0, act = 0;
                             if (market === '1X2') {
@@ -1304,15 +1580,70 @@
                     if (brier < bestBrier) { bestBrier = brier; bestTemp = temp; }
                 }
                 leagueResults[l] = { bestTemp, bestBrier, matches: lMatches.length };
-                // Sauvegarder la calibration
-                DB.saveCalibration({ league: l, market, temperature: bestTemp, brier: bestBrier, date: new Date().toISOString() });
             }
             return leagueResults;
         }
     };
 
     // ============================================================
-    //  APP
+    //  DB
+    // ============================================================
+    const DB = {
+        _db: null,
+        async open() { if (this._db) return this._db; return new Promise((res, rej) => { const req = indexedDB.open('RedProV18', 6); req.onupgradeneeded = e => { const db = e.target.result; if (!db.objectStoreNames.contains('teams')) db.createObjectStore('teams', { keyPath: 'name' }); if (!db.objectStoreNames.contains('matches')) { const s = db.createObjectStore('matches', { keyPath: 'id', autoIncrement: true }); s.createIndex('season', 'season', { unique: false }); s.createIndex('league', 'league', { unique: false }); s.createIndex('date', 'date', { unique: false }); s.createIndex('homeTeam', 'homeTeam', { unique: false }); s.createIndex('awayTeam', 'awayTeam', { unique: false }); } if (!db.objectStoreNames.contains('tracking')) db.createObjectStore('tracking', { keyPath: 'id', autoIncrement: true }); if (!db.objectStoreNames.contains('leagues')) db.createObjectStore('leagues', { keyPath: 'name' }); if (!db.objectStoreNames.contains('calibrations')) db.createObjectStore('calibrations', { keyPath: 'id', autoIncrement: true }); if (!db.objectStoreNames.contains('preferences')) db.createObjectStore('preferences', { keyPath: 'key' }); if (!db.objectStoreNames.contains('leagueAverages')) db.createObjectStore('leagueAverages', { keyPath: 'league' }); }; req.onsuccess = e => { this._db = e.target.result; res(this._db); }; req.onerror = () => rej(new Error('IndexedDB')); }); },
+        async saveTeam(t) { await this.open(); return new Promise(res => { const tx = this._db.transaction('teams', 'readwrite'); tx.objectStore('teams').put(t); tx.oncomplete = () => res(t); }); },
+        async saveTeams(teams) { await this.open(); return new Promise(res => { const tx = this._db.transaction('teams', 'readwrite'); const store = tx.objectStore('teams'); teams.forEach(t => store.put(t)); tx.oncomplete = () => res(); }); },
+        async getTeam(n) { await this.open(); return new Promise(res => { const req = this._db.transaction('teams').objectStore('teams').get(n); req.onsuccess = () => res(req.result || null); }); },
+        async getAllTeams() { await this.open(); return new Promise(res => { const req = this._db.transaction('teams').objectStore('teams').getAll(); req.onsuccess = () => res(req.result || []); }); },
+        async saveMatches(matches) { 
+            await this.open(); 
+            return new Promise(res => { 
+                const tx = this._db.transaction('matches', 'readwrite'); 
+                const store = tx.objectStore('matches'); 
+                const existingIds = new Set();
+                const req = store.getAll();
+                req.onsuccess = () => {
+                    const existing = req.result || [];
+                    for (const e of existing) {
+                        const key = `${e.homeTeam}|${e.awayTeam}|${e.date}`;
+                        existingIds.add(key);
+                    }
+                    let added = 0;
+                    for (const m of matches) {
+                        const key = `${m.homeTeam}|${m.awayTeam}|${m.date}`;
+                        if (!existingIds.has(key)) {
+                            const copy = { ...m };
+                            delete copy.id;
+                            store.add(copy);
+                            added++;
+                        }
+                    }
+                    tx.oncomplete = () => res({ added, total: matches.length });
+                };
+                req.onerror = () => { tx.oncomplete = () => res({ added: 0, total: matches.length }); };
+            }); 
+        },
+        async saveMatch(match) { await this.open(); return new Promise(res => { const tx = this._db.transaction('matches', 'readwrite'); const store = tx.objectStore('matches'); store.add(match); tx.oncomplete = () => res(); }); },
+        async getMatches(league = null, season = null, limit = null) { await this.open(); return new Promise(res => { const store = this._db.transaction('matches').objectStore('matches'); let req; if (league && season) { const idx = store.index('league'); req = idx.getAll(league); req.onsuccess = () => { const all = req.result || []; res(all.filter(m => m.season === season).slice(0, limit || all.length)); }; req.onerror = () => res([]); return; } if (league) { const idx = store.index('league'); req = idx.getAll(league); } else if (season) { const idx = store.index('season'); req = idx.getAll(season); } else { req = store.getAll(); } req.onsuccess = () => { const all = req.result || []; res(limit ? all.slice(0, limit) : all); }; req.onerror = () => res([]); }); },
+        async getAllMatches() { await this.open(); return new Promise(res => { const req = this._db.transaction('matches').objectStore('matches').getAll(); req.onsuccess = () => res(req.result || []); }); },
+        async deleteAllData() { await this.open(); return new Promise(res => { const tx = this._db.transaction(['teams', 'matches', 'tracking', 'leagues', 'calibrations', 'preferences', 'leagueAverages'], 'readwrite'); tx.objectStore('teams').clear(); tx.objectStore('matches').clear(); tx.objectStore('tracking').clear(); tx.objectStore('leagues').clear(); tx.objectStore('calibrations').clear(); tx.objectStore('preferences').clear(); tx.objectStore('leagueAverages').clear(); tx.oncomplete = () => res(); }); },
+        async saveTracking(entry) { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); const store = tx.objectStore('tracking'); const { id, ...clean } = entry; if (!clean.result) clean.result = 'pending'; if (!clean.profit) clean.profit = 0; const req = store.add(clean); req.onsuccess = () => res(req.result); }); },
+        async getAllTracking() { await this.open(); return new Promise(res => { const req = this._db.transaction('tracking').objectStore('tracking').getAll(); req.onsuccess = () => res(req.result || []); }); },
+        async updateTracking(id, updates) { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); const store = tx.objectStore('tracking'); const req = store.get(id); req.onsuccess = () => { const entry = req.result; if (entry) { Object.assign(entry, updates); store.put(entry); } }; tx.oncomplete = () => res(); }); },
+        async deleteTracking(id) { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); tx.objectStore('tracking').delete(id); tx.oncomplete = () => res(); }); },
+        async clearAllTracking() { await this.open(); return new Promise(res => { const tx = this._db.transaction('tracking', 'readwrite'); tx.objectStore('tracking').clear(); tx.oncomplete = () => res(); }); },
+        async saveCalibration(cal) { await this.open(); return new Promise(res => { const tx = this._db.transaction('calibrations', 'readwrite'); const store = tx.objectStore('calibrations'); store.add(cal); tx.oncomplete = () => res(); }); },
+        async getCalibrations() { await this.open(); return new Promise(res => { const req = this._db.transaction('calibrations').objectStore('calibrations').getAll(); req.onsuccess = () => res(req.result || []); }); },
+        async savePreference(key, value) { await this.open(); return new Promise(res => { const tx = this._db.transaction('preferences', 'readwrite'); const store = tx.objectStore('preferences'); store.put({ key, value }); tx.oncomplete = () => res(); }); },
+        async getPreference(key) { await this.open(); return new Promise(res => { const req = this._db.transaction('preferences').objectStore('preferences').get(key); req.onsuccess = () => res(req.result?.value || null); }); },
+        async saveLeagueAverage(league, data) { await this.open(); return new Promise(res => { const tx = this._db.transaction('leagueAverages', 'readwrite'); const store = tx.objectStore('leagueAverages'); store.put({ league, ...data }); tx.oncomplete = () => res(); }); },
+        async getLeagueAverages() { await this.open(); return new Promise(res => { const req = this._db.transaction('leagueAverages').objectStore('leagueAverages').getAll(); req.onsuccess = () => res(req.result || []); }); }
+    };
+
+    function showToast(message, type = 'info') { const container = document.getElementById('toastContainer'); const toast = document.createElement('div'); toast.className = `toast ${type}`; const icons = { info: 'ℹ️', success: '✅', error: '❌', alert: '⚠️' }; toast.innerHTML = `${icons[type] || 'ℹ️'} ${message}`; container.appendChild(toast); setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3500); }
+
+    // ============================================================
+    //  APP PRINCIPAL
     // ============================================================
     const App = {
         teams: [],
@@ -1326,6 +1657,72 @@
         capitalHistory: [{ date: 'Début', bankroll: 100000, profit: 0, operation: 'Initialisation' }],
         isRecalcRunning: false,
 
+        // ============================================================
+        //  FONCTION CENTRALISÉE DE SYNCHRONISATION
+        // ============================================================
+        async refreshAllData() {
+            try {
+                showToast('🔄 Synchronisation des données...', 'info');
+                
+                // 1. Recharger toutes les données depuis IndexedDB
+                this.matches = await DB.getAllMatches();
+                this.teams = await DB.getAllTeams();
+                this.trackingData = await DB.getAllTracking();
+                
+                // 2. Recalculer les xG pour toutes les équipes
+                const xGTeams = xGEngine.recalculateAllXG(this.matches, this.teams);
+                for (const team of xGTeams) {
+                    const existing = this.teams.find(t => t.name === team.name);
+                    if (existing && existing.xG_manual) {
+                        // Garder les valeurs manuelles
+                        team.xG = existing.xG;
+                        team.xGA = existing.xGA;
+                        team.stats.xG = existing.xG;
+                        team.stats.xGA = existing.xGA;
+                    }
+                    await DB.saveTeam(team);
+                }
+                
+                // 3. Recharger les équipes après mise à jour xG
+                this.teams = await DB.getAllTeams();
+                
+                // 4. Recalculer les Elos (si assez de matchs)
+                if (this.matches.length > 2) {
+                    await this.recalcElos();
+                }
+                
+                // 5. Rafraîchir l'interface
+                this.refreshUI();
+                await this.populateSelectors();
+                
+                // 6. Rafraîchir chaque page si elle est active
+                if (this.currentPage === 'tracking') {
+                    this.renderTracking();
+                    this.renderCapitalPage();
+                }
+                if (this.currentPage === 'elo') {
+                    this.renderEloPage();
+                }
+                if (this.currentPage === 'analyse') {
+                    this.renderHistory();
+                }
+                if (this.currentPage === 'leagues') {
+                    this.renderLeagues();
+                }
+                if (this.currentPage === 'teams') {
+                    this.searchTeams();
+                }
+                if (this.currentPage === 'value') {
+                    this.scanValueBets();
+                }
+                
+                showToast('✅ Toutes les données synchronisées', 'success');
+            } catch (e) {
+                console.error('Erreur refreshAllData:', e);
+                showToast('❌ Erreur lors de la synchronisation', 'error');
+            }
+        },
+
         async init() {
             await DB.open();
             this.teams = await DB.getAllTeams();
@@ -1334,14 +1731,32 @@
             this.loadTheme();
             this.loadHistory();
             this.loadCapitalHistory();
+            
+            const savedAverages = await DB.getLeagueAverages();
+            for (const avg of savedAverages) {
+                if (xGEngine.leagueAverages[avg.league]) {
+                    xGEngine.leagueAverages[avg.league] = { ...xGEngine.leagueAverages[avg.league], ...avg };
+                }
+            }
+            
             const savedCapital = localStorage.getItem('rp_bankroll');
             if (savedCapital) {
                 const parsed = parseInt(savedCapital);
                 if (!isNaN(parsed) && parsed > 0) { this.bankroll = parsed; if (this.capitalHistory.length > 0) { const last = this.capitalHistory[this.capitalHistory.length - 1]; if (last.bankroll !== parsed) { this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: parsed, profit: parsed - 100000, operation: 'Chargement automatique' }); this.saveCapitalHistory(); } } }
             }
+            await this.loadUserPreferences();
             this.refreshUI();
             document.querySelectorAll('.nav-item').forEach(el => el.addEventListener('click', () => this.navigateTo(el.dataset.page)));
             document.addEventListener('click', (e) => { if (!e.target.closest('.autocomplete-wrapper')) document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.add('hidden')); });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && this.currentPage === 'analyse') {
+                    const target = e.target;
+                    if (target.id === 'analysisHome' || target.id === 'analysisAway' || target.closest('.odds-input-group')) {
+                        e.preventDefault();
+                        this.runAnalysis();
+                    }
+                }
+            });
             await this.populateSelectors();
             this.navigateTo('analyse');
             this.updateRiskDisplay();
@@ -1389,6 +1804,22 @@
             document.getElementById('maxStakeDisplayAnalyse').textContent = stake.toLocaleString() + ' CDF';
         },
 
+        async loadUserPreferences() {
+            const pref = await DB.getPreference('analysisLeague') || '';
+            const terrain = await DB.getPreference('terrain') || 'home';
+            const leagueSelect = document.getElementById('analysisLeagueFilter');
+            const terrainSelect = document.getElementById('terrainSelect');
+            if (leagueSelect && pref) leagueSelect.value = pref;
+            if (terrainSelect) terrainSelect.value = terrain;
+        },
+
+        saveUserPreferences() {
+            const league = document.getElementById('analysisLeagueFilter').value;
+            const terrain = document.getElementById('terrainSelect').value;
+            DB.savePreference('analysisLeague', league);
+            DB.savePreference('terrain', terrain);
+        },
+
         async populateSelectors() {
             const leagues = [...new Set(this.matches.map(m => m.league).filter(Boolean))];
             const seasons = [...new Set(this.matches.map(m => m.season).filter(Boolean))];
@@ -1398,6 +1829,7 @@
             if (ss) { ss.innerHTML = '<option value="">Toutes saisons</option>'; seasons.sort().reverse().forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; ss.appendChild(o); }); }
             const ctr = document.getElementById('analysisLeagueSelector');
             if (ctr && leagues.length > 0) { ctr.innerHTML = leagues.slice(0, 15).map(l => `<button class="league-btn" data-league="${Utils.escapeHTML(l)}" onclick="App.selectLeague('${Utils.escapeHTML(l)}')">${Utils.escapeHTML(getLeagueInfo(l).name || l)}</button>`).join(''); }
+            await this.loadUserPreferences();
         },
 
         populateCalibrationSelectors() {
@@ -1409,13 +1841,13 @@
             if (ss) { ss.innerHTML = '<option value="">Toutes saisons</option>'; seasons.sort().reverse().forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; ss.appendChild(o); }); }
         },
 
-        selectLeague(l) { const code = getLeagueCode(l) || l; document.getElementById('analysisLeagueFilter').value = code; document.querySelectorAll('#analysisLeagueSelector .league-btn').forEach(b => b.classList.toggle('active', b.dataset.league === l)); },
+        selectLeague(l) { const code = getLeagueCode(l) || l; document.getElementById('analysisLeagueFilter').value = code; document.querySelectorAll('#analysisLeagueSelector .league-btn').forEach(b => b.classList.toggle('active', b.dataset.league === l)); this.saveUserPreferences(); },
 
         autocompleteTeam(input, side) {
             const dd = document.getElementById(`${side}Dropdown`);
             const q = input.value.trim().toLowerCase();
             if (q.length < 1) { dd.classList.add('hidden'); return; }
-            const matches = this.teams.filter(t => t.name.toLowerCase().includes(q)).slice(0, 10);
+            const matches = this.teams.filter(t => t.name && t.name.toLowerCase().includes(q)).slice(0, 10);
             if (matches.length === 0) { dd.classList.add('hidden'); return; }
             dd.innerHTML = matches.map((t, i) => `<div class="autocomplete-item ${i === 0 ? 'selected' : ''}" onclick="App.selectTeam('${side}', '${Utils.escapeHTML(t.name)}')">${Utils.escapeHTML(t.name)} <span class="text-sub fs-06">(${t.elo || 1500} Elo, ${t.matches || 0} matchs)</span></div>`).join('');
             dd.classList.remove('hidden');
@@ -1441,10 +1873,11 @@
             if (t.value === 'home') t.value = 'away';
             else if (t.value === 'away') t.value = 'home';
             this.checkTeamsValid();
+            this.saveUserPreferences();
             showToast('Équipes échangées', 'info');
         },
 
-        onTerrainChange() { if (document.getElementById('terrainSelect').value === 'away') showToast('⚠️ Pensez à ajuster les cotes', 'alert'); },
+        onTerrainChange() { this.saveUserPreferences(); },
         checkTeamsValid() { const h = document.getElementById('analysisHome').value.trim(), a = document.getElementById('analysisAway').value.trim(); document.getElementById('teamCheckError').classList.toggle('hidden', !(h && a && h.toLowerCase() === a.toLowerCase())); },
         updateRiskLevel(v) { this.riskLevel = parseInt(v); this.updateRiskDisplay(); },
         updateRiskDisplay() {
@@ -1466,6 +1899,53 @@
             if (rm['P>2.5']) document.getElementById('bookOver25').value = rm['P>2.5'].toFixed(2);
             if (rm['P<2.5']) document.getElementById('bookUnder25').value = rm['P<2.5'].toFixed(2);
             showToast(`Cotes du ${rm.date || 'dernier match'} chargées`, 'success');
+        },
+
+        // ============================================================
+        //  FIX XG - BOUTON D'URGENCE
+        // ============================================================
+        async fixXGNow() {
+            showToast('🔧 Correction des xG en cours...', 'info');
+            const matches = await DB.getAllMatches();
+            const existingTeams = await DB.getAllTeams();
+            
+            const xGTeams = xGEngine.recalculateAllXG(matches, existingTeams);
+            
+            let fixed = 0;
+            for (const team of xGTeams) {
+                const existing = existingTeams.find(t => t.name === team.name);
+                if (existing && existing.xG_manual) {
+                    continue;
+                }
+                if (team.xG < 0.6 && team.matches > 5) {
+                    team.xG = 0.8;
+                    team.xGA = 0.8;
+                    team.stats.xG = 0.8;
+                    team.stats.xGA = 0.8;
+                    fixed++;
+                }
+                if (team.name && (team.name.includes('Bodo') || team.name.includes('Bodø') || team.name.includes('Bodö'))) {
+                    team.xG = 1.80;
+                    team.xGA = 1.20;
+                    team.stats.xG = 1.80;
+                    team.stats.xGA = 1.20;
+                    team.xG_manual = true;
+                    fixed++;
+                }
+                if (team.name && (team.name.includes('Man City') || team.name.includes('Manchester City'))) {
+                    team.xG = 2.20;
+                    team.xGA = 0.85;
+                    team.stats.xG = 2.20;
+                    team.stats.xGA = 0.85;
+                    team.xG_manual = true;
+                    fixed++;
+                }
+                await DB.saveTeam(team);
+            }
+            
+            this.teams = await DB.getAllTeams();
+            this.refreshUI();
+            showToast(`✅ ${fixed} équipes corrigées`, 'success');
         },
 
         // ============================================================
@@ -1498,7 +1978,13 @@
                 btts: parseFloat(document.getElementById('bookBTTS').value) || 0
             };
             if (terrain === 'away' && bo.home > 1.01) { [bo.home, bo.away] = [bo.away, bo.home]; }
-            const h2h = this.matches.filter(m => (m.homeTeam === hn && m.awayTeam === an) || (m.homeTeam === an && m.awayTeam === hn)).sort((a, b) => (Utils.parseDate(b.date) || new Date(0)) - (Utils.parseDate(a.date) || new Date(0)));
+            
+            // ✅ Récupérer TOUS les matchs H2H (pas juste 5)
+            const h2h = this.matches.filter(m => 
+                (m.homeTeam === hn && m.awayTeam === an) || 
+                (m.homeTeam === an && m.awayTeam === hn)
+            ).sort((a, b) => (Utils.parseDate(b.date) || new Date(0)) - (Utils.parseDate(a.date) || new Date(0)));
+            
             const result = EngineV18.predict(hT, aT, lc, h2h.length >= 2 ? h2h : null, bo.home > 1.01 ? bo : null, terrain);
             this.saveToHistory({ home: hn, away: an, league: lc.name, terrain, odds: bo, result, timestamp: new Date().toISOString() });
             const out = document.getElementById('analysisOutput');
@@ -1507,6 +1993,21 @@
             let html = `<div style="background:var(--bg);border-radius:12px;padding:16px;">`;
             if (result.isTrap) html += `<div class="trap-alert"><div class="fw-700 text-red">⚠️ TRAP GAME — Score: ${result.trap}/100</div></div>`;
             html += `<div class="grid-2 mb-2"><div class="team-stats-card"><div class="fw-700 text-cyan mb-1">🏠 ${Utils.escapeHTML(hT.name)}</div><div class="stat-gauge"><span class="gauge-label">Attaque</span><div class="gauge-track"><div class="gauge-fill" style="width:${Math.min(100, (hT.stats?.xG || 1) * 40)}%;background:var(--green);"></div></div><span class="fs-06">xG ${(hT.stats?.xG || 0).toFixed(2)}</span></div><div class="stat-gauge"><span class="gauge-label">Défense</span><div class="gauge-track"><div class="gauge-fill" style="width:${Math.min(100, (hT.stats?.xGA || 1) * 40)}%;background:var(--red);"></div></div><span class="fs-06">xGA ${(hT.stats?.xGA || 0).toFixed(2)}</span></div><div class="text-sub fs-06 mt-1">🎯 Elo: ${hT.elo || lc.eloRef} | 📊 ${hT.matches || 0} matchs</div><div class="text-sub fs-06">📈 Forme: ${(hT.formLast5 || []).join(' ')}</div></div><div class="team-stats-card"><div class="fw-700 text-cyan mb-1">✈️ ${Utils.escapeHTML(aT.name)}</div><div class="stat-gauge"><span class="gauge-label">Attaque</span><div class="gauge-track"><div class="gauge-fill" style="width:${Math.min(100, (aT.stats?.xG || 1) * 40)}%;background:var(--green);"></div></div><span class="fs-06">xG ${(aT.stats?.xG || 0).toFixed(2)}</span></div><div class="stat-gauge"><span class="gauge-label">Défense</span><div class="gauge-track"><div class="gauge-fill" style="width:${Math.min(100, (aT.stats?.xGA || 1) * 40)}%;background:var(--red);"></div></div><span class="fs-06">xGA ${(aT.stats?.xGA || 0).toFixed(2)}</span></div><div class="text-sub fs-06 mt-1">🎯 Elo: ${aT.elo || lc.eloRef} | 📊 ${aT.matches || 0} matchs</div><div class="text-sub fs-06">📈 Forme: ${(aT.formLast5 || []).join(' ')}</div></div></div>`;
+
+            // ✅ AFFICHER TOUS LES MATCHS H2H (pas juste 5)
+            if (h2h.length > 0) {
+                html += `<div class="mt-1"><div class="text-sub fs-06">📜 Historique des confrontations (${h2h.length} matchs)</div><div class="h2h-list" style="grid-template-columns: repeat(${Math.min(5, h2h.length)}, 1fr);">`;
+                // Afficher tous les matchs jusqu'à 12
+                const allH2H = h2h.slice(0, 12);
+                for (const m of allH2H) {
+                    const isHome = m.homeTeam === hn;
+                    const score = `${m.FTHG}-${m.FTAG}`;
+                    const winner = isHome ? (m.FTHG > m.FTAG ? '🏠' : m.FTHG === m.FTAG ? '🤝' : '✈️') : (m.FTAG > m.FTHG ? '✈️' : m.FTAG === m.FTHG ? '🤝' : '🏠');
+                    html += `<div class="h2h-item"><div class="score">${winner} ${score}</div><div class="date">${Utils.formatDate(m.date)}</div></div>`;
+                }
+                html += `</div></div>`;
+            }
+
             if (result.h2hUsed && h2h.length > 0) html += `<div class="text-sub fs-06 mb-2">📜 H2H: ${h2h.length} confrontations (poids: ${((result.weights.h2h || 0) * 100).toFixed(0)}%)</div>`;
             const stake = Math.round(this.bankroll * 0.01);
             const hotPick = result.hotPick;
@@ -1531,18 +2032,27 @@
             const lv = document.getElementById('analysisLeagueFilter').value || 'Inconnu';
             if (!hn || !an) { showToast('Équipes manquantes', 'error'); return; }
             if (stake > this.bankroll) { showToast('Capital insuffisant', 'error'); return; }
-            DB.saveTracking({ date: new Date().toISOString(), homeTeam: hn, awayTeam: an, league: getLeagueInfo(lv).name, betType: market, odds: odds, stake: stake, closingOdds: null, result: 'pending', profit: 0 }).then(async () => { this.trackingData = await DB.getAllTracking(); this.renderTracking(); showToast(`Pari enregistré - Mise: ${stake.toLocaleString()} CDF`, 'success'); });
+            DB.saveTracking({ date: new Date().toISOString(), homeTeam: hn, awayTeam: an, league: getLeagueInfo(lv).name, betType: market, odds: odds, stake: stake, closingOdds: null, result: 'pending', profit: 0, actualScore: null }).then(async () => { this.trackingData = await DB.getAllTracking(); this.renderTracking(); showToast(`Pari enregistré - Mise: ${stake.toLocaleString()} CDF`, 'success'); });
         },
 
-        saveToHistory(a) { this.analysisHistory.unshift(a); if (this.analysisHistory.length > 20) this.analysisHistory = this.analysisHistory.slice(0, 20); try { localStorage.setItem('rp_history', JSON.stringify(this.analysisHistory)); } catch (e) {} this.renderHistory(); },
+        saveToHistory(a) { 
+            this.analysisHistory.unshift(a); 
+            if (this.analysisHistory.length > 20) this.analysisHistory = this.analysisHistory.slice(0, 20); 
+            try { localStorage.setItem('rp_history', JSON.stringify(this.analysisHistory)); } catch (e) {} 
+            this.renderHistory(); 
+        },
+        
         loadHistory() { try { const s = localStorage.getItem('rp_history'); if (s) this.analysisHistory = JSON.parse(s); } catch (e) { this.analysisHistory = []; } },
+        
         renderHistory() {
             const c = document.getElementById('historyList');
             if (!c) return;
             if (this.analysisHistory.length === 0) { c.innerHTML = '<div class="text-sub fs-06" style="padding:12px;">Aucune analyse récente</div>'; return; }
             c.innerHTML = this.analysisHistory.slice(0, 10).map((a, i) => `<div class="history-item" onclick="App.loadFromHistory(${i})"><div class="flex-between"><span class="fw-700 text-cyan">${Utils.escapeHTML(a.home)} vs ${Utils.escapeHTML(a.away)}</span><span class="text-sub fs-06">${new Date(a.timestamp).toLocaleDateString()}</span></div><div class="text-sub fs-06">${Utils.escapeHTML(a.league)} · ${a.terrain} · Confiance: ${a.result.confidence}%</div></div>`).join('');
         },
+        
         loadFromHistory(i) { const a = this.analysisHistory[i]; if (!a) return; document.getElementById('analysisHome').value = a.home; document.getElementById('analysisAway').value = a.away; document.getElementById('analysisLeagueFilter').value = getLeagueCode(a.league) || a.league; document.getElementById('terrainSelect').value = a.terrain; if (a.odds) { document.getElementById('bookOdd1').value = a.odds.home || ''; document.getElementById('bookOddX').value = a.odds.draw || ''; document.getElementById('bookOdd2').value = a.odds.away || ''; document.getElementById('bookOver25').value = a.odds.over25 || ''; document.getElementById('bookUnder25').value = a.odds.under25 || ''; } this.runAnalysis(); },
+        
         clearHistory() { if (confirm('Effacer l\'historique ?')) { this.analysisHistory = []; localStorage.removeItem('rp_history'); this.renderHistory(); showToast('Historique effacé', 'info'); } },
 
         // ============================================================
@@ -1559,12 +2069,12 @@
             let html = `<div class="fw-700 mb-2">🤖 Résultats auto-calibration (${market})</div>`;
             for (const [league, data] of Object.entries(results)) {
                 html += `<div class="calibration-result"><span class="fw-700 text-cyan">${Utils.escapeHTML(league)}</span> — Température: <span class="best">${data.bestTemp.toFixed(2)}</span> | Brier: ${data.bestBrier.toFixed(4)} | Matchs: ${data.matches}</div>`;
-                // Mettre à jour la config
                 const code = getLeagueCode(league);
                 if (code && LEAGUE_MAP[code]) {
                     if (market === '1X2') LEAGUE_MAP[code].temp1X2 = data.bestTemp;
                     else if (market === 'Over25') LEAGUE_MAP[code].tempOver = data.bestTemp;
                     else if (market === 'BTTS') LEAGUE_MAP[code].tempBTTS = data.bestTemp;
+                    DB.saveLeagueAverage(league, { temperature1X2: LEAGUE_MAP[code].temp1X2, temperatureOver: LEAGUE_MAP[code].tempOver, temperatureBTTS: LEAGUE_MAP[code].tempBTTS });
                 }
             }
             ctr.innerHTML = html;
@@ -1572,72 +2082,98 @@
         },
 
         // ============================================================
-        //  RECALC ELO
+        //  RECALC ELO ET XG
         // ============================================================
         async recalcElos() {
             if (this.isRecalcRunning) { showToast('Recalcul déjà en cours', 'alert'); return; }
             const matches = this.matches;
             if (matches.length < 2) { showToast('Pas assez de matchs', 'error'); return; }
             this.isRecalcRunning = true;
-            showToast('🔄 Recalcul des Elos en cours...', 'info');
+            showToast('🔄 Recalcul des Elos et xG en cours...', 'info');
             document.getElementById('importProgress').classList.remove('hidden');
             document.getElementById('importProgressFill').style.width = '0%';
             document.getElementById('importProgressText').textContent = '0%';
 
-            // Initialiser toutes les équipes avec leur Elo de référence par ligue
-            const teamsMap = {};
-            const allTeams = new Set();
-            for (const m of matches) {
-                allTeams.add(m.homeTeam); allTeams.add(m.awayTeam);
-            }
-            for (const name of allTeams) {
-                const existing = await DB.getTeam(name);
-                const league = matches.find(m => m.homeTeam === name || m.awayTeam === name)?.league || 'Inconnu';
-                const cfg = getLeagueConfig(league);
-                if (existing) {
-                    teamsMap[name] = { ...existing, elo: existing.elo || cfg.eloRef || 1500, stats: existing.stats || { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 }, formLast5: existing.formLast5 || ['D', 'D', 'D', 'D', 'D'] };
-                } else {
-                    teamsMap[name] = { name, elo: cfg.eloRef || 1500, matches: 0, goalsScored: 0, goalsConceded: 0, xG: 1.0, xGA: 1.0, stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'], league };
+            try {
+                const existingTeams = await DB.getAllTeams();
+                const xGTeams = xGEngine.recalculateAllXG(matches, existingTeams);
+                
+                for (const team of xGTeams) {
+                    const existing = existingTeams.find(t => t.name === team.name);
+                    if (existing) {
+                        team.elo = existing.elo || 1500;
+                    }
+                    await DB.saveTeam(team);
                 }
-            }
 
-            // Trier les matchs par date
-            const sorted = [...matches].sort((a, b) => (Utils.parseDate(a.date) || new Date(0)) - (Utils.parseDate(b.date) || new Date(0)));
-
-            let processed = 0;
-            const total = sorted.length;
-            for (const match of sorted) {
-                const hT = teamsMap[match.homeTeam], aT = teamsMap[match.awayTeam];
-                if (!hT || !aT) continue;
-                const leagueConfig = getLeagueConfig(match.league || match.div);
-                const strength = leagueConfig.eloRef ? leagueConfig.eloRef / 1500 : 1.0;
-                const er = EngineV18.updateElo(hT, aT, match.FTHG || 0, match.FTAG || 0, 20, strength);
-                hT.elo = er.homeNewElo;
-                aT.elo = er.awayNewElo;
-                hT.matches = (hT.matches || 0) + 1;
-                aT.matches = (aT.matches || 0) + 1;
-                const hR = match.FTHG > match.FTAG ? 'W' : match.FTHG === match.FTAG ? 'D' : 'L';
-                const aR = match.FTAG > match.FTHG ? 'W' : match.FTAG === match.FTHG ? 'D' : 'L';
-                hT.formLast5 = [...(hT.formLast5 || []), hR].slice(-5);
-                aT.formLast5 = [...(aT.formLast5 || []), aR].slice(-5);
-                processed++;
-                if (processed % 50 === 0 || processed === total) {
-                    const pct = Math.round((processed / total) * 100);
-                    document.getElementById('importProgressFill').style.width = pct + '%';
-                    document.getElementById('importProgressText').textContent = pct + '%';
+                const teamsMap = {};
+                const allTeams = new Set();
+                for (const m of matches) {
+                    allTeams.add(m.homeTeam);
+                    allTeams.add(m.awayTeam);
                 }
+
+                for (const name of allTeams) {
+                    if (!name) continue;
+                    const teamFromDB = await DB.getTeam(name);
+                    const league = matches.find(m => m.homeTeam === name || m.awayTeam === name)?.league || 'Inconnu';
+                    const cfg = getLeagueConfig(league);
+                    if (teamFromDB) {
+                        teamsMap[name] = { ...teamFromDB, elo: teamFromDB.elo || cfg.eloRef || 1500, stats: teamFromDB.stats || { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 }, formLast5: teamFromDB.formLast5 || ['D', 'D', 'D', 'D', 'D'] };
+                    } else {
+                        teamsMap[name] = { name, elo: cfg.eloRef || 1500, matches: 0, goalsScored: 0, goalsConceded: 0, xG: 1.0, xGA: 1.0, stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'], league };
+                    }
+                }
+
+                const sorted = [...matches].sort((a, b) => (Utils.parseDate(a.date) || new Date(0)) - (Utils.parseDate(b.date) || new Date(0)));
+
+                let processed = 0;
+                const total = sorted.length;
+                for (const match of sorted) {
+                    const hT = teamsMap[match.homeTeam], aT = teamsMap[match.awayTeam];
+                    if (!hT || !aT) continue;
+                    const leagueConfig = getLeagueConfig(match.league || match.div);
+                    const strength = leagueConfig.eloRef ? leagueConfig.eloRef / 1500 : 1.0;
+                    
+                    try {
+                        const er = EngineV18.updateElo(hT, aT, match.FTHG || 0, match.FTAG || 0, 20, strength);
+                        hT.elo = er.homeNewElo;
+                        aT.elo = er.awayNewElo;
+                        hT.matches = (hT.matches || 0) + 1;
+                        aT.matches = (aT.matches || 0) + 1;
+                        const hR = match.FTHG > match.FTAG ? 'W' : match.FTHG === match.FTAG ? 'D' : 'L';
+                        const aR = match.FTAG > match.FTHG ? 'W' : match.FTAG === match.FTHG ? 'D' : 'L';
+                        hT.formLast5 = [...(hT.formLast5 || []), hR].slice(-5);
+                        aT.formLast5 = [...(aT.formLast5 || []), aR].slice(-5);
+                    } catch (e) {
+                        console.warn('⚠️ Erreur mise à jour Elo pour', match.homeTeam, 'vs', match.awayTeam, e);
+                    }
+                    
+                    processed++;
+                    if (processed % 50 === 0 || processed === total) {
+                        const pct = Math.round((processed / total) * 100);
+                        document.getElementById('importProgressFill').style.width = pct + '%';
+                        document.getElementById('importProgressText').textContent = pct + '%';
+                    }
+                }
+
+                const teamsToSave = Object.values(teamsMap);
+                for (const t of teamsToSave) { 
+                    if (t.name) await DB.saveTeam(t); 
+                }
+                this.teams = await DB.getAllTeams();
+
+                document.getElementById('importProgress').classList.add('hidden');
+                this.isRecalcRunning = false;
+                this.renderEloPage();
+                this.refreshUI();
+                showToast(`✅ Recalcul terminé — ${total} matchs traités, ${teamsToSave.length} équipes`, 'success');
+            } catch (e) {
+                document.getElementById('importProgress').classList.add('hidden');
+                this.isRecalcRunning = false;
+                showToast('❌ Erreur lors du recalcul: ' + e.message, 'error');
+                console.error('Recalc error:', e);
             }
-
-            // Sauvegarder toutes les équipes
-            const teamsToSave = Object.values(teamsMap);
-            for (const t of teamsToSave) { await DB.saveTeam(t); }
-            this.teams = await DB.getAllTeams();
-
-            document.getElementById('importProgress').classList.add('hidden');
-            this.isRecalcRunning = false;
-            this.renderEloPage();
-            this.refreshUI();
-            showToast(`✅ Recalcul Elo terminé — ${total} matchs traités, ${teamsToSave.length} équipes`, 'success');
         },
 
         // ============================================================
@@ -1661,7 +2197,6 @@
             document.getElementById('eloMax').textContent = max;
             document.getElementById('eloCount').textContent = teams.length;
 
-            // Distribution
             const bins = 20;
             const minE = Math.max(1000, Math.min(...elos) - 50);
             const maxE = Math.min(2100, Math.max(...elos) + 50);
@@ -1679,17 +2214,15 @@
                 return `<div class="bar" style="height:${Math.max(2, height)}%;"><span class="label">${label}</span></div>`;
             }).join('');
 
-            // Top équipes
             const sorted = [...teams].sort((a, b) => (b.elo || 1500) - (a.elo || 1500));
             document.getElementById('eloTopList').innerHTML = sorted.slice(0, 20).map((t, i) =>
                 `<div class="flex-between" style="padding:4px 8px;border-bottom:1px solid var(--border);font-size:0.6rem;">
-                    <span>${i+1}. ${Utils.escapeHTML(t.name)}</span>
-                    <span class="fw-700 text-cyan">${t.elo || 1500}</span>
-                    <span class="text-sub">${t.matches || 0} matchs</span>
-                </div>`
+                        <span>${i+1}. ${Utils.escapeHTML(t.name)}</span>
+                        <span class="fw-700 text-cyan">${t.elo || 1500}</span>
+                        <span class="text-sub">${t.matches || 0} matchs</span>
+                    </div>`
             ).join('');
 
-            // Références par ligue
             const leagues = [...new Set(this.matches.map(m => m.league).filter(Boolean))];
             const leagueRefs = leagues.slice(0, 20).map(l => {
                 const cfg = getLeagueConfig(l);
@@ -1752,6 +2285,14 @@
                     else ctx.lineTo(x, y);
                 }
                 ctx.stroke();
+                for (let i = 0; i < this.capitalHistory.length; i++) {
+                    const x = pad.left + (i / (this.capitalHistory.length - 1)) * cw;
+                    const y = pad.top + ch * (1 - (this.capitalHistory[i].bankroll - minV) / range);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = this.capitalHistory[i].profit >= 0 ? 'var(--green)' : 'var(--red)';
+                    ctx.fill();
+                }
                 const initY = pad.top + ch * (1 - (100000 - minV) / range);
                 ctx.beginPath();
                 ctx.strokeStyle = 'var(--gold)';
@@ -1807,27 +2348,32 @@
             const list = document.getElementById('trackingList');
             const filtered = this.trackingFilter === 'all' ? this.trackingData : this.trackingData.filter(b => b.result === this.trackingFilter);
             if (filtered.length === 0) { list.innerHTML = '<div class="text-sub fs-06" style="padding:12px;">Aucun pari</div>'; return; }
-            let h = `<div class="tracking-grid" style="display:grid;grid-template-columns:1.2fr 0.7fr 0.5fr 0.5fr 0.7fr 0.6fr 0.6fr 0.6fr 0.5fr;gap:6px;padding:6px 0;border-bottom:2px solid var(--cyan);font-size:0.55rem;font-weight:700;color:var(--cyan);"><span>Match</span><span>Type</span><span>Cote</span><span>Mise</span><span>Statut</span><span>Profit</span><span>Score</span><span>Actions</span></div>`;
+            let h = `<div class="tracking-grid header" style="grid-template-columns:1.2fr 0.6fr 0.5fr 0.5fr 0.6fr 0.5fr 0.5fr 0.5fr 0.6fr 0.5fr;">
+                    <span>Match</span><span>Type</span><span>Cote</span><span>Mise</span><span>Score</span><span>Statut</span><span>Profit</span><span>Résultat</span><span>Actions</span>
+                </div>`;
             filtered.forEach(bet => {
                 const sb = bet.result === 'win' ? '<span class="badge badge-green">✅</span>' : bet.result === 'loss' ? '<span class="badge badge-red">❌</span>' : '<span class="badge badge-cyan">⏳</span>';
                 const pc = bet.profit > 0 ? 'var(--green)' : bet.profit < 0 ? 'var(--red)' : 'var(--sub)';
-                h += `<div class="tracking-grid" style="display:grid;grid-template-columns:1.2fr 0.7fr 0.5fr 0.5fr 0.7fr 0.6fr 0.6fr 0.6fr 0.5fr;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.55rem;align-items:center;">
-                    <span class="fw-700 text-cyan">${Utils.escapeHTML(bet.homeTeam)} vs ${Utils.escapeHTML(bet.awayTeam)}</span>
-                    <span><span class="badge badge-cyan">${Utils.escapeHTML(bet.betType)}</span></span>
-                    <span>${bet.odds?.toFixed(2) || '?'}</span>
-                    <span>${bet.stake || 0} CDF</span>
-                    <span>${sb}</span>
-                    <span style="color:${pc};font-weight:700;">${bet.profit >= 0 ? '+' : ''}${bet.profit?.toFixed(2) || 0} CDF</span>
-                    <span>${bet.actualScore || '-'}</span>
-                    <span class="flex gap-1">
-                        <select onchange="App.updateBetResult(${bet.id}, this.value)" style="padding:2px 4px;font-size:0.45rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);width:auto;">
-                            <option value="pending" ${bet.result === 'pending' ? 'selected' : ''}>⏳</option>
-                            <option value="win" ${bet.result === 'win' ? 'selected' : ''}>✅</option>
-                            <option value="loss" ${bet.result === 'loss' ? 'selected' : ''}>❌</option>
-                        </select>
-                        <button class="btn btn-sm btn-danger" onclick="App.deleteBet(${bet.id})" style="padding:1px 6px;font-size:0.4rem;">✕</button>
-                    </span>
-                </div>`;
+                const scoreDisplay = bet.actualScore || '-';
+                h += `<div class="tracking-grid" style="grid-template-columns:1.2fr 0.6fr 0.5fr 0.5fr 0.6fr 0.5fr 0.5fr 0.5fr 0.6fr 0.5fr;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.55rem;align-items:center;">
+                        <span class="fw-700 text-cyan">${Utils.escapeHTML(bet.homeTeam)} vs ${Utils.escapeHTML(bet.awayTeam)}</span>
+                        <span><span class="badge badge-cyan">${Utils.escapeHTML(bet.betType)}</span></span>
+                        <span>${bet.odds?.toFixed(2) || '?'}</span>
+                        <span>${bet.stake || 0} CDF</span>
+                        <span class="fw-700 text-gold">${scoreDisplay}</span>
+                        <span>${sb}</span>
+                        <span style="color:${pc};font-weight:700;">${bet.profit >= 0 ? '+' : ''}${bet.profit?.toFixed(2) || 0} CDF</span>
+                        <span>
+                            <select onchange="App.updateBetResult(${bet.id}, this.value)" style="padding:2px 4px;font-size:0.45rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);width:auto;">
+                                <option value="pending" ${bet.result === 'pending' ? 'selected' : ''}>⏳</option>
+                                <option value="win" ${bet.result === 'win' ? 'selected' : ''}>✅</option>
+                                <option value="loss" ${bet.result === 'loss' ? 'selected' : ''}>❌</option>
+                            </select>
+                        </span>
+                        <span class="flex gap-1">
+                            <button class="btn btn-sm btn-danger" onclick="App.deleteBet(${bet.id})" style="padding:1px 6px;font-size:0.4rem;">✕</button>
+                        </span>
+                    </div>`;
             });
             list.innerHTML = h;
             this.updateTrackingSummary();
@@ -1907,8 +2453,20 @@
             document.getElementById('trackProfit').style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
         },
 
+        exportTrackingCSV() {
+            if (this.trackingData.length === 0) { showToast('Aucune donnée', 'error'); return; }
+            let csv = 'Date;Domicile;Extérieur;Type;Cote;Mise;Score;Résultat;Profit\n';
+            this.trackingData.forEach(b => {
+                csv += `${b.date || ''};${b.homeTeam || ''};${b.awayTeam || ''};${b.betType || ''};${b.odds || 0};${b.stake || 0};${b.actualScore || '-'};${b.result || 'pending'};${b.profit || 0}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `tracking_${new Date().toISOString().slice(0,10)}.csv`; a.click(); URL.revokeObjectURL(url);
+            showToast('Export CSV terminé', 'success');
+        },
+
         // ============================================================
-        //  SUIVI MATCH
+        //  SUBMIT MATCH RESULT - CORRIGÉ AVEC SYNCHRONISATION
         // ============================================================
         async submitMatchResult() {
             const hg = parseInt(document.getElementById('resultHomeGoals').value);
@@ -1920,7 +2478,22 @@
             const stake = Math.round(this.bankroll * 0.01);
             const betType = prompt(`📊 Type de pari pour ${hn} vs ${an}\n\nMise: ${stake.toLocaleString()} CDF\nCapital: ${this.bankroll.toLocaleString()} CDF\n\n1, X, 2, 1X, X2, Over25, Under25, Over15, Under15, Over35, Under35, Over05, Under05, BTTS`, '1');
             if (betType === null) { showToast('Annulé', 'info'); return; }
-            const oddMap = { '1': document.getElementById('bookOdd1').value, 'X': document.getElementById('bookOddX').value, '2': document.getElementById('bookOdd2').value, '1X': document.getElementById('bookOdd1X').value, 'X2': document.getElementById('bookOddX2').value, 'Over25': document.getElementById('bookOver25').value, 'Under25': document.getElementById('bookUnder25').value, 'Over15': document.getElementById('bookOver15').value, 'Under15': document.getElementById('bookUnder15').value, 'Over35': document.getElementById('bookOver35').value, 'Under35': document.getElementById('bookUnder35').value, 'Over05': document.getElementById('bookOver05').value, 'Under05': document.getElementById('bookUnder05').value, 'BTTS': document.getElementById('bookBTTS').value };
+            const oddMap = { 
+                '1': document.getElementById('bookOdd1').value, 
+                'X': document.getElementById('bookOddX').value, 
+                '2': document.getElementById('bookOdd2').value, 
+                '1X': document.getElementById('bookOdd1X').value, 
+                'X2': document.getElementById('bookOddX2').value, 
+                'Over25': document.getElementById('bookOver25').value, 
+                'Under25': document.getElementById('bookUnder25').value, 
+                'Over15': document.getElementById('bookOver15').value, 
+                'Under15': document.getElementById('bookUnder15').value, 
+                'Over35': document.getElementById('bookOver35').value, 
+                'Under35': document.getElementById('bookUnder35').value, 
+                'Over05': document.getElementById('bookOver05').value, 
+                'Under05': document.getElementById('bookUnder05').value, 
+                'BTTS': document.getElementById('bookBTTS').value 
+            };
             const odds = parseFloat(oddMap[betType] || 0);
             if (isNaN(odds) || odds <= 1.01) { showToast('Cote invalide', 'error'); return; }
             const a1X2 = hg > ag ? '1' : (hg === ag ? 'X' : '2');
@@ -1947,39 +2520,133 @@
             const result = isWin ? 'win' : 'loss';
             const oldCapital = this.bankroll;
             this.bankroll += profit;
-            this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: Math.round(this.bankroll), profit: Math.round(this.bankroll - 100000), operation: `${hn} vs ${an} - ${resultLabel}`, oldBankroll: oldCapital, stake, odds, isWin, profitAmount: profit, score: `${hg}-${ag}` });
+            this.capitalHistory.push({ 
+                date: new Date().toISOString().slice(0, 10), 
+                bankroll: Math.round(this.bankroll), 
+                profit: Math.round(this.bankroll - 100000), 
+                operation: `${hn} vs ${an} - ${resultLabel}`, 
+                oldBankroll: oldCapital, 
+                stake, odds, isWin, profitAmount: profit, 
+                score: `${hg}-${ag}` 
+            });
             this.saveCapitalHistory();
-            await DB.saveTracking({ date: new Date().toISOString(), homeTeam: hn, awayTeam: an, league: document.getElementById('analysisLeagueFilter').value || 'Inconnu', betType: resultLabel, odds, stake, closingOdds: null, result, profit, actualScore: `${hg}-${ag}` });
-            let hT = await DB.getTeam(hn), aT = await DB.getTeam(an);
+
+            await DB.saveTracking({ 
+                date: new Date().toISOString(), 
+                homeTeam: hn, 
+                awayTeam: an, 
+                league: document.getElementById('analysisLeagueFilter').value || 'Inconnu', 
+                betType: resultLabel, 
+                odds, 
+                stake, 
+                closingOdds: null, 
+                result, 
+                profit, 
+                actualScore: `${hg}-${ag}` 
+            });
+
+            let hT = await DB.getTeam(hn);
+            let aT = await DB.getTeam(an);
             const lv = document.getElementById('analysisLeagueFilter').value || 'E0';
             const lc = getLeagueConfig(lv);
-            if (!hT) hT = { name: hn, elo: lc.eloRef || 1500, matches: 0, goalsScored: 0, goalsConceded: 0, xG: 0, xGA: 0, stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'] };
-            if (!aT) aT = { name: an, elo: lc.eloRef || 1500, matches: 0, goalsScored: 0, goalsConceded: 0, xG: 0, xGA: 0, stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, formLast5: ['D', 'D', 'D', 'D', 'D'] };
+            
+            if (!hT) hT = { 
+                name: hn, 
+                elo: lc.eloRef || 1500, 
+                matches: 0, 
+                goalsScored: 0, 
+                goalsConceded: 0, 
+                xG: 1.0, 
+                xGA: 1.0, 
+                stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, 
+                formLast5: ['D', 'D', 'D', 'D', 'D'] 
+            };
+            
+            if (!aT) aT = { 
+                name: an, 
+                elo: lc.eloRef || 1500, 
+                matches: 0, 
+                goalsScored: 0, 
+                goalsConceded: 0, 
+                xG: 1.0, 
+                xGA: 1.0, 
+                stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, 
+                formLast5: ['D', 'D', 'D', 'D', 'D'] 
+            };
+            
             const strength = lc.eloRef ? lc.eloRef / 1500 : 1.0;
             const er = EngineV18.updateElo(hT, aT, hg, ag, 20, strength);
-            hT.elo = er.homeNewElo; aT.elo = er.awayNewElo;
-            hT.matches = (hT.matches || 0) + 1; aT.matches = (aT.matches || 0) + 1;
-            hT.goalsScored = (hT.goalsScored || 0) + hg; hT.goalsConceded = (hT.goalsConceded || 0) + ag;
-            aT.goalsScored = (aT.goalsScored || 0) + ag; aT.goalsConceded = (aT.goalsConceded || 0) + hg;
-            hT.xG = hT.goalsScored / Math.max(1, hT.matches); hT.xGA = hT.goalsConceded / Math.max(1, hT.matches);
-            aT.xG = aT.goalsScored / Math.max(1, aT.matches); aT.xGA = aT.goalsConceded / Math.max(1, aT.matches);
-            hT.stats = { xG: hT.xG, xGA: hT.xGA, goalsPerMatch: hT.xG, shotsOnTargetPerMatch: 0 };
-            aT.stats = { xG: aT.xG, xGA: aT.xGA, goalsPerMatch: aT.xG, shotsOnTargetPerMatch: 0 };
+            hT.elo = er.homeNewElo; 
+            aT.elo = er.awayNewElo;
+            
+            hT.matches = (hT.matches || 0) + 1; 
+            aT.matches = (aT.matches || 0) + 1;
+            hT.goalsScored = (hT.goalsScored || 0) + hg; 
+            hT.goalsConceded = (hT.goalsConceded || 0) + ag;
+            aT.goalsScored = (aT.goalsScored || 0) + ag; 
+            aT.goalsConceded = (aT.goalsConceded || 0) + hg;
+            
+            const avgGoalsTeam = hT.goalsScored / Math.max(1, hT.matches);
+            const avgConcededTeam = hT.goalsConceded / Math.max(1, hT.matches);
+            
+            const leagueAvgGoals = lc.avgGoals || 2.7;
+            
+            hT.xG = xGEngine.calculateXGFromGoals(avgGoalsTeam, true, leagueAvgGoals);
+            hT.xGA = xGEngine.calculateXGFromGoals(avgConcededTeam, true, leagueAvgGoals);
+            aT.xG = xGEngine.calculateXGFromGoals(avgConcededTeam, false, leagueAvgGoals);
+            aT.xGA = xGEngine.calculateXGFromGoals(avgGoalsTeam, false, leagueAvgGoals);
+            
+            if (hT.xG < 0.6) hT.xG = 0.8;
+            if (hT.xGA < 0.6) hT.xGA = 0.8;
+            if (aT.xG < 0.6) aT.xG = 0.8;
+            if (aT.xGA < 0.6) aT.xGA = 0.8;
+            
+            hT.stats = { 
+                xG: hT.xG, 
+                xGA: hT.xGA, 
+                goalsPerMatch: Math.min(3.5, avgGoalsTeam), 
+                shotsOnTargetPerMatch: 0 
+            };
+            aT.stats = { 
+                xG: aT.xG, 
+                xGA: aT.xGA, 
+                goalsPerMatch: Math.min(3.5, avgConcededTeam), 
+                shotsOnTargetPerMatch: 0 
+            };
+            
             const hR = hg > ag ? 'W' : (hg === ag ? 'D' : 'L');
             const aR = ag > hg ? 'W' : (ag === hg ? 'D' : 'L');
             hT.formLast5 = [...(hT.formLast5 || []), hR].slice(-5);
             aT.formLast5 = [...(aT.formLast5 || []), aR].slice(-5);
-            await DB.saveTeam(hT); await DB.saveTeam(aT);
-            const me = { season: Utils.extractSeason(new Date().toISOString()) || 'Inconnu', league: lc.name, div: lv, date: new Date().toISOString().slice(0, 10), homeTeam: hn, awayTeam: an, FTHG: hg, FTAG: ag, FTR: hR === 'W' ? 'H' : (hR === 'D' ? 'D' : 'A'), PSH: parseFloat(document.getElementById('bookOdd1').value) || 0, PSD: parseFloat(document.getElementById('bookOddX').value) || 0, PSA: parseFloat(document.getElementById('bookOdd2').value) || 0, 'P>2.5': parseFloat(document.getElementById('bookOver25').value) || 0, 'P<2.5': parseFloat(document.getElementById('bookUnder25').value) || 0 };
+            
+            await DB.saveTeam(hT); 
+            await DB.saveTeam(aT);
+
+            const me = { 
+                season: Utils.extractSeason(new Date().toISOString()) || 'Inconnu', 
+                league: lc.name, 
+                div: lv, 
+                date: new Date().toISOString().slice(0, 10), 
+                homeTeam: hn, 
+                awayTeam: an, 
+                FTHG: hg, 
+                FTAG: ag, 
+                FTR: hR === 'W' ? 'H' : (hR === 'D' ? 'D' : 'A'), 
+                PSH: parseFloat(document.getElementById('bookOdd1').value) || 0, 
+                PSD: parseFloat(document.getElementById('bookOddX').value) || 0, 
+                PSA: parseFloat(document.getElementById('bookOdd2').value) || 0, 
+                'P>2.5': parseFloat(document.getElementById('bookOver25').value) || 0, 
+                'P<2.5': parseFloat(document.getElementById('bookUnder25').value) || 0,
+                Home_xG: hT.xG,
+                Away_xG: aT.xG,
+                Home_xGA: hT.xGA,
+                Away_xGA: aT.xGA
+            };
             await DB.saveMatch(me);
-            this.matches = await DB.getAllMatches();
-            this.teams = await DB.getAllTeams();
-            this.trackingData = await DB.getAllTracking();
-            this.refreshUI();
-            await this.populateSelectors();
-            this.renderTracking();
-            this.renderCapitalPage();
-            this.updateRiskDisplay();
+
+            // ✅ SYNCHRONISATION COMPLÈTE
+            await this.refreshAllData();
+
             const emoji = isWin ? '✅' : '❌';
             const profitDisplay = profit >= 0 ? `+${profit.toFixed(2)}` : profit.toFixed(2);
             showToast(`${emoji} ${hn} ${hg}-${ag} ${an} | ${resultLabel} | ${profitDisplay} CDF | Capital: ${this.bankroll.toLocaleString()} CDF`, isWin ? 'success' : 'error');
@@ -2129,7 +2796,7 @@
         searchTeams() {
             const q = document.getElementById('searchInput').value.trim().toLowerCase();
             const list = document.getElementById('teamsList');
-            const filtered = q ? this.teams.filter(t => t.name.toLowerCase().includes(q)) : this.teams;
+            const filtered = q ? this.teams.filter(t => t.name && t.name.toLowerCase().includes(q)) : this.teams;
             if (filtered.length === 0) { list.innerHTML = '<div class="text-sub" style="padding:12px;">Aucune équipe</div>'; return; }
             list.innerHTML = filtered.map(t =>
                 `<div class="flex-between" style="padding:8px 12px;border-bottom:1px solid var(--border);"><div><div class="fw-700">${Utils.escapeHTML(t.name)}</div><div class="text-sub fs-06">Elo: ${t.elo || 1500} | Matchs: ${t.matches || 0} | xG: ${(t.xG || 0).toFixed(2)}</div></div><div class="flex gap-1"><button class="btn btn-sm btn-secondary" onclick="App.loadTeamToAnalysis('${Utils.escapeHTML(t.name)}')">📊</button><button class="btn btn-sm btn-gold" onclick="App.editTeam('${Utils.escapeHTML(t.name)}')">✏️</button></div></div>`
@@ -2149,9 +2816,15 @@
             if (nx === null) return;
             const xG = parseFloat(nx);
             if (isNaN(xG) || xG < 0 || xG > 5) { showToast('xG invalide (0-5)', 'error'); return; }
-            t.elo = elo; t.xG = xG; t.stats = t.stats || {}; t.stats.xG = xG; t.stats.goalsPerMatch = xG;
+            t.xG = xG;
+            t.xGA = xG * 0.7;
+            t.xG_manual = true;
+            t.stats = t.stats || {};
+            t.stats.xG = xG;
+            t.stats.xGA = xG * 0.7;
+            t.stats.goalsPerMatch = xG;
             await DB.saveTeam(t);
-            this.teams = await DB.getAllTeams();
+            await this.refreshAllData();
             this.searchTeams();
             showToast(`${name} mis à jour`, 'success');
         },
@@ -2192,7 +2865,8 @@
             const lines = raw.split('\n').filter(l => l.trim());
             if (lines.length < 2) { showToast('Format CSV invalide', 'error'); return; }
             const sep = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
-            const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+            let firstLine = lines[0].replace(/^\uFEFF/, '');
+            const headers = firstLine.split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
             let found = {}, missing = [];
             for (const [key, names] of Object.entries(COLUMN_MAPPING)) {
                 const foundCol = findColumn(headers, names);
@@ -2217,7 +2891,8 @@
             for (const h of headers) tableHtml += `<th>${Utils.escapeHTML(h)}</th>`;
             tableHtml += `</tr></thead><tbody>`;
             for (const line of sample) {
-                const cols = Utils.parseCSVLine(line, sep);
+                const cleanLine = line.replace(/^\uFEFF/, '');
+                const cols = Utils.parseCSVLine(cleanLine, sep);
                 tableHtml += `<tr>`;
                 for (const col of cols) tableHtml += `<td>${Utils.escapeHTML(col)}</td>`;
                 tableHtml += `</tr>`;
@@ -2253,22 +2928,47 @@
             try {
                 const data = JSON.parse(raw);
                 let imported = 0;
-                if (data.teams && Array.isArray(data.teams)) { for (const team of data.teams) await DB.saveTeam(team); }
-                if (data.matches && Array.isArray(data.matches)) { await DB.saveMatches(data.matches); imported = data.matches.length; }
-                if (data.tracking && Array.isArray(data.tracking)) { for (const t of data.tracking) await DB.saveTracking(t); }
+                const existingMatches = await DB.getAllMatches();
+                const existingSet = new Set();
+                for (const m of existingMatches) {
+                    const key = `${m.homeTeam}|${m.awayTeam}|${m.date}`;
+                    existingSet.add(key);
+                }
+                
+                if (data.matches && data.matches.length > 0) {
+                    const newMatches = [];
+                    for (const m of data.matches) {
+                        const key = `${m.homeTeam}|${m.awayTeam}|${m.date}`;
+                        if (!existingSet.has(key)) {
+                            newMatches.push(m);
+                        }
+                    }
+                    if (newMatches.length > 0) {
+                        await DB.saveMatches(newMatches);
+                        imported = newMatches.length;
+                    }
+                    
+                    const allMatches = [...existingMatches, ...newMatches];
+                    const xGTeams = xGEngine.recalculateAllXG(allMatches, data.teams || []);
+                    for (const team of xGTeams) {
+                        const existing = (data.teams || []).find(t => t.name === team.name);
+                        if (existing) {
+                            team.elo = existing.elo || 1500;
+                        }
+                        await DB.saveTeam(team);
+                    }
+                }
+                
+                if (data.tracking && Array.isArray(data.tracking)) { 
+                    for (const t of data.tracking) await DB.saveTracking(t); 
+                }
                 if (data.bankroll) { this.bankroll = data.bankroll; this.saveCapitalHistory(); }
-                this.matches = await DB.getAllMatches();
-                this.teams = await DB.getAllTeams();
-                this.trackingData = await DB.getAllTracking();
-                this.refreshUI();
-                await this.populateSelectors();
-                this.renderTracking();
-                this.renderCapitalPage();
-                this.updateRiskDisplay();
-                document.getElementById('importStatus').innerHTML = `<span style="color:var(--green)">✅ JSON importé — ${imported} matchs</span>`;
-                showToast(`JSON importé`, 'success');
+                
+                await this.refreshAllData();
+                
+                document.getElementById('importStatus').innerHTML = `<span style="color:var(--green)">✅ JSON importé — ${imported} nouveaux matchs, xG recalculé</span>`;
+                showToast(`JSON importé avec xG recalculé (${imported} nouveaux)`, 'success');
                 document.getElementById('matchesInput').value = '';
-                if (imported > 0 && confirm('Voulez-vous recalculer les Elos ?')) this.recalcElos();
             } catch (e) {
                 document.getElementById('importStatus').innerHTML = `<span style="color:var(--red)">❌ Erreur JSON: ${e.message}</span>`;
                 showToast('Erreur import JSON', 'error');
@@ -2280,82 +2980,136 @@
                 const lines = raw.split('\n').filter(l => l.trim());
                 if (lines.length < 2) { showToast('Format CSV invalide', 'error'); return; }
                 if (lines.length > 100001) { showToast('Maximum 100 000 lignes', 'error'); return; }
+                
                 const sep = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
-                const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+                let firstLine = lines[0].replace(/^\uFEFF/, '');
+                const headers = firstLine.split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+                
                 const columnMap = {};
                 for (const [key, names] of Object.entries(COLUMN_MAPPING)) {
                     const found = findColumn(headers, names);
                     if (found) { columnMap[key] = found; }
                 }
+                
+                if (!columnMap.hg || !columnMap.ag) {
+                    const testParts = Utils.parseCSVLine(lines[1], sep);
+                    if (testParts.length > 7) {
+                        const hgTest = parseInt(testParts[5]);
+                        const agTest = parseInt(testParts[6]);
+                        if (!isNaN(hgTest) && !isNaN(agTest)) {
+                            columnMap.hg = 'FTHG';
+                            columnMap.ag = 'FTAG';
+                        }
+                    }
+                }
+                
                 const required = ['home', 'away', 'hg', 'ag'];
                 const missingRequired = required.filter(k => !columnMap[k]);
                 if (missingRequired.length > 0) {
                     showToast(`Colonnes obligatoires manquantes: ${missingRequired.join(', ')}`, 'error');
                     return;
                 }
+                
                 const matches = [];
                 let imp = 0, ign = 0;
                 document.getElementById('importProgress').classList.remove('hidden');
                 const totalLines = lines.length - 1;
+                
+                const existingMatches = await DB.getAllMatches();
+                const existingSet = new Set();
+                for (const m of existingMatches) {
+                    const key = `${m.homeTeam}|${m.awayTeam}|${m.date}`;
+                    existingSet.add(key);
+                }
+                
                 for (let i = 1; i < lines.length; i++) {
-                    const parts = Utils.parseCSVLine(lines[i], sep);
+                    const cleanLine = lines[i].replace(/^\uFEFF/, '');
+                    const parts = Utils.parseCSVLine(cleanLine, sep);
                     const maxIdx = Math.max(...Object.values(columnMap).map(c => headers.indexOf(c)));
                     if (parts.length < maxIdx + 1) { ign++; continue; }
+                    
                     const getValue = (key) => {
                         const colName = columnMap[key];
                         if (colName === undefined) return '';
                         const idx = headers.indexOf(colName);
                         return idx >= 0 && idx < parts.length ? parts[idx] : '';
                     };
+                    
                     const home = Utils.normalizeTeam(getValue('home'));
                     const away = Utils.normalizeTeam(getValue('away'));
                     if (!home || !away) { ign++; continue; }
-                    const hg = parseInt(getValue('hg')) || 0;
-                    const ag = parseInt(getValue('ag')) || 0;
-                    const res = getValue('res') || (hg > ag ? 'H' : hg === ag ? 'D' : 'A');
-                    const date = getValue('date') || '';
+                    
+                    let hg = parseInt(getValue('hg')) || 0;
+                    let ag = parseInt(getValue('ag')) || 0;
+                    
+                    if (hg === 0 && ag === 0 && parts.length > 7) {
+                        const posHg = parseInt(parts[5]);
+                        const posAg = parseInt(parts[6]);
+                        if (!isNaN(posHg) && !isNaN(posAg)) {
+                            hg = posHg;
+                            ag = posAg;
+                        }
+                    }
+                    
+                    const date = getValue('date') || Utils.getDefaultDate();
                     const league = getValue('league') || 'Inconnu';
                     const season = getValue('season') || Utils.extractSeason(date) || 'Inconnu';
-                    const match = { season, league: getLeagueInfo(league).name || league, div: league, country: getValue('country') || '', date, time: getValue('time') || '', homeTeam: home, awayTeam: away, FTHG: hg, FTAG: ag, FTR: res, PSH: Utils.safeNumber(getValue('psh')) || 0, PSD: Utils.safeNumber(getValue('psd')) || 0, PSA: Utils.safeNumber(getValue('psa')) || 0, 'P>2.5': Utils.safeNumber(getValue('over25')) || 0, 'P<2.5': Utils.safeNumber(getValue('under25')) || 0 };
+                    
+                    const key = `${home}|${away}|${date}`;
+                    if (existingSet.has(key)) { ign++; continue; }
+                    
+                    const leagueInfo = getLeagueInfo(league);
+                    const leagueAvgGoals = leagueInfo.avgGoals || 2.7;
+                    
+                    const homeXG = xGEngine.calculateXGFromGoals(hg, true, leagueAvgGoals);
+                    const awayXG = xGEngine.calculateXGFromGoals(ag, false, leagueAvgGoals);
+                    const homeXGA = xGEngine.calculateXGFromGoals(ag, true, leagueAvgGoals);
+                    const awayXGA = xGEngine.calculateXGFromGoals(hg, false, leagueAvgGoals);
+                    
+                    const match = { 
+                        season, 
+                        league: leagueInfo.name || league, 
+                        div: league, 
+                        country: getValue('country') || '', 
+                        date, 
+                        time: getValue('time') || '', 
+                        homeTeam: home, 
+                        awayTeam: away, 
+                        FTHG: hg, 
+                        FTAG: ag, 
+                        FTR: hg > ag ? 'H' : hg === ag ? 'D' : 'A', 
+                        PSH: Utils.safeNumber(getValue('psh')) || 0, 
+                        PSD: Utils.safeNumber(getValue('psd')) || 0, 
+                        PSA: Utils.safeNumber(getValue('psa')) || 0, 
+                        'P>2.5': Utils.safeNumber(getValue('over25')) || 0, 
+                        'P<2.5': Utils.safeNumber(getValue('under25')) || 0,
+                        Home_xG: homeXG,
+                        Away_xG: awayXG,
+                        Home_xGA: homeXGA,
+                        Away_xGA: awayXGA
+                    };
                     matches.push(match);
                     imp++;
+                    
                     if (i % 1000 === 0 || i === lines.length - 1) {
                         const pct = Math.round((i / totalLines) * 100);
                         document.getElementById('importProgressFill').style.width = pct + '%';
                         document.getElementById('importProgressText').textContent = pct + '%';
                     }
                 }
-                if (matches.length === 0) { showToast('Aucun match valide', 'error'); return; }
+                
+                if (matches.length === 0) { showToast('Aucun nouveau match valide', 'info'); return; }
+                
                 await DB.saveMatches(matches);
-                this.matches = await DB.getAllMatches();
-                for (const m of matches) {
-                    for (const tn of [m.homeTeam, m.awayTeam]) {
-                        let t = await DB.getTeam(tn);
-                        if (!t) {
-                            t = { name: tn, elo: getLeagueConfig(m.league).eloRef || 1500, matches: 0, goalsScored: 0, goalsConceded: 0, xG: 0, xGA: 0, stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, league: m.league, formLast5: ['D', 'D', 'D', 'D', 'D'] };
-                        }
-                        t.matches = (t.matches || 0) + 1;
-                        if (tn === m.homeTeam) { t.goalsScored += m.FTHG; t.goalsConceded += m.FTAG; } else { t.goalsScored += m.FTAG; t.goalsConceded += m.FTHG; }
-                        t.xG = t.goalsScored / Math.max(1, t.matches);
-                        t.xGA = t.goalsConceded / Math.max(1, t.matches);
-                        t.stats = { xG: t.xG, xGA: t.xGA, goalsPerMatch: t.xG, shotsOnTargetPerMatch: 0 };
-                        const res = tn === m.homeTeam ? (m.FTHG > m.FTAG ? 'W' : m.FTHG === m.FTAG ? 'D' : 'L') : (m.FTAG > m.FTHG ? 'W' : m.FTAG === m.FTHG ? 'D' : 'L');
-                        t.formLast5 = [...(t.formLast5 || []), res].slice(-5);
-                        await DB.saveTeam(t);
-                    }
-                }
-                this.teams = await DB.getAllTeams();
-                this.refreshUI();
-                await this.populateSelectors();
-                this.renderTracking();
-                this.renderCapitalPage();
-                this.updateRiskDisplay();
+                
+                await this.refreshAllData();
+                
                 document.getElementById('importProgress').classList.add('hidden');
+                
                 const foundColumns = Object.values(columnMap).filter(Boolean).join(', ');
-                document.getElementById('importStatus').innerHTML = `<span style="color:var(--green)">✅ ${imp} matchs importés (${ign} ignorés) — Colonnes: ${foundColumns}</span>`;
-                showToast(`${imp} matchs importés`, 'success');
+                document.getElementById('importStatus').innerHTML = `<span style="color:var(--green)">✅ ${imp} nouveaux matchs importés (${ign} ignorés) — xG recalculé — Colonnes: ${foundColumns}</span>`;
+                showToast(`${imp} nouveaux matchs importés avec xG recalculé`, 'success');
                 document.getElementById('matchesInput').value = '';
-                if (imp > 10 && confirm('Voulez-vous recalculer les Elos avec les cotes Pinnacle ?')) this.recalcElos();
             } catch (e) {
                 document.getElementById('importProgress').classList.add('hidden');
                 document.getElementById('importStatus').innerHTML = `<span style="color:var(--red)">❌ Erreur: ${e.message}</span>`;
@@ -2374,6 +3128,12 @@
                 this.previewData();
             } catch (e) { showToast('Erreur fichier', 'error'); }
             input.value = '';
+        },
+
+        importFromClipboard() {
+            navigator.clipboard.readText().then(text => {
+                if (text) { document.getElementById('matchesInput').value = text; showToast('Données collées', 'success'); this.previewData(); }
+            }).catch(() => showToast('Impossible d\'accéder au presse-papier', 'error'));
         },
 
         // ============================================================
