@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <meta name="theme-color" content="#0a0d14">
-    <title>🇨🇩🥏🇨🇩RED PRO AI · V18 ULTIMATE</title>
+    <title>⚽ RED PRO AI · V18 ULTIMATE</title>
     <style>
         :root {
             --bg: #0a0d14;
@@ -625,7 +625,6 @@
         }
         .team-input-wrapper .team-label .icon { font-size: 0.8rem; }
 
-        /* NOUVEAU : Affichage de la différence d'Elo */
         .elo-diff-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -636,6 +635,39 @@
         .elo-diff-badge.favori { background: rgba(34, 197, 94, 0.15); color: var(--green); }
         .elo-diff-badge.underdog { background: rgba(239, 68, 68, 0.15); color: var(--red); }
         .elo-diff-badge.egal { background: rgba(245, 158, 11, 0.15); color: var(--gold); }
+
+        /* MODALE */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            animation: modalIn 0.3s ease;
+        }
+        .modal.hidden { display: none; }
+        .modal-content {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 14px;
+            max-width: 520px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .modal-content input[type="number"] {
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        @keyframes modalIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
 
         @media (max-width: 768px) {
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
@@ -744,11 +776,11 @@
                     </div>
                     <div>
                         <div class="text-sub fs-06">Mise (1% du capital)</div>
-                        <div class="fs-12 fw-700 text-cyan" id="maxStakeDisplayAnalyse">1 000 CDF</div>
+                        <div class="fs-12 fw-700 text-cyan" id="maxStakeDisplayAnalyse">0 CDF</div>
                     </div>
                     <div>
                         <div class="text-sub fs-06">Capital disponible</div>
-                        <div class="fs-1 fw-700 text-gold" id="capitalDisplayAnalyse">100 000 CDF</div>
+                        <div class="fs-1 fw-700 text-gold" id="capitalDisplayAnalyse">0 CDF</div>
                     </div>
                 </div>
 
@@ -778,14 +810,6 @@
                     <button class="btn btn-gold btn-sm" onclick="App.refreshAllData()">🔄 Sync</button>
                 </div>
                 <div id="analysisOutput" class="mt-2"></div>
-                <div id="resultSection" class="hidden mt-2">
-                    <div class="card-title"><span class="icon">🏁</span> Enregistrer le résultat</div>
-                    <div class="grid-2">
-                        <input type="number" id="resultHomeGoals" placeholder="Buts domicile" min="0">
-                        <input type="number" id="resultAwayGoals" placeholder="Buts extérieur" min="0">
-                    </div>
-                    <button class="btn btn-gold btn-block mt-1" onclick="App.submitMatchResult()">📥 Enregistrer</button>
-                </div>
             </div>
             <div class="card" id="comparatorCard">
                 <div class="card-header">
@@ -899,13 +923,15 @@
                         <button class="btn btn-sm btn-gold" onclick="App.calibrateCapital()">⚙️ Calibrer</button>
                         <button class="btn btn-sm btn-secondary" onclick="App.resetCapital()">🔄 Réinitialiser</button>
                         <button class="btn btn-sm btn-purple" onclick="App.exportTrackingCSV()">📤 CSV</button>
+                        <button class="btn btn-sm btn-purple" onclick="App.exportTrackingJSON()">📤 JSON</button>
+                        <button class="btn btn-sm btn-secondary" onclick="App.importTrackingFile()">📥 JSON</button>
                         <button class="btn btn-sm btn-gold" onclick="App.refreshAllData()">🔄 Sync</button>
                     </div>
                 </div>
                 <div class="grid-4 text-center mb-2" style="background:var(--bg);border-radius:12px;padding:14px;">
                     <div>
                         <div class="text-sub fs-06">Capital</div>
-                        <div class="bankroll-display" id="capitalDisplay">100 000 CDF</div>
+                        <div class="bankroll-display" id="capitalDisplay">0 CDF</div>
                     </div>
                     <div>
                         <div class="text-sub fs-06">Profit total</div>
@@ -913,7 +939,7 @@
                     </div>
                     <div>
                         <div class="text-sub fs-06">Mise (Kelly)</div>
-                        <div class="fs-14 fw-700 text-cyan" id="capitalStakeDisplay">1 000 CDF</div>
+                        <div class="fs-14 fw-700 text-cyan" id="capitalStakeDisplay">0 CDF</div>
                     </div>
                     <div>
                         <div class="text-sub fs-06">ROI</div>
@@ -931,6 +957,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title"><span class="icon">📋</span> Suivi des paris</div>
+                    <button class="btn btn-sm btn-gold" onclick="App.openScoreFromTrackingManual()">➕ Ajouter pari terminé</button>
                 </div>
                 <div class="grid-4 text-center mb-2" style="background:var(--bg);border-radius:12px;padding:14px;">
                     <div><div class="text-sub fs-06">Total</div><div class="fs-14 fw-700 text-cyan" id="trackTotal">0</div></div>
@@ -983,6 +1010,50 @@
                 <div id="teamsList" class="scroll-table" style="max-height:400px;"></div>
             </div>
         </section>
+
+        <!-- MODALE SCORE FINAL -->
+        <div id="scoreModal" class="modal hidden">
+            <div class="modal-content">
+                <h2 class="text-cyan fw-700">⚽ Saisir le score final</h2>
+                <div class="text-sub fs-06 mb-2">Saisissez le score pour ce pari</div>
+                
+                <div class="grid-2 mt-1" style="background:var(--bg);padding:12px;border-radius:10px;">
+                    <div><span class="text-sub fs-06">🏠 Domicile</span><div class="fw-700" id="modalScoreHome">-</div></div>
+                    <div><span class="text-sub fs-06">✈️ Extérieur</span><div class="fw-700" id="modalScoreAway">-</div></div>
+                    <div><span class="text-sub fs-06">📈 Marché</span><div class="text-cyan fw-700" id="modalScoreMarket">-</div></div>
+                    <div><span class="text-sub fs-06">💰 Cote</span><div class="text-gold fw-700" id="modalScoreOdd">-</div></div>
+                    <div><span class="text-sub fs-06">💵 Mise</span><div class="fw-700" id="modalScoreStake">-</div></div>
+                    <div><span class="text-sub fs-06">📊 Probabilité modèle</span><div id="modalScoreProb">-</div></div>
+                </div>
+
+                <div class="grid-2 mt-2">
+                    <div>
+                        <div class="text-sub fs-06 mb-1">⚽ Buts domicile</div>
+                        <input type="number" id="modalScoreHG" min="0" placeholder="0" style="font-size:1.2rem;padding:12px;text-align:center;">
+                    </div>
+                    <div>
+                        <div class="text-sub fs-06 mb-1">⚽ Buts extérieur</div>
+                        <input type="number" id="modalScoreAG" min="0" placeholder="0" style="font-size:1.2rem;padding:12px;text-align:center;">
+                    </div>
+                </div>
+
+                <div id="modalScorePreview" class="mt-1 text-center" style="padding:8px;border-radius:8px;background:var(--bg);border:2px solid var(--border);transition:all 0.3s;">
+                    <span class="text-sub fs-06">Résultat : </span>
+                    <span class="fw-700" id="modalScoreResult">Saisissez le score</span>
+                </div>
+
+                <div class="mt-2">
+                    <div class="text-sub fs-06 mb-1">📅 Date du match</div>
+                    <input type="date" id="modalScoreDate" style="padding:8px 12px;">
+                </div>
+
+                <div class="flex gap-2 mt-2">
+                    <button class="btn btn-success" onclick="App.saveScoreFromTracking()" style="flex:2;">✅ Enregistrer le score</button>
+                    <button class="btn btn-secondary" onclick="App.closeScoreModal()" style="flex:1;">❌ Annuler</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
@@ -1073,7 +1144,7 @@
     }
 
     // ============================================================
-    //  LIGUES & ELO REFS - CORRIGÉ AVEC FACTEUR DE DIVISION
+    //  LIGUES & ELO REFS
     // ============================================================
     const LEAGUE_MAP = {
         'E0': { name: 'Premier League', homeAdv: 42, rho: -0.07, temp1X2: 0.85, tempOver: 1.0, tempBTTS: 0.85, avgGoals: 2.85, avgXgHome: 1.65, avgXgAway: 1.20, avgXGA_home: 1.10, avgXGA_away: 1.55, eloRef: 1600, level: 1 },
@@ -1100,11 +1171,8 @@
         return LEAGUE_MAP[code] || { name: div, homeAdv: 40, rho: -0.08, temp1X2: 0.85, tempOver: 1.1, tempBTTS: 0.95, avgGoals: 2.70, avgXgHome: 1.50, avgXgAway: 1.20, avgXGA_home: 1.10, avgXGA_away: 1.50, eloRef: 1500, level: 2 }; 
     }
     
-    // ✅ CORRECTION : getLeagueConfig avec facteur de division
     function getLeagueConfig(div) { 
         const info = getLeagueInfo(div); 
-        
-        // ✅ Facteur de force de la ligue basé sur le niveau
         let leagueStrength = 1.0;
         const level = info.level || 2;
         if (level === 1) leagueStrength = 1.0;
@@ -1112,7 +1180,6 @@
         else if (level === 3) leagueStrength = 0.68;
         else if (level === 4) leagueStrength = 0.55;
         else leagueStrength = 0.70;
-        
         return { 
             name: info.name, 
             homeAdv: info.homeAdv || 40, 
@@ -1325,7 +1392,7 @@
     };
 
     // ============================================================
-    //  ENGINE V18 - CORRIGÉ AVEC ELO ET DIVISIONS
+    //  ENGINE V18
     // ============================================================
     const EngineV18 = {
         maxGoals: 8,
@@ -1385,25 +1452,17 @@
             return result;
         },
 
-        // ✅ CORRECTION 1 : Modèle Elo corrigé
         _eloModel(eloA, eloB, homeAdv, eloRef = 1500) {
             const effA = eloA || eloRef;
             const effB = eloB || eloRef;
-            
-            // ✅ L'avantage du domicile est appliqué de manière fine
             const homeAdvFactor = (homeAdv || 40) / 400;
             const adjustedA = effA + (homeAdv > 0 ? homeAdvFactor * 100 : 0);
-            
             const expected = 1 / (1 + Math.pow(10, (effB - adjustedA) / 400));
-            
-            // ✅ Le nul dépend de la différence d'Elo
             const eloDiff = Math.abs(effA - effB);
             let pX = 0.22 + (eloDiff / 10000);
             pX = Math.min(0.35, Math.max(0.15, pX));
-            
             const p1 = expected * (1 - pX);
             const p2 = Math.max(0.02, 1 - p1 - pX);
-            
             return { p1, pX, p2 };
         },
 
@@ -1468,24 +1527,16 @@
             return result;
         },
 
-        // ✅ CORRECTION 2 : _computeLambdas avec facteur de division
         _computeLambdas(hS, aS, terrain, homeAdv = 42, leagueStrength = 1.0) {
             const hXG = hS.xG || 1.0, hXGA = hS.xGA || 1.0;
             const aXG = aS.xG || 1.0, aXGA = aS.xGA || 1.0;
-            
-            // ✅ Application du facteur de force de la ligue
             const strengthFactor = leagueStrength || 1.0;
-            
             let lA = (hXG + aXGA) / 2;
             let lB = (aXG + hXGA) / 2;
-            
-            // ✅ Application du facteur de force
             lA *= strengthFactor;
             lB *= strengthFactor;
-            
             if (lA < 0.3 && hS.goalsPerMatch > 0) lA = hS.goalsPerMatch * strengthFactor;
             if (lB < 0.3 && aS.goalsPerMatch > 0) lB = aS.goalsPerMatch * strengthFactor;
-            
             const haFactor = this.normalizeHomeAdvantage(homeAdv);
             if (terrain === 'home') { 
                 lA *= (1 + haFactor); 
@@ -1494,7 +1545,6 @@
                 lA *= (1 - haFactor); 
                 lB *= (1 + haFactor); 
             }
-            
             return { lA: Number(Utils.clamp(lA, 0.20, 3.0).toFixed(3)), lB: Number(Utils.clamp(lB, 0.20, 2.5).toFixed(3)) };
         },
 
@@ -1541,14 +1591,10 @@
             };
         },
 
-        // ✅ CORRECTION 3 : predict avec gestion des divisions
         predict(homeTeam, awayTeam, leagueConfig, h2hData = null, bookmakerOdds = null, terrain = 'home') {
             const hS = homeTeam.stats || { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 };
             const aS = awayTeam.stats || { xG: 1.0, xGA: 1.0, goalsPerMatch: 1.0, shotsOnTargetPerMatch: 0 };
-            
-            // ✅ Récupération du facteur de force de la ligue
             const leagueStrength = leagueConfig.leagueStrength || 1.0;
-            
             const { lA, lB } = this._computeLambdas(hS, aS, terrain, leagueConfig.homeAdv, leagueStrength);
             const poisson = this._poissonMatrix(lA, lB);
             const rho = leagueConfig.rho || -0.08;
@@ -1588,22 +1634,17 @@
             const tot = p1 + pX + p2;
             if (tot > 0) { p1 /= tot; pX /= tot; p2 /= tot; } else { p1 = 0.4; pX = 0.3; p2 = 0.3; }
             
-            // ✅ CORRECTION 4 : Ajustement basé sur la différence d'Elo
             if (eloDiff > 300) {
                 const boost = Math.min(0.25, eloDiff / 2000);
                 if (eloDiff > 0) {
-                    // Home est favori
                     p1 += boost * (1 - p1);
                     p2 *= (1 - boost * 0.7);
                     pX *= (1 - boost * 0.5);
                 } else {
-                    // Away est favori
                     p2 += boost * (1 - p2);
                     p1 *= (1 - boost * 0.7);
                     pX *= (1 - boost * 0.5);
                 }
-                
-                // Re-normalisation
                 const total2 = p1 + pX + p2;
                 if (total2 > 0) { p1 /= total2; pX /= total2; p2 /= total2; }
             }
@@ -1752,7 +1793,7 @@
     // ============================================================
     const DB = {
         _db: null,
-        async open() { if (this._db) return this._db; return new Promise((res, rej) => { const req = indexedDB.open('RedProV18', 6); req.onupgradeneeded = e => { const db = e.target.result; if (!db.objectStoreNames.contains('teams')) db.createObjectStore('teams', { keyPath: 'name' }); if (!db.objectStoreNames.contains('matches')) { const s = db.createObjectStore('matches', { keyPath: 'id', autoIncrement: true }); s.createIndex('season', 'season', { unique: false }); s.createIndex('league', 'league', { unique: false }); s.createIndex('date', 'date', { unique: false }); s.createIndex('homeTeam', 'homeTeam', { unique: false }); s.createIndex('awayTeam', 'awayTeam', { unique: false }); } if (!db.objectStoreNames.contains('tracking')) db.createObjectStore('tracking', { keyPath: 'id', autoIncrement: true }); if (!db.objectStoreNames.contains('leagues')) db.createObjectStore('leagues', { keyPath: 'name' }); if (!db.objectStoreNames.contains('calibrations')) db.createObjectStore('calibrations', { keyPath: 'id', autoIncrement: true }); if (!db.objectStoreNames.contains('preferences')) db.createObjectStore('preferences', { keyPath: 'key' }); if (!db.objectStoreNames.contains('leagueAverages')) db.createObjectStore('leagueAverages', { keyPath: 'league' }); }; req.onsuccess = e => { this._db = e.target.result; res(this._db); }; req.onerror = () => rej(new Error('IndexedDB')); }); },
+        async open() { if (this._db) return this._db; return new Promise((res, rej) => { const req = indexedDB.open('RedProV18', 7); req.onupgradeneeded = e => { const db = e.target.result; if (!db.objectStoreNames.contains('teams')) db.createObjectStore('teams', { keyPath: 'name' }); if (!db.objectStoreNames.contains('matches')) { const s = db.createObjectStore('matches', { keyPath: 'id', autoIncrement: true }); s.createIndex('season', 'season', { unique: false }); s.createIndex('league', 'league', { unique: false }); s.createIndex('date', 'date', { unique: false }); s.createIndex('homeTeam', 'homeTeam', { unique: false }); s.createIndex('awayTeam', 'awayTeam', { unique: false }); } if (!db.objectStoreNames.contains('tracking')) { const s = db.createObjectStore('tracking', { keyPath: 'id', autoIncrement: true }); s.createIndex('result', 'result', { unique: false }); } if (!db.objectStoreNames.contains('leagues')) db.createObjectStore('leagues', { keyPath: 'name' }); if (!db.objectStoreNames.contains('calibrations')) db.createObjectStore('calibrations', { keyPath: 'id', autoIncrement: true }); if (!db.objectStoreNames.contains('preferences')) db.createObjectStore('preferences', { keyPath: 'key' }); if (!db.objectStoreNames.contains('leagueAverages')) db.createObjectStore('leagueAverages', { keyPath: 'league' }); }; req.onsuccess = e => { this._db = e.target.result; res(this._db); }; req.onerror = () => rej(new Error('IndexedDB')); }); },
         async saveTeam(t) { await this.open(); return new Promise(res => { const tx = this._db.transaction('teams', 'readwrite'); tx.objectStore('teams').put(t); tx.oncomplete = () => res(t); }); },
         async saveTeams(teams) { await this.open(); return new Promise(res => { const tx = this._db.transaction('teams', 'readwrite'); const store = tx.objectStore('teams'); teams.forEach(t => store.put(t)); tx.oncomplete = () => res(); }); },
         async getTeam(n) { await this.open(); return new Promise(res => { const req = this._db.transaction('teams').objectStore('teams').get(n); req.onsuccess = () => res(req.result || null); }); },
@@ -1813,23 +1854,22 @@
         trackingData: [],
         currentPage: 'analyse',
         trackingFilter: 'all',
-        bankroll: 100000,
+        bankroll: 0,
         riskLevel: 5,
         analysisHistory: [],
-        capitalHistory: [{ date: 'Début', bankroll: 100000, profit: 0, operation: 'Initialisation' }],
+        capitalHistory: [],
         isRecalcRunning: false,
+        _editingBetId: null,
 
         // ============================================================
-        //  FONCTION CENTRALISÉE DE SYNCHRONISATION
+        //  REFRESH ALL DATA
         // ============================================================
         async refreshAllData() {
             try {
                 showToast('🔄 Synchronisation des données...', 'info');
-                
                 this.matches = await DB.getAllMatches();
                 this.teams = await DB.getAllTeams();
                 this.trackingData = await DB.getAllTracking();
-                
                 const xGTeams = xGEngine.recalculateAllXG(this.matches, this.teams);
                 for (const team of xGTeams) {
                     const existing = this.teams.find(t => t.name === team.name);
@@ -1841,16 +1881,12 @@
                     }
                     await DB.saveTeam(team);
                 }
-                
                 this.teams = await DB.getAllTeams();
-                
                 if (this.matches.length > 2) {
                     await this.recalcElos();
                 }
-                
                 this.refreshUI();
                 await this.populateSelectors();
-                
                 if (this.currentPage === 'tracking') {
                     this.renderTracking();
                     this.renderCapitalPage();
@@ -1870,7 +1906,6 @@
                 if (this.currentPage === 'value') {
                     this.scanValueBets();
                 }
-                
                 showToast('✅ Toutes les données synchronisées', 'success');
             } catch (e) {
                 console.error('Erreur refreshAllData:', e);
@@ -1878,6 +1913,9 @@
             }
         },
 
+        // ============================================================
+        //  INIT
+        // ============================================================
         async init() {
             await DB.open();
             this.teams = await DB.getAllTeams();
@@ -1897,7 +1935,7 @@
             const savedCapital = localStorage.getItem('rp_bankroll');
             if (savedCapital) {
                 const parsed = parseInt(savedCapital);
-                if (!isNaN(parsed) && parsed > 0) { this.bankroll = parsed; if (this.capitalHistory.length > 0) { const last = this.capitalHistory[this.capitalHistory.length - 1]; if (last.bankroll !== parsed) { this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: parsed, profit: parsed - 100000, operation: 'Chargement automatique' }); this.saveCapitalHistory(); } } }
+                if (!isNaN(parsed) && parsed >= 0) { this.bankroll = parsed; if (this.capitalHistory.length > 0) { const last = this.capitalHistory[this.capitalHistory.length - 1]; if (last.bankroll !== parsed) { this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: parsed, profit: parsed, operation: 'Chargement automatique' }); this.saveCapitalHistory(); } } }
             }
             await this.loadUserPreferences();
             this.refreshUI();
@@ -1942,7 +1980,7 @@
         loadTheme() { try { if (localStorage.getItem('rp_theme') === 'light') document.body.classList.add('light-mode'); } catch (e) {} },
 
         loadCapitalHistory() {
-            try { const r = localStorage.getItem('rp_capital_history'); if (r) this.capitalHistory = JSON.parse(r); } catch (e) { this.capitalHistory = [{ date: 'Début', bankroll: 100000, profit: 0, operation: 'Initialisation' }]; }
+            try { const r = localStorage.getItem('rp_capital_history'); if (r) this.capitalHistory = JSON.parse(r); } catch (e) { this.capitalHistory = []; }
         },
         saveCapitalHistory() {
             try { localStorage.setItem('rp_capital_history', JSON.stringify(this.capitalHistory)); localStorage.setItem('rp_bankroll', this.bankroll.toString()); } catch (e) {}
@@ -1954,7 +1992,7 @@
             document.getElementById('leagueCount').textContent = new Set(this.matches.map(m => m.league).filter(Boolean)).size;
             document.getElementById('capitalDisplay').textContent = this.bankroll.toLocaleString() + ' CDF';
             document.getElementById('capitalDisplayAnalyse').textContent = this.bankroll.toLocaleString() + ' CDF';
-            const stake = Math.round(this.bankroll * 0.01);
+            const stake = this.bankroll > 0 ? Math.round(this.bankroll * 0.01) : 0;
             document.getElementById('capitalStakeDisplay').textContent = stake.toLocaleString() + ' CDF';
             document.getElementById('maxStakeDisplayAnalyse').textContent = stake.toLocaleString() + ' CDF';
         },
@@ -2024,15 +2062,12 @@
 
         selectTeam(side, name) { document.getElementById(`analysis${side === 'home' ? 'Home' : 'Away'}`).value = name; document.getElementById(`${side}Dropdown`).classList.add('hidden'); this.checkTeamsValid(); },
 
-        updateTerrain() {
-            this.saveUserPreferences();
-        },
-
+        updateTerrain() { this.saveUserPreferences(); },
         onTerrainChange() { this.saveUserPreferences(); },
         checkTeamsValid() { const h = document.getElementById('analysisHome').value.trim(), a = document.getElementById('analysisAway').value.trim(); document.getElementById('teamCheckError').classList.toggle('hidden', !(h && a && h.toLowerCase() === a.toLowerCase())); },
         updateRiskLevel(v) { this.riskLevel = parseInt(v); this.updateRiskDisplay(); },
         updateRiskDisplay() {
-            const stake = Math.round(this.bankroll * 0.01);
+            const stake = this.bankroll > 0 ? Math.round(this.bankroll * 0.01) : 0;
             document.getElementById('maxStakeDisplayAnalyse').textContent = stake.toLocaleString() + ' CDF';
             document.getElementById('riskLevelDisplay').textContent = `${this.riskLevel}/10`;
             document.getElementById('capitalStakeDisplay').textContent = stake.toLocaleString() + ' CDF';
@@ -2059,15 +2094,11 @@
             showToast('🔧 Correction des xG en cours...', 'info');
             const matches = await DB.getAllMatches();
             const existingTeams = await DB.getAllTeams();
-            
             const xGTeams = xGEngine.recalculateAllXG(matches, existingTeams);
-            
             let fixed = 0;
             for (const team of xGTeams) {
                 const existing = existingTeams.find(t => t.name === team.name);
-                if (existing && existing.xG_manual) {
-                    continue;
-                }
+                if (existing && existing.xG_manual) continue;
                 if (team.xG < 0.6 && team.matches > 5) {
                     team.xG = 0.8;
                     team.xGA = 0.8;
@@ -2093,14 +2124,13 @@
                 }
                 await DB.saveTeam(team);
             }
-            
             this.teams = await DB.getAllTeams();
             this.refreshUI();
             showToast(`✅ ${fixed} équipes corrigées`, 'success');
         },
 
         // ============================================================
-        //  ANALYSE - CORRIGÉE AVEC ELO ET DIVISIONS
+        //  ANALYSE
         // ============================================================
         async runAnalysis() {
             const hn = document.getElementById('analysisHome').value.trim(), an = document.getElementById('analysisAway').value.trim();
@@ -2109,7 +2139,6 @@
             
             const terrainHome = document.getElementById('terrainHome').value;
             const terrainAway = document.getElementById('terrainAway').value;
-            
             let terrain = 'home';
             if (terrainHome === 'home' && terrainAway === 'away') terrain = 'home';
             else if (terrainHome === 'away' && terrainAway === 'home') terrain = 'away';
@@ -2120,11 +2149,9 @@
             const lc = getLeagueConfig(lv);
             const leagueStrength = lc.leagueStrength || 1.0;
             
-            // ✅ CORRECTION : Récupération des Elos réels depuis la DB
             let hT = await DB.getTeam(hn);
             let aT = await DB.getTeam(an);
             
-            // ✅ Si l'équipe n'existe pas, on crée des stats de base avec le facteur de division
             if (!hT) {
                 hT = { 
                     name: hn, 
@@ -2145,7 +2172,6 @@
                     leagueStrength: leagueStrength
                 };
             }
-            
             if (!aT) {
                 aT = { 
                     name: an, 
@@ -2189,7 +2215,6 @@
                 (m.homeTeam === an && m.awayTeam === hn)
             ).sort((a, b) => (Utils.parseDate(b.date) || new Date(0)) - (Utils.parseDate(a.date) || new Date(0)));
             
-            // ✅ Passage du facteur de force de la ligue
             const result = EngineV18.predict(hT, aT, lc, h2h.length >= 2 ? h2h : null, bo.home > 1.01 ? bo : null, terrain);
             
             this.saveToHistory({ home: hn, away: an, league: lc.name, terrain: terrain, odds: bo, result, timestamp: new Date().toISOString() });
@@ -2199,7 +2224,6 @@
             const m = result.markets;
             let html = `<div style="background:var(--bg);border-radius:12px;padding:16px;">`;
             
-            // ✅ AFFICHAGE DE LA DIFFÉRENCE D'ELO
             const eloDiff = (hT.elo || 1500) - (aT.elo || 1500);
             const diffPercent = eloDiff > 0 ? 
                 `+${Math.round((eloDiff / (aT.elo || 1500)) * 100)}%` : 
@@ -2242,10 +2266,10 @@
 
             if (result.h2hUsed && h2h.length > 0) html += `<div class="text-sub fs-06 mb-2">📜 H2H: ${h2h.length} confrontations (poids: ${((result.weights.h2h || 0) * 100).toFixed(0)}%)</div>`;
             
-            const stake = Math.round(this.bankroll * 0.01);
+            const stake = this.bankroll > 0 ? Math.round(this.bankroll * 0.01) : 0;
             const hotPick = result.hotPick;
             if (hotPick) {
-                html += `<div class="hot-pick"><div class="text-sub fs-06" style="text-transform:uppercase;letter-spacing:1px;">🔥 HOT PICK — MEILLEURE PROBABILITÉ</div><div class="fs-14 fw-700 text-gold">${hotPick.market}</div><div class="grid-4 mt-1"><div><div class="text-sub fs-06">Probabilité</div><div class="fw-700 fs-09">${(hotPick.modelProb * 100).toFixed(1)}%</div></div><div><div class="text-sub fs-06">Cote Fair</div><div class="fw-700 fs-09 text-cyan">${hotPick.fairOdd.toFixed(2)}</div></div><div><div class="text-sub fs-06">Cote Marché</div><div class="fw-700 fs-09 text-gold">${hotPick.bookmakerOdd.toFixed(2)}</div></div><div><div class="text-sub fs-06">Edge</div><div class="fw-700 fs-09 text-green">+${(hotPick.edge * 100).toFixed(1)}%</div></div></div><div class="text-sub fs-06">Confiance: ${hotPick.confidence}% | Force: ${hotPick.strength.toUpperCase()}</div><div class="text-sub fs-06">Mise recommandée: ${stake.toLocaleString()} CDF (1% du capital)</div><button class="btn btn-success btn-sm mt-1" onclick="App.saveBetFromAnalysis('${hotPick.market}', ${hotPick.bookmakerOdd}, ${stake})">💾 Enregistrer ce pari</button></div>`;
+                html += `<div class="hot-pick"><div class="text-sub fs-06" style="text-transform:uppercase;letter-spacing:1px;">🔥 HOT PICK — MEILLEURE PROBABILITÉ</div><div class="fs-14 fw-700 text-gold">${hotPick.market}</div><div class="grid-4 mt-1"><div><div class="text-sub fs-06">Probabilité</div><div class="fw-700 fs-09">${(hotPick.modelProb * 100).toFixed(1)}%</div></div><div><div class="text-sub fs-06">Cote Fair</div><div class="fw-700 fs-09 text-cyan">${hotPick.fairOdd.toFixed(2)}</div></div><div><div class="text-sub fs-06">Cote Marché</div><div class="fw-700 fs-09 text-gold">${hotPick.bookmakerOdd.toFixed(2)}</div></div><div><div class="text-sub fs-06">Edge</div><div class="fw-700 fs-09 text-green">+${(hotPick.edge * 100).toFixed(1)}%</div></div></div><div class="text-sub fs-06">Confiance: ${hotPick.confidence}% | Force: ${hotPick.strength.toUpperCase()}</div><div class="text-sub fs-06">Mise recommandée: ${stake.toLocaleString()} CDF (1% du capital)</div><button class="btn btn-success btn-sm mt-1" onclick="App.saveBetFromAnalysis('${hotPick.market}', ${hotPick.bookmakerOdd}, ${stake})">💾 Enregistrer</button></div>`;
             }
             
             html += `<div class="card-title mt-2">📊 Probabilités calibrées</div>`;
@@ -2256,19 +2280,53 @@
             
             if (result.valueBets.length > 0) {
                 html += `<div class="card-title mt-2">💎 Value Bets (${result.valueBets.length})</div><div class="value-row header"><span>Marché</span><span>Prob.</span><span>Fair</span><span>Cote</span><span>Edge</span><span>Conf.</span><span>Force</span><span>Mise</span><span>Action</span></div>`;
-                result.valueBets.slice(0, 10).forEach(v => { const st = Math.round(this.bankroll * 0.01); html += `<div class="value-row"><span class="fw-700 text-cyan">${v.market}</span><span>${(v.modelProb*100).toFixed(1)}%</span><span class="text-cyan">${v.fairOdd.toFixed(2)}</span><span class="text-gold">${v.bookmakerOdd.toFixed(2)}</span><span class="text-green">+${(v.edge*100).toFixed(1)}%</span><span>${v.confidence}%</span><span><span class="strength ${v.strength.toLowerCase()}">${v.strength}</span></span><span class="text-gold fw-700">${st.toLocaleString()} CDF</span><span><button class="btn btn-sm btn-success" onclick="App.saveBetFromAnalysis('${v.market}', ${v.bookmakerOdd}, ${st})" style="padding:1px 6px;font-size:0.45rem;">💾</button></span></div>`; });
+                result.valueBets.slice(0, 10).forEach(v => { const st = this.bankroll > 0 ? Math.round(this.bankroll * 0.01) : 0; html += `<div class="value-row"><span class="fw-700 text-cyan">${v.market}</span><span>${(v.modelProb*100).toFixed(1)}%</span><span class="text-cyan">${v.fairOdd.toFixed(2)}</span><span class="text-gold">${v.bookmakerOdd.toFixed(2)}</span><span class="text-green">+${(v.edge*100).toFixed(1)}%</span><span>${v.confidence}%</span><span><span class="strength ${v.strength.toLowerCase()}">${v.strength}</span></span><span class="text-gold fw-700">${st.toLocaleString()} CDF</span><span><button class="btn btn-sm btn-success" onclick="App.saveBetFromAnalysis('${v.market}', ${v.bookmakerOdd}, ${st})" style="padding:1px 6px;font-size:0.45rem;">💾</button></span></div>`; });
             }
             html += `</div>`;
             out.innerHTML = html;
-            document.getElementById('resultSection').classList.remove('hidden');
         },
 
-        saveBetFromAnalysis(market, odds, stake) {
-            const hn = document.getElementById('analysisHome').value.trim(), an = document.getElementById('analysisAway').value.trim();
+        // ============================================================
+        //  SAVE BET FROM ANALYSIS (EN PENDING)
+        // ============================================================
+        async saveBetFromAnalysis(market, odds, stake) {
+            const hn = document.getElementById('analysisHome').value.trim();
+            const an = document.getElementById('analysisAway').value.trim();
             const lv = document.getElementById('analysisLeagueFilter').value || 'Inconnu';
+            const lc = getLeagueConfig(lv);
+            const leagueName = lc.name || lv;
+            
             if (!hn || !an) { showToast('Équipes manquantes', 'error'); return; }
-            if (stake > this.bankroll) { showToast('Capital insuffisant', 'error'); return; }
-            DB.saveTracking({ date: new Date().toISOString(), homeTeam: hn, awayTeam: an, league: getLeagueInfo(lv).name, betType: market, odds: odds, stake: stake, closingOdds: null, result: 'pending', profit: 0, actualScore: null }).then(async () => { this.trackingData = await DB.getAllTracking(); this.renderTracking(); showToast(`Pari enregistré - Mise: ${stake.toLocaleString()} CDF`, 'success'); });
+            if (stake > this.bankroll && this.bankroll > 0) { showToast('Capital insuffisant', 'error'); return; }
+            
+            const lastResult = this.analysisHistory[0]?.result;
+            if (!lastResult) {
+                showToast('Aucune analyse trouvée', 'error');
+                return;
+            }
+            
+            const marketData = lastResult.valueBets?.find(v => v.market === market);
+            
+            await DB.saveTracking({
+                date: new Date().toISOString(),
+                homeTeam: hn,
+                awayTeam: an,
+                league: leagueName,
+                betType: market,
+                odds: odds,
+                stake: stake,
+                modelProb: marketData?.modelProb || 0.5,
+                fairOdd: marketData?.fairOdd || (1 / 0.5),
+                edge: marketData?.edge || 0,
+                confidence: marketData?.confidence || 50,
+                result: 'pending',
+                profit: 0,
+                actualScore: null
+            });
+            
+            this.trackingData = await DB.getAllTracking();
+            this.renderTracking();
+            showToast(`📌 Pari en attente - ${market} | Mise: ${stake.toLocaleString()} CDF`, 'success');
         },
 
         saveToHistory(a) { 
@@ -2333,12 +2391,9 @@
             try {
                 const existingTeams = await DB.getAllTeams();
                 const xGTeams = xGEngine.recalculateAllXG(matches, existingTeams);
-                
                 for (const team of xGTeams) {
                     const existing = existingTeams.find(t => t.name === team.name);
-                    if (existing) {
-                        team.elo = existing.elo || 1500;
-                    }
+                    if (existing) team.elo = existing.elo || 1500;
                     await DB.saveTeam(team);
                 }
 
@@ -2476,15 +2531,16 @@
         // ============================================================
         renderCapitalPage() {
             if (this.currentPage !== 'tracking') return;
-            const lastCapital = this.capitalHistory[this.capitalHistory.length - 1] || { bankroll: 100000, profit: 0 };
+            const lastCapital = this.capitalHistory.length > 0 ? this.capitalHistory[this.capitalHistory.length - 1] : { bankroll: 0, profit: 0 };
             document.getElementById('capitalDisplay').textContent = lastCapital.bankroll.toLocaleString() + ' CDF';
             const profit = lastCapital.profit || 0;
             const profitEl = document.getElementById('capitalProfit');
             profitEl.textContent = (profit >= 0 ? '+' : '') + profit.toLocaleString() + ' CDF';
             profitEl.style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
-            const stake = Math.round(this.bankroll * 0.01);
+            const stake = this.bankroll > 0 ? Math.round(this.bankroll * 0.01) : 0;
             document.getElementById('capitalStakeDisplay').textContent = stake.toLocaleString() + ' CDF';
-            document.getElementById('capitalROI').textContent = (profit / 100000 * 100).toFixed(1) + '%';
+            const totalProfit = this.capitalHistory.length > 0 ? this.capitalHistory[this.capitalHistory.length - 1].profit || 0 : 0;
+            document.getElementById('capitalROI').textContent = (totalProfit / (this.bankroll + totalProfit || 1) * 100).toFixed(1) + '%';
             const historyList = document.getElementById('capitalHistoryList');
             if (historyList) {
                 const recentHistory = this.capitalHistory.slice(-20).reverse();
@@ -2507,7 +2563,9 @@
             const pad = { top: 15, bottom: 15, left: 35, right: 15 };
             const cw = w - pad.left - pad.right, ch = h - pad.top - pad.bottom;
             const vals = this.capitalHistory.map(d => d.bankroll);
-            const minV = Math.min(90000, ...vals), maxV = Math.max(110000, ...vals);
+            if (vals.length === 0) { ctx.fillStyle = 'var(--sub)'; ctx.font = '12px system-ui'; ctx.textAlign = 'center'; ctx.fillText('Pas de données', w / 2, h / 2); return; }
+            const minV = Math.min(0, ...vals);
+            const maxV = Math.max(10000, ...vals);
             const range = maxV - minV || 1;
             ctx.clearRect(0, 0, w, h);
             if (this.capitalHistory.length > 1) {
@@ -2529,15 +2587,6 @@
                     ctx.fillStyle = this.capitalHistory[i].profit >= 0 ? 'var(--green)' : 'var(--red)';
                     ctx.fill();
                 }
-                const initY = pad.top + ch * (1 - (100000 - minV) / range);
-                ctx.beginPath();
-                ctx.strokeStyle = 'var(--gold)';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([4, 4]);
-                ctx.moveTo(pad.left, initY);
-                ctx.lineTo(w - pad.right, initY);
-                ctx.stroke();
-                ctx.setLineDash([]);
             } else {
                 ctx.fillStyle = 'var(--sub)';
                 ctx.font = '12px system-ui';
@@ -2555,10 +2604,10 @@
             if (trimmed.startsWith('+')) { const amount = parseFloat(trimmed.substring(1)); if (!isNaN(amount) && amount > 0) { newCapital = currentCapital + amount; operation = `Ajout de ${amount.toLocaleString()} CDF`; } }
             else if (trimmed.startsWith('-')) { const amount = parseFloat(trimmed.substring(1)); if (!isNaN(amount) && amount > 0 && amount <= currentCapital) { newCapital = currentCapital - amount; operation = `Retrait de ${amount.toLocaleString()} CDF`; } else { showToast('Montant invalide', 'error'); return; } }
             else { const amount = parseFloat(trimmed); if (!isNaN(amount) && amount > 0) { newCapital = amount; operation = `Nouveau capital: ${amount.toLocaleString()} CDF`; } }
-            if (newCapital <= 0) { showToast('Capital doit être > 0', 'error'); return; }
+            if (newCapital < 0) { showToast('Capital ne peut pas être négatif', 'error'); return; }
             const oldCapital = this.bankroll;
             this.bankroll = Math.round(newCapital);
-            this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: this.bankroll, profit: this.bankroll - 100000, operation, oldBankroll: oldCapital });
+            this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: this.bankroll, profit: this.bankroll, operation, oldBankroll: oldCapital });
             this.saveCapitalHistory();
             this.renderCapitalPage();
             this.refreshUI();
@@ -2567,14 +2616,14 @@
         },
 
         resetCapital() {
-            if (!confirm('⚠️ Réinitialiser le capital à 100 000 CDF ?')) return;
-            this.bankroll = 100000;
-            this.capitalHistory = [{ date: 'Début', bankroll: 100000, profit: 0, operation: 'Réinitialisation' }];
+            if (!confirm('⚠️ Réinitialiser le capital à 0 CDF ?')) return;
+            this.bankroll = 0;
+            this.capitalHistory = [];
             this.saveCapitalHistory();
             this.renderCapitalPage();
             this.refreshUI();
             this.updateRiskDisplay();
-            showToast('Capital réinitialisé', 'info');
+            showToast('Capital réinitialisé à 0', 'info');
         },
 
         // ============================================================
@@ -2585,12 +2634,13 @@
             const filtered = this.trackingFilter === 'all' ? this.trackingData : this.trackingData.filter(b => b.result === this.trackingFilter);
             if (filtered.length === 0) { list.innerHTML = '<div class="text-sub fs-06" style="padding:12px;">Aucun pari</div>'; return; }
             let h = `<div class="tracking-grid header" style="grid-template-columns:1.2fr 0.6fr 0.5fr 0.5fr 0.6fr 0.5fr 0.5fr 0.5fr 0.6fr 0.5fr;">
-                    <span>Match</span><span>Type</span><span>Cote</span><span>Mise</span><span>Score</span><span>Statut</span><span>Profit</span><span>Résultat</span><span>Actions</span>
+                    <span>Match</span><span>Type</span><span>Cote</span><span>Mise</span><span>Score</span><span>Statut</span><span>Profit</span><span>Edge</span><span>Actions</span>
                 </div>`;
             filtered.forEach(bet => {
                 const sb = bet.result === 'win' ? '<span class="badge badge-green">✅</span>' : bet.result === 'loss' ? '<span class="badge badge-red">❌</span>' : '<span class="badge badge-cyan">⏳</span>';
                 const pc = bet.profit > 0 ? 'var(--green)' : bet.profit < 0 ? 'var(--red)' : 'var(--sub)';
                 const scoreDisplay = bet.actualScore || '-';
+                const edgeDisplay = bet.edge ? (bet.edge * 100).toFixed(1) + '%' : '-';
                 h += `<div class="tracking-grid" style="grid-template-columns:1.2fr 0.6fr 0.5fr 0.5fr 0.6fr 0.5fr 0.5fr 0.5fr 0.6fr 0.5fr;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.55rem;align-items:center;">
                         <span class="fw-700 text-cyan">${Utils.escapeHTML(bet.homeTeam)} vs ${Utils.escapeHTML(bet.awayTeam)}</span>
                         <span><span class="badge badge-cyan">${Utils.escapeHTML(bet.betType)}</span></span>
@@ -2599,14 +2649,12 @@
                         <span class="fw-700 text-gold">${scoreDisplay}</span>
                         <span>${sb}</span>
                         <span style="color:${pc};font-weight:700;">${bet.profit >= 0 ? '+' : ''}${bet.profit?.toFixed(2) || 0} CDF</span>
-                        <span>
-                            <select onchange="App.updateBetResult(${bet.id}, this.value)" style="padding:2px 4px;font-size:0.45rem;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);width:auto;">
-                                <option value="pending" ${bet.result === 'pending' ? 'selected' : ''}>⏳</option>
-                                <option value="win" ${bet.result === 'win' ? 'selected' : ''}>✅</option>
-                                <option value="loss" ${bet.result === 'loss' ? 'selected' : ''}>❌</option>
-                            </select>
-                        </span>
+                        <span style="color:${bet.edge > 0.02 ? 'var(--green)' : 'var(--sub)'}">${edgeDisplay}</span>
                         <span class="flex gap-1">
+                            ${bet.result === 'pending' ? 
+                                `<button class="btn btn-sm btn-gold" onclick="App.openScoreFromTracking(${bet.id})" style="padding:1px 6px;font-size:0.45rem;">⚽ Score</button>` : 
+                                `<span class="badge ${bet.result === 'win' ? 'badge-green' : 'badge-red'}">${bet.result === 'win' ? '✅' : '❌'}</span>`
+                            }
                             <button class="btn btn-sm btn-danger" onclick="App.deleteBet(${bet.id})" style="padding:1px 6px;font-size:0.4rem;">✕</button>
                         </span>
                     </div>`;
@@ -2615,32 +2663,14 @@
             this.updateTrackingSummary();
         },
 
-        async updateBetResult(id, r) {
-            const bet = this.trackingData.find(b => b.id === id);
-            if (!bet) return;
-            let p = 0;
-            if (r === 'win') p = bet.stake * (bet.odds - 1);
-            else if (r === 'loss') p = -bet.stake;
-            if (bet.result === 'pending') {
-                this.bankroll += p;
-                this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: Math.round(this.bankroll), profit: Math.round(this.bankroll - 100000), operation: `${bet.homeTeam} vs ${bet.awayTeam} - ${bet.betType}`, stake: bet.stake, odds: bet.odds, isWin: r === 'win', profitAmount: p, score: bet.actualScore || '-' });
-                this.saveCapitalHistory();
-                this.renderCapitalPage();
-                this.refreshUI();
-                this.updateRiskDisplay();
-            }
-            await DB.updateTracking(id, { result: r, profit: p });
-            this.trackingData = await DB.getAllTracking();
-            this.renderTracking();
-            showToast('Pari mis à jour', 'success');
-        },
+        filterTracking(f) { this.trackingFilter = f; this.renderTracking(); },
 
         async deleteBet(id) {
             if (confirm('Supprimer ce pari ?')) {
                 const bet = this.trackingData.find(b => b.id === id);
                 if (bet && bet.result === 'pending') {
                     this.bankroll += bet.stake;
-                    this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: Math.round(this.bankroll), profit: Math.round(this.bankroll - 100000), operation: `Annulation: ${bet.homeTeam} vs ${bet.awayTeam}`, stake: bet.stake, isWin: false, profitAmount: 0 });
+                    this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: Math.round(this.bankroll), profit: Math.round(this.bankroll), operation: `Annulation: ${bet.homeTeam} vs ${bet.awayTeam}`, stake: bet.stake, isWin: false, profitAmount: 0 });
                     this.saveCapitalHistory();
                     this.renderCapitalPage();
                     this.refreshUI();
@@ -2653,8 +2683,6 @@
             }
         },
 
-        filterTracking(f) { this.trackingFilter = f; this.renderTracking(); },
-
         async clearAllTracking() {
             if (confirm('Supprimer tous les paris ?')) {
                 const pending = this.trackingData.filter(b => b.result === 'pending');
@@ -2662,7 +2690,7 @@
                 for (const bet of pending) totalRefund += bet.stake || 0;
                 if (totalRefund > 0) {
                     this.bankroll += totalRefund;
-                    this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: Math.round(this.bankroll), profit: Math.round(this.bankroll - 100000), operation: `Annulation de ${pending.length} paris en attente`, isWin: false, profitAmount: 0 });
+                    this.capitalHistory.push({ date: new Date().toISOString().slice(0, 10), bankroll: Math.round(this.bankroll), profit: Math.round(this.bankroll), operation: `Annulation de ${pending.length} paris en attente`, isWin: false, profitAmount: 0 });
                     this.saveCapitalHistory();
                     this.renderCapitalPage();
                     this.refreshUI();
@@ -2691,9 +2719,9 @@
 
         exportTrackingCSV() {
             if (this.trackingData.length === 0) { showToast('Aucune donnée', 'error'); return; }
-            let csv = 'Date;Domicile;Extérieur;Type;Cote;Mise;Score;Résultat;Profit\n';
+            let csv = 'Date;Domicile;Extérieur;Type;Cote;Mise;Score;Résultat;Profit;Edge;Probabilité\n';
             this.trackingData.forEach(b => {
-                csv += `${b.date || ''};${b.homeTeam || ''};${b.awayTeam || ''};${b.betType || ''};${b.odds || 0};${b.stake || 0};${b.actualScore || '-'};${b.result || 'pending'};${b.profit || 0}\n`;
+                csv += `${b.date || ''};${b.homeTeam || ''};${b.awayTeam || ''};${b.betType || ''};${b.odds || 0};${b.stake || 0};${b.actualScore || '-'};${b.result || 'pending'};${b.profit || 0};${b.edge ? (b.edge*100).toFixed(1)+'%' : '-'};${b.modelProb ? (b.modelProb*100).toFixed(1)+'%' : '-'}\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
@@ -2702,151 +2730,408 @@
         },
 
         // ============================================================
-        //  SUBMIT MATCH RESULT
+        //  EXPORT / IMPORT JSON
         // ============================================================
-        async submitMatchResult() {
-            const hg = parseInt(document.getElementById('resultHomeGoals').value);
-            const ag = parseInt(document.getElementById('resultAwayGoals').value);
-            if (isNaN(hg) || isNaN(ag) || hg < 0 || ag < 0) { showToast('Score invalide', 'error'); return; }
-            const hn = document.getElementById('analysisHome').value.trim();
-            const an = document.getElementById('analysisAway').value.trim();
-            if (!hn || !an) { showToast('Équipes manquantes', 'error'); return; }
-            const stake = Math.round(this.bankroll * 0.01);
-            const betType = prompt(`📊 Type de pari pour ${hn} vs ${an}\n\nMise: ${stake.toLocaleString()} CDF\nCapital: ${this.bankroll.toLocaleString()} CDF\n\n1, X, 2, 1X, X2, Over25, Under25, Over15, Under15, Over35, Under35, Over05, Under05, BTTS`, '1');
-            if (betType === null) { showToast('Annulé', 'info'); return; }
-            const oddMap = { 
-                '1': document.getElementById('bookOdd1').value, 
-                'X': document.getElementById('bookOddX').value, 
-                '2': document.getElementById('bookOdd2').value, 
-                '1X': document.getElementById('bookOdd1X').value, 
-                'X2': document.getElementById('bookOddX2').value, 
-                'Over25': document.getElementById('bookOver25').value, 
-                'Under25': document.getElementById('bookUnder25').value, 
-                'Over15': document.getElementById('bookOver15').value, 
-                'Under15': document.getElementById('bookUnder15').value, 
-                'Over35': document.getElementById('bookOver35').value, 
-                'Under35': document.getElementById('bookUnder35').value, 
-                'Over05': document.getElementById('bookOver05').value, 
-                'Under05': document.getElementById('bookUnder05').value, 
-                'BTTS': document.getElementById('bookBTTS').value 
+        async exportTrackingJSON() {
+            const data = {
+                version: '18.0-ultimate',
+                exportedAt: new Date().toISOString(),
+                teams: this.teams,
+                matches: this.matches,
+                tracking: this.trackingData,
+                bankroll: this.bankroll,
+                capitalHistory: this.capitalHistory
             };
-            const odds = parseFloat(oddMap[betType] || 0);
-            if (isNaN(odds) || odds <= 1.01) { showToast('Cote invalide', 'error'); return; }
-            const a1X2 = hg > ag ? '1' : (hg === ag ? 'X' : '2');
-            const totalGoals = hg + ag;
-            let isWin = false, resultLabel = betType;
-            switch(betType) {
-                case '1': isWin = a1X2 === '1'; resultLabel = '1'; break;
-                case 'X': isWin = a1X2 === 'X'; resultLabel = 'X'; break;
-                case '2': isWin = a1X2 === '2'; resultLabel = '2'; break;
-                case '1X': isWin = (a1X2 === '1' || a1X2 === 'X'); resultLabel = '1X'; break;
-                case 'X2': isWin = (a1X2 === 'X' || a1X2 === '2'); resultLabel = 'X2'; break;
-                case 'Over05': isWin = totalGoals > 0.5; resultLabel = 'Over 0.5'; break;
-                case 'Under05': isWin = totalGoals < 0.5; resultLabel = 'Under 0.5'; break;
-                case 'Over15': isWin = totalGoals > 1.5; resultLabel = 'Over 1.5'; break;
-                case 'Under15': isWin = totalGoals < 1.5; resultLabel = 'Under 1.5'; break;
-                case 'Over25': isWin = totalGoals > 2.5; resultLabel = 'Over 2.5'; break;
-                case 'Under25': isWin = totalGoals < 2.5; resultLabel = 'Under 2.5'; break;
-                case 'Over35': isWin = totalGoals > 3.5; resultLabel = 'Over 3.5'; break;
-                case 'Under35': isWin = totalGoals < 3.5; resultLabel = 'Under 3.5'; break;
-                case 'BTTS': isWin = (hg > 0 && ag > 0); resultLabel = 'BTTS'; break;
-                default: isWin = a1X2 === '1';
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `RED_PRO_SUIVI_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Export JSON terminé', 'success');
+        },
+
+        importTrackingFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+                    
+                    if (data.teams) {
+                        for (const t of data.teams) await DB.saveTeam(t);
+                    }
+                    
+                    if (data.matches) {
+                        const existing = await DB.getAllMatches();
+                        const existingSet = new Set();
+                        for (const m of existing) {
+                            existingSet.add(`${m.homeTeam}|${m.awayTeam}|${m.date}`);
+                        }
+                        const toAdd = data.matches.filter(m => 
+                            !existingSet.has(`${m.homeTeam}|${m.awayTeam}|${m.date}`)
+                        );
+                        if (toAdd.length > 0) await DB.saveMatches(toAdd);
+                    }
+                    
+                    if (data.tracking) {
+                        for (const t of data.tracking) await DB.saveTracking(t);
+                    }
+                    
+                    if (data.bankroll !== undefined) {
+                        this.bankroll = data.bankroll;
+                    }
+                    
+                    if (data.capitalHistory) {
+                        this.capitalHistory = data.capitalHistory;
+                    }
+                    
+                    this.saveCapitalHistory();
+                    await this.refreshAllData();
+                    showToast('✅ Import JSON terminé', 'success');
+                } catch (err) {
+                    showToast('❌ Erreur import: ' + err.message, 'error');
+                }
+            };
+            input.click();
+        },
+
+        // ============================================================
+        //  MODALE SCORE
+        // ============================================================
+        openScoreFromTracking(betId) {
+            const bet = this.trackingData.find(b => b.id === betId);
+            if (!bet) { showToast('Pari introuvable', 'error'); return; }
+            if (bet.result !== 'pending') { showToast('Ce pari est déjà terminé', 'info'); return; }
+            
+            this._editingBetId = betId;
+            
+            document.getElementById('modalScoreHome').textContent = bet.homeTeam;
+            document.getElementById('modalScoreAway').textContent = bet.awayTeam;
+            document.getElementById('modalScoreMarket').textContent = bet.betType;
+            document.getElementById('modalScoreOdd').textContent = bet.odds.toFixed(2);
+            document.getElementById('modalScoreStake').textContent = bet.stake.toLocaleString() + ' CDF';
+            document.getElementById('modalScoreProb').textContent = bet.modelProb ? (bet.modelProb * 100).toFixed(1) + '%' : '-';
+            document.getElementById('modalScoreHG').value = '';
+            document.getElementById('modalScoreAG').value = '';
+            document.getElementById('modalScoreResult').textContent = 'Saisissez le score';
+            document.getElementById('modalScorePreview').style.borderColor = 'var(--border)';
+            
+            const dateInput = document.getElementById('modalScoreDate');
+            if (bet.date) {
+                const d = new Date(bet.date);
+                dateInput.value = d.toISOString().slice(0, 10);
+            } else {
+                dateInput.value = new Date().toISOString().slice(0, 10);
             }
-            const profit = isWin ? stake * (odds - 1) : -stake;
-            const result = isWin ? 'win' : 'loss';
-            const oldCapital = this.bankroll;
+            
+            const hgInput = document.getElementById('modalScoreHG');
+            const agInput = document.getElementById('modalScoreAG');
+            
+            const updatePreview = () => {
+                const hg = parseInt(hgInput.value) || -1;
+                const ag = parseInt(agInput.value) || -1;
+                const preview = document.getElementById('modalScoreResult');
+                const previewBox = document.getElementById('modalScorePreview');
+                
+                if (hg < 0 || ag < 0) {
+                    preview.textContent = 'Saisissez le score';
+                    previewBox.style.borderColor = 'var(--border)';
+                    return;
+                }
+                
+                const isWin = this.calculateWin(hg, ag, bet.betType);
+                const resultText = isWin ? '✅ GAGNANT' : '❌ PERDANT';
+                const profit = isWin ? bet.stake * (bet.odds - 1) : -bet.stake;
+                
+                preview.textContent = `${resultText} (${hg}-${ag}) | ${profit >= 0 ? '+' : ''}${profit.toFixed(0)} CDF`;
+                previewBox.style.borderColor = isWin ? 'var(--green)' : 'var(--red)';
+                previewBox.style.border = '2px solid ' + (isWin ? 'var(--green)' : 'var(--red)');
+            };
+            
+            hgInput.oninput = updatePreview;
+            agInput.oninput = updatePreview;
+            
+            document.getElementById('scoreModal').classList.remove('hidden');
+        },
+
+        openScoreFromTrackingManual() {
+            // Version manuelle : l'utilisateur remplit tout
+            document.getElementById('modalScoreHome').textContent = 'À définir';
+            document.getElementById('modalScoreAway').textContent = 'À définir';
+            document.getElementById('modalScoreMarket').textContent = 'À définir';
+            document.getElementById('modalScoreOdd').textContent = '0.00';
+            document.getElementById('modalScoreStake').textContent = '0 CDF';
+            document.getElementById('modalScoreProb').textContent = '-';
+            document.getElementById('modalScoreHG').value = '';
+            document.getElementById('modalScoreAG').value = '';
+            document.getElementById('modalScoreResult').textContent = 'Saisissez le score';
+            document.getElementById('modalScorePreview').style.borderColor = 'var(--border)';
+            document.getElementById('modalScoreDate').value = new Date().toISOString().slice(0, 10);
+            this._editingBetId = -1; // Mode manuel
+            
+            const hgInput = document.getElementById('modalScoreHG');
+            const agInput = document.getElementById('modalScoreAG');
+            
+            const updatePreview = () => {
+                const hg = parseInt(hgInput.value) || -1;
+                const ag = parseInt(agInput.value) || -1;
+                const preview = document.getElementById('modalScoreResult');
+                const previewBox = document.getElementById('modalScorePreview');
+                
+                if (hg < 0 || ag < 0) {
+                    preview.textContent = 'Saisissez le score';
+                    previewBox.style.borderColor = 'var(--border)';
+                    return;
+                }
+                
+                // Pour le mode manuel, on ne peut pas déterminer win/loss sans le marché
+                preview.textContent = `Score: ${hg}-${ag} (Saisissez les infos du pari)`;
+                previewBox.style.borderColor = 'var(--gold)';
+                previewBox.style.border = '2px solid var(--gold)';
+            };
+            
+            hgInput.oninput = updatePreview;
+            agInput.oninput = updatePreview;
+            
+            document.getElementById('scoreModal').classList.remove('hidden');
+        },
+
+        closeScoreModal() {
+            document.getElementById('scoreModal').classList.add('hidden');
+            this._editingBetId = null;
+        },
+
+        async saveScoreFromTracking() {
+            const hg = parseInt(document.getElementById('modalScoreHG').value);
+            const ag = parseInt(document.getElementById('modalScoreAG').value);
+            
+            if (isNaN(hg) || isNaN(ag) || hg < 0 || ag < 0) {
+                showToast('⚠️ Entrez un score valide', 'error');
+                return;
+            }
+            
+            const betId = this._editingBetId;
+            const date = document.getElementById('modalScoreDate').value || new Date().toISOString().slice(0, 10);
+            
+            // Mode manuel
+            if (betId === -1) {
+                const home = prompt('🏠 Équipe domicile:') || '';
+                const away = prompt('✈️ Équipe extérieur:') || '';
+                const market = prompt('📈 Marché (1, X, 2, Over25, Under25, BTTS, etc.):') || '1';
+                const odds = parseFloat(prompt('💰 Cote:') || '0');
+                const stake = parseFloat(prompt('💵 Mise (CDF):') || '0');
+                
+                if (!home || !away || isNaN(odds) || odds <= 0 || isNaN(stake) || stake <= 0) {
+                    showToast('Données invalides', 'error');
+                    return;
+                }
+                
+                const isWin = this.calculateWin(hg, ag, market);
+                const profit = isWin ? stake * (odds - 1) : -stake;
+                
+                await DB.saveTracking({
+                    date: new Date().toISOString(),
+                    homeTeam: home,
+                    awayTeam: away,
+                    league: prompt('🏆 Ligue:') || 'Inconnu',
+                    betType: market,
+                    odds: odds,
+                    stake: stake,
+                    modelProb: 0,
+                    fairOdd: 0,
+                    edge: 0,
+                    confidence: 0,
+                    result: isWin ? 'win' : 'loss',
+                    profit: profit,
+                    actualScore: `${hg}-${ag}`
+                });
+                
+                this.bankroll += profit;
+                this.capitalHistory.push({
+                    date: date,
+                    bankroll: Math.round(this.bankroll),
+                    profit: Math.round(this.bankroll),
+                    operation: `${home} vs ${away} - ${market}`,
+                    stake: stake,
+                    odds: odds,
+                    isWin: isWin,
+                    profitAmount: profit,
+                    score: `${hg}-${ag}`
+                });
+                this.saveCapitalHistory();
+                
+                await this.updateTeamStats(home, away, hg, ag, 'Inconnu');
+                await DB.saveMatch({
+                    season: Utils.extractSeason(date) || 'Inconnu',
+                    league: 'Inconnu',
+                    date: date,
+                    homeTeam: home,
+                    awayTeam: away,
+                    FTHG: hg,
+                    FTAG: ag,
+                    FTR: hg > ag ? 'H' : (hg === ag ? 'D' : 'A')
+                });
+                
+                this.closeScoreModal();
+                await this.refreshAllData();
+                this.renderTracking();
+                this.renderCapitalPage();
+                this.refreshUI();
+                this.updateRiskDisplay();
+                showToast(`✅ ${home} ${hg}-${ag} ${away} enregistré`, 'success');
+                return;
+            }
+            
+            // Mode existant
+            const bet = this.trackingData.find(b => b.id === betId);
+            if (!bet) { showToast('⚠️ Pari introuvable', 'error'); return; }
+            
+            const isWin = this.calculateWin(hg, ag, bet.betType);
+            const profit = isWin ? bet.stake * (bet.odds - 1) : -bet.stake;
+            
+            await DB.updateTracking(betId, {
+                result: isWin ? 'win' : 'loss',
+                profit: profit,
+                actualScore: `${hg}-${ag}`
+            });
+            
             this.bankroll += profit;
-            this.capitalHistory.push({ 
-                date: new Date().toISOString().slice(0, 10), 
-                bankroll: Math.round(this.bankroll), 
-                profit: Math.round(this.bankroll - 100000), 
-                operation: `${hn} vs ${an} - ${resultLabel}`, 
-                oldBankroll: oldCapital, 
-                stake, odds, isWin, profitAmount: profit, 
-                score: `${hg}-${ag}` 
+            this.capitalHistory.push({
+                date: date,
+                bankroll: Math.round(this.bankroll),
+                profit: Math.round(this.bankroll),
+                operation: `${bet.homeTeam} vs ${bet.awayTeam} - ${bet.betType}`,
+                stake: bet.stake,
+                odds: bet.odds,
+                isWin: isWin,
+                profitAmount: profit,
+                score: `${hg}-${ag}`
             });
             this.saveCapitalHistory();
-
-            await DB.saveTracking({ 
-                date: new Date().toISOString(), 
-                homeTeam: hn, 
-                awayTeam: an, 
-                league: document.getElementById('analysisLeagueFilter').value || 'Inconnu', 
-                betType: resultLabel, 
-                odds, 
-                stake, 
-                closingOdds: null, 
-                result, 
-                profit, 
-                actualScore: `${hg}-${ag}` 
+            
+            await this.updateTeamStats(bet.homeTeam, bet.awayTeam, hg, ag, bet.league || 'Inconnu');
+            
+            const lc = getLeagueConfig(bet.league || 'Inconnu');
+            await DB.saveMatch({
+                season: Utils.extractSeason(date) || 'Inconnu',
+                league: bet.league || 'Inconnu',
+                div: lc.name || bet.league || 'Inconnu',
+                date: date,
+                homeTeam: bet.homeTeam,
+                awayTeam: bet.awayTeam,
+                FTHG: hg,
+                FTAG: ag,
+                FTR: hg > ag ? 'H' : (hg === ag ? 'D' : 'A')
             });
+            
+            this.closeScoreModal();
+            await this.refreshAllData();
+            this.renderTracking();
+            this.renderCapitalPage();
+            this.refreshUI();
+            this.updateRiskDisplay();
+            
+            const emoji = isWin ? '✅' : '❌';
+            showToast(`${emoji} ${bet.homeTeam} ${hg}-${ag} ${bet.awayTeam} | ${bet.betType} | ${profit >= 0 ? '+' : ''}${profit.toFixed(0)} CDF`, isWin ? 'success' : 'error');
+        },
 
-            let hT = await DB.getTeam(hn);
-            let aT = await DB.getTeam(an);
-            const lv = document.getElementById('analysisLeagueFilter').value || 'E0';
-            const lc = getLeagueConfig(lv);
+        // ============================================================
+        //  CALCUL WIN
+        // ============================================================
+        calculateWin(hg, ag, market) {
+            const total = hg + ag;
+            const isHomeWin = hg > ag;
+            const isDraw = hg === ag;
+            const isAwayWin = ag > hg;
             
-            if (!hT) hT = { 
-                name: hn, 
-                elo: lc.eloRef || 1500, 
-                matches: 0, 
-                goalsScored: 0, 
-                goalsConceded: 0, 
-                xG: 1.0, 
-                xGA: 1.0, 
-                stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, 
-                formLast5: ['D', 'D', 'D', 'D', 'D'] 
-            };
-            
-            if (!aT) aT = { 
-                name: an, 
-                elo: lc.eloRef || 1500, 
-                matches: 0, 
-                goalsScored: 0, 
-                goalsConceded: 0, 
-                xG: 1.0, 
-                xGA: 1.0, 
-                stats: { xG: 1.0, xGA: 1.0, goalsPerMatch: 0, shotsOnTargetPerMatch: 0 }, 
-                formLast5: ['D', 'D', 'D', 'D', 'D'] 
-            };
-            
-            const strength = lc.eloRef ? lc.eloRef / 1500 : 1.0;
-            const er = EngineV18.updateElo(hT, aT, hg, ag, 20, strength);
-            hT.elo = er.homeNewElo; 
-            aT.elo = er.awayNewElo;
-            
-            hT.matches = (hT.matches || 0) + 1; 
-            aT.matches = (aT.matches || 0) + 1;
-            hT.goalsScored = (hT.goalsScored || 0) + hg; 
-            hT.goalsConceded = (hT.goalsConceded || 0) + ag;
-            aT.goalsScored = (aT.goalsScored || 0) + ag; 
-            aT.goalsConceded = (aT.goalsConceded || 0) + hg;
-            
-            const avgGoalsTeam = hT.goalsScored / Math.max(1, hT.matches);
-            const avgConcededTeam = hT.goalsConceded / Math.max(1, hT.matches);
-            
+            switch(market) {
+                case '1': return isHomeWin;
+                case 'X': return isDraw;
+                case '2': return isAwayWin;
+                case '1X': return isHomeWin || isDraw;
+                case 'X2': return isDraw || isAwayWin;
+                case 'Over 0.5': return total > 0.5;
+                case 'Under 0.5': return total < 0.5;
+                case 'Over 1.5': return total > 1.5;
+                case 'Under 1.5': return total < 1.5;
+                case 'Over 2.5': return total > 2.5;
+                case 'Under 2.5': return total < 2.5;
+                case 'Over 3.5': return total > 3.5;
+                case 'Under 3.5': return total < 3.5;
+                case 'BTTS': return hg > 0 && ag > 0;
+                default: return isHomeWin;
+            }
+        },
+
+        // ============================================================
+        //  UPDATE TEAM STATS
+        // ============================================================
+        async updateTeamStats(homeName, awayName, hg, ag, league) {
+            let hT = await DB.getTeam(homeName);
+            let aT = await DB.getTeam(awayName);
+            const lc = getLeagueConfig(league);
+            const strength = lc.leagueStrength || 1.0;
             const leagueAvgGoals = lc.avgGoals || 2.7;
             
-            hT.xG = xGEngine.calculateXGFromGoals(avgGoalsTeam, true, leagueAvgGoals);
-            hT.xGA = xGEngine.calculateXGFromGoals(avgConcededTeam, true, leagueAvgGoals);
-            aT.xG = xGEngine.calculateXGFromGoals(avgConcededTeam, false, leagueAvgGoals);
-            aT.xGA = xGEngine.calculateXGFromGoals(avgGoalsTeam, false, leagueAvgGoals);
+            if (!hT) {
+                hT = { 
+                    name: homeName, 
+                    elo: lc.eloRef || 1500, 
+                    matches: 0, 
+                    goalsScored: 0, 
+                    goalsConceded: 0, 
+                    xG: lc.xgHome * strength, 
+                    xGA: lc.xGA_home * strength, 
+                    stats: { xG: lc.xgHome * strength, xGA: lc.xGA_home * strength, goalsPerMatch: lc.goalsHome * strength, shotsOnTargetPerMatch: 0 }, 
+                    formLast5: ['D', 'D', 'D', 'D', 'D'] 
+                };
+            }
+            if (!aT) {
+                aT = { 
+                    name: awayName, 
+                    elo: lc.eloRef || 1500, 
+                    matches: 0, 
+                    goalsScored: 0, 
+                    goalsConceded: 0, 
+                    xG: lc.xgAway * strength, 
+                    xGA: lc.xGA_away * strength, 
+                    stats: { xG: lc.xgAway * strength, xGA: lc.xGA_away * strength, goalsPerMatch: lc.goalsAway * strength, shotsOnTargetPerMatch: 0 }, 
+                    formLast5: ['D', 'D', 'D', 'D', 'D'] 
+                };
+            }
             
-            if (hT.xG < 0.6) hT.xG = 0.8;
-            if (hT.xGA < 0.6) hT.xGA = 0.8;
-            if (aT.xG < 0.6) aT.xG = 0.8;
-            if (aT.xGA < 0.6) aT.xGA = 0.8;
+            const er = EngineV18.updateElo(hT, aT, hg, ag, 20, strength);
+            hT.elo = er.homeNewElo;
+            aT.elo = er.awayNewElo;
+            
+            hT.matches = (hT.matches || 0) + 1;
+            aT.matches = (aT.matches || 0) + 1;
+            hT.goalsScored = (hT.goalsScored || 0) + hg;
+            hT.goalsConceded = (hT.goalsConceded || 0) + ag;
+            aT.goalsScored = (aT.goalsScored || 0) + ag;
+            aT.goalsConceded = (aT.goalsConceded || 0) + hg;
+            
+            hT.xG = xGEngine.calculateXGFromGoals(hT.goalsScored / hT.matches, true, leagueAvgGoals);
+            hT.xGA = xGEngine.calculateXGFromGoals(hT.goalsConceded / hT.matches, true, leagueAvgGoals);
+            aT.xG = xGEngine.calculateXGFromGoals(aT.goalsScored / aT.matches, false, leagueAvgGoals);
+            aT.xGA = xGEngine.calculateXGFromGoals(aT.goalsConceded / aT.matches, false, leagueAvgGoals);
             
             hT.stats = { 
                 xG: hT.xG, 
                 xGA: hT.xGA, 
-                goalsPerMatch: Math.min(3.5, avgGoalsTeam), 
+                goalsPerMatch: hT.goalsScored / hT.matches, 
                 shotsOnTargetPerMatch: 0 
             };
             aT.stats = { 
                 xG: aT.xG, 
                 xGA: aT.xGA, 
-                goalsPerMatch: Math.min(3.5, avgConcededTeam), 
+                goalsPerMatch: aT.goalsScored / aT.matches, 
                 shotsOnTargetPerMatch: 0 
             };
             
@@ -2855,38 +3140,8 @@
             hT.formLast5 = [...(hT.formLast5 || []), hR].slice(-5);
             aT.formLast5 = [...(aT.formLast5 || []), aR].slice(-5);
             
-            await DB.saveTeam(hT); 
+            await DB.saveTeam(hT);
             await DB.saveTeam(aT);
-
-            const me = { 
-                season: Utils.extractSeason(new Date().toISOString()) || 'Inconnu', 
-                league: lc.name, 
-                div: lv, 
-                date: new Date().toISOString().slice(0, 10), 
-                homeTeam: hn, 
-                awayTeam: an, 
-                FTHG: hg, 
-                FTAG: ag, 
-                FTR: hR === 'W' ? 'H' : (hR === 'D' ? 'D' : 'A'), 
-                PSH: parseFloat(document.getElementById('bookOdd1').value) || 0, 
-                PSD: parseFloat(document.getElementById('bookOddX').value) || 0, 
-                PSA: parseFloat(document.getElementById('bookOdd2').value) || 0, 
-                'P>2.5': parseFloat(document.getElementById('bookOver25').value) || 0, 
-                'P<2.5': parseFloat(document.getElementById('bookUnder25').value) || 0,
-                Home_xG: hT.xG,
-                Away_xG: aT.xG,
-                Home_xGA: hT.xGA,
-                Away_xGA: aT.xGA
-            };
-            await DB.saveMatch(me);
-
-            await this.refreshAllData();
-
-            const emoji = isWin ? '✅' : '❌';
-            const profitDisplay = profit >= 0 ? `+${profit.toFixed(2)}` : profit.toFixed(2);
-            showToast(`${emoji} ${hn} ${hg}-${ag} ${an} | ${resultLabel} | ${profitDisplay} CDF | Capital: ${this.bankroll.toLocaleString()} CDF`, isWin ? 'success' : 'error');
-            document.getElementById('resultHomeGoals').value = '';
-            document.getElementById('resultAwayGoals').value = '';
         },
 
         // ============================================================
@@ -2995,7 +3250,7 @@
                     const r = EngineV18.predict(hT, aT, lc, null, odds.home > 1.01 ? odds : null, 'home');
                     for (const vb of r.valueBets) {
                         if (vb.edge > 0.02 && vb.confidence > 50 && vb.bookmakerOdd >= 1.30 && vb.bookmakerOdd <= 4.00) {
-                            avb.push({ home: match.homeTeam, away: match.awayTeam, league: match.league, market: vb.market, modelProb: vb.modelProb, odd: vb.bookmakerOdd, fairOdd: vb.fairOdd, edge: vb.edge, strength: vb.strength, score: vb.score, confidence: vb.confidence, stake: Math.round(this.bankroll * 0.01) });
+                            avb.push({ home: match.homeTeam, away: match.awayTeam, league: match.league, market: vb.market, modelProb: vb.modelProb, odd: vb.bookmakerOdd, fairOdd: vb.fairOdd, edge: vb.edge, strength: vb.strength, score: vb.score, confidence: vb.confidence, stake: this.bankroll > 0 ? Math.round(this.bankroll * 0.01) : 0 });
                         }
                     }
                 } catch (e) { continue; }
@@ -3004,14 +3259,10 @@
             if (avb.length === 0) { ctr.innerHTML = '<div class="text-sub">Aucune value bet (Edge > 2%, Confiance > 50%, Cote 1.30-4.00)</div>'; return; }
             let h = `<div class="value-row header"><span>Match</span><span>Ligue</span><span>Marché</span><span>Prob.</span><span>Fair</span><span>Cote</span><span>Edge</span><span>Mise</span><span>Action</span></div>`;
             avb.slice(0, 30).forEach(vb => {
-                h += `<div class="value-row"><span class="fw-700 text-cyan">${Utils.escapeHTML(vb.home)} vs ${Utils.escapeHTML(vb.away)}</span><span class="text-sub">${Utils.escapeHTML(vb.league || '-')}</span><span>${vb.market}</span><span>${(vb.modelProb*100).toFixed(1)}%</span><span class="text-cyan">${vb.fairOdd.toFixed(2)}</span><span class="text-gold">${vb.odd.toFixed(2)}</span><span class="text-green">+${(vb.edge*100).toFixed(1)}%</span><span class="text-gold fw-700">${vb.stake.toLocaleString()} CDF</span><span><button class="btn btn-sm btn-success" onclick="App.saveBetFromValueBets('${Utils.escapeHTML(vb.home)}', '${Utils.escapeHTML(vb.away)}', '${vb.market}', ${vb.odd}, ${vb.stake})" style="padding:1px 6px;font-size:0.45rem;">💾</button></span></div>`;
+                h += `<div class="value-row"><span class="fw-700 text-cyan">${Utils.escapeHTML(vb.home)} vs ${Utils.escapeHTML(vb.away)}</span><span class="text-sub">${Utils.escapeHTML(vb.league || '-')}</span><span>${vb.market}</span><span>${(vb.modelProb*100).toFixed(1)}%</span><span class="text-cyan">${vb.fairOdd.toFixed(2)}</span><span class="text-gold">${vb.odd.toFixed(2)}</span><span class="text-green">+${(vb.edge*100).toFixed(1)}%</span><span class="text-gold fw-700">${vb.stake.toLocaleString()} CDF</span><span><button class="btn btn-sm btn-success" onclick="App.saveBetFromAnalysis('${vb.market}', ${vb.odd}, ${vb.stake})" style="padding:1px 6px;font-size:0.45rem;">💾</button></span></div>`;
             });
             ctr.innerHTML = h;
             showToast(`${avb.length} value bets`, 'success');
-        },
-
-        saveBetFromValueBets(home, away, market, odds, stake) {
-            DB.saveTracking({ date: new Date().toISOString(), homeTeam: home, awayTeam: away, league: 'Scan Value Bets', betType: market, odds, stake, closingOdds: null, result: 'pending', profit: 0 }).then(async () => { this.trackingData = await DB.getAllTracking(); this.renderTracking(); showToast(`Pari enregistré - Mise: ${stake.toLocaleString()} CDF`, 'success'); });
         },
 
         exportValueBetsCSV() {
@@ -3065,7 +3316,7 @@
         },
 
         // ============================================================
-        //  EXPORT / IMPORT
+        //  EXPORT / IMPORT ALL DATA
         // ============================================================
         async exportAllData() {
             const data = { version: '18.0-ultimate', exportedAt: new Date().toISOString(), teams: this.teams, matches: this.matches, tracking: this.trackingData, bankroll: this.bankroll, capitalHistory: this.capitalHistory };
@@ -3079,7 +3330,7 @@
             if (!confirm('⚠️ Supprimer toutes les données ?')) return;
             await DB.deleteAllData();
             this.teams = []; this.matches = []; this.trackingData = []; this.analysisHistory = [];
-            this.bankroll = 100000; this.capitalHistory = [{ date: 'Début', bankroll: 100000, profit: 0, operation: 'Initialisation' }];
+            this.bankroll = 0; this.capitalHistory = [];
             localStorage.removeItem('rp_history'); localStorage.removeItem('rp_capital_history'); localStorage.removeItem('rp_bankroll');
             EngineV18.clearCache();
             this.refreshUI(); await this.populateSelectors(); this.renderHistory(); this.renderCapitalPage(); this.updateRiskDisplay();
@@ -3087,7 +3338,7 @@
         },
 
         // ============================================================
-        //  IMPORT
+        //  IMPORT DATA
         // ============================================================
         previewData() {
             const raw = document.getElementById('matchesInput').value.trim();
@@ -3197,7 +3448,8 @@
                 if (data.tracking && Array.isArray(data.tracking)) { 
                     for (const t of data.tracking) await DB.saveTracking(t); 
                 }
-                if (data.bankroll) { this.bankroll = data.bankroll; this.saveCapitalHistory(); }
+                if (data.bankroll !== undefined) { this.bankroll = data.bankroll; this.saveCapitalHistory(); }
+                if (data.capitalHistory) { this.capitalHistory = data.capitalHistory; this.saveCapitalHistory(); }
                 
                 await this.refreshAllData();
                 
@@ -3336,7 +3588,6 @@
                 if (matches.length === 0) { showToast('Aucun nouveau match valide', 'info'); return; }
                 
                 await DB.saveMatches(matches);
-                
                 await this.refreshAllData();
                 
                 document.getElementById('importProgress').classList.add('hidden');
