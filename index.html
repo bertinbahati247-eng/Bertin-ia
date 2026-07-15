@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🚀 RED PRO AI - Trading Multi-Exchange</title>
+    <title>🔴 RED PRO AI - Multi-Exchange (Binance/OKX/Bybit)</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,7 +14,6 @@
             color: #e0e6f0;
             min-height: 100vh;
             padding: 8px;
-            padding-bottom: 80px;
         }
         
         ::-webkit-scrollbar { width: 4px; }
@@ -60,7 +59,8 @@
         }
         .status-dot.connected { background: #00ff88; animation: pulse 2s infinite; }
         .status-dot.scanning { background: #ffaa00; animation: pulse 0.5s infinite; }
-        .status-dot.warning { background: #ff8800; animation: pulse 1s infinite; }
+        .status-dot.okx { background: #7b2ffc; animation: pulse 2s infinite; }
+        .status-dot.bybit { background: #00d4ff; animation: pulse 2s infinite; }
         
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -73,10 +73,9 @@
             margin-bottom: 10px;
             overflow-x: auto;
             padding-bottom: 4px;
-            flex-wrap: nowrap;
         }
         .tab {
-            padding: 8px 12px;
+            padding: 8px 14px;
             background: #0a0e17;
             border: 1px solid #1a2230;
             border-radius: 10px;
@@ -86,7 +85,6 @@
             font-weight: 600;
             white-space: nowrap;
             transition: all 0.3s;
-            flex-shrink: 0;
         }
         .tab.active { background: #1a2230; color: #ff4466; border-color: #ff4466; }
         .tab.locked { opacity: 0.5; cursor: not-allowed; }
@@ -95,41 +93,41 @@
         .card {
             background: #0d1520;
             border-radius: 12px;
-            padding: 14px;
+            padding: 16px;
             margin-bottom: 10px;
             border: 1px solid #1e2a3a;
         }
         
         .card-title {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             color: #8899bb;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 4px;
         }
         
         .api-status-card {
             background: #0a0e17;
             border-radius: 10px;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 10px;
             border: 1px solid #1a2230;
         }
         .api-status-card.connected { border-color: #00ff88; }
         .api-status-card.disconnected { border-color: #ff4466; }
+        .api-status-card.okx { border-color: #7b2ffc; }
+        .api-status-card.bybit { border-color: #00d4ff; }
         
         .api-input-group {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .api-input-group label {
             display: block;
-            font-size: 10px;
+            font-size: 11px;
             color: #8899bb;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
         }
         .api-input-group input, .api-input-group select {
             width: 100%;
@@ -159,84 +157,84 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
+            gap: 8px;
         }
         .stat-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: #0a0e17;
+            border-radius: 10px;
+            border: 1px solid #1a2230;
+        }
+        .stat-value { font-size: 18px; font-weight: 700; }
+        .stat-value.green { color: #00ff88; }
+        .stat-value.red { color: #ff4466; }
+        .stat-value.blue { color: #00d4ff; }
+        .stat-value.gold { color: #ffaa00; }
+        .stat-value.purple { color: #7b2ffc; }
+        .stat-label { font-size: 9px; color: #667799; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .engine-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .engine-score {
             text-align: center;
             padding: 10px 6px;
             background: #0a0e17;
             border-radius: 10px;
             border: 1px solid #1a2230;
         }
-        .stat-value { font-size: 16px; font-weight: 700; }
-        .stat-value.green { color: #00ff88; }
-        .stat-value.red { color: #ff4466; }
-        .stat-value.blue { color: #00d4ff; }
-        .stat-value.gold { color: #ffaa00; }
-        .stat-value.purple { color: #7b2ffc; }
-        .stat-label { font-size: 8px; color: #667799; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .engine-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            margin-bottom: 10px;
-        }
-        .engine-score {
-            text-align: center;
-            padding: 8px 4px;
-            background: #0a0e17;
-            border-radius: 10px;
-            border: 1px solid #1a2230;
-        }
         .engine-score.active { border-color: #ff4466; }
-        .engine-score .score { font-size: 18px; font-weight: 700; }
-        .engine-score .label { font-size: 8px; color: #8899bb; margin-top: 2px; }
+        .engine-score .score { font-size: 22px; font-weight: 700; }
+        .engine-score .label { font-size: 9px; color: #8899bb; margin-top: 3px; }
         
         .btn {
-            padding: 8px 14px;
+            padding: 10px 18px;
             border: none;
             border-radius: 10px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-primary { background: linear-gradient(135deg, #00d4ff, #7b2ffc); color: white; }
         .btn-danger { background: linear-gradient(135deg, #ff4466, #cc1133); color: white; }
         .btn-success { background: linear-gradient(135deg, #00ff88, #00cc66); color: #0a0e17; }
         .btn-warning { background: linear-gradient(135deg, #ffaa00, #ff8800); color: #0a0e17; }
-        .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
-        .btn-sm { padding: 6px 10px; font-size: 9px; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-exchange { background: #1a2230; color: #8899bb; border: 1px solid #2a3a4a; }
+        .btn-exchange.active { background: #ff4466; color: white; border-color: #ff4466; }
         
         .data-table {
             width: 100%;
-            font-size: 9px;
+            font-size: 10px;
             border-collapse: collapse;
         }
         .data-table th {
             text-align: left;
             color: #667799;
-            padding: 6px 4px;
+            padding: 8px 6px;
             border-bottom: 2px solid #1a2230;
-            font-size: 8px;
+            font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .data-table td {
-            padding: 4px;
+            padding: 6px;
             border-bottom: 1px solid #0a0e17;
-            font-size: 9px;
         }
         .profit { color: #00ff88; font-weight: 700; }
         .loss { color: #ff4466; font-weight: 700; }
         
         .scroll-container {
-            max-height: 400px;
+            max-height: 450px;
             overflow-y: auto;
             border-radius: 8px;
         }
@@ -257,8 +255,8 @@
         .signal-card {
             background: #0a0e17;
             border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 8px;
+            padding: 16px;
+            margin-bottom: 10px;
             border: 1px solid #1a2230;
         }
         .signal-card.strong-buy { border-color: #00ff88; border-width: 2px; box-shadow: 0 0 20px rgba(0,255,136,0.1); }
@@ -269,11 +267,11 @@
         
         .monte-carlo-bar {
             display: flex;
-            height: 20px;
-            border-radius: 10px;
+            height: 24px;
+            border-radius: 12px;
             overflow: hidden;
-            margin-top: 6px;
-            font-size: 8px;
+            margin-top: 8px;
+            font-size: 10px;
             font-weight: 700;
         }
         .monte-carlo-bar .up { background: #00ff8833; color: #00ff88; display: flex; align-items: center; justify-content: center; }
@@ -282,18 +280,18 @@
         
         .toast {
             position: fixed;
-            bottom: 70px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             background: #1a1f2e;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 12px;
             border: 1px solid #2a3a4a;
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
             z-index: 999;
             display: none;
-            font-size: 12px;
+            font-size: 13px;
             max-width: 90%;
             text-align: center;
         }
@@ -307,8 +305,8 @@
             background: #00ff8811;
             border: 2px solid #00ff88;
             border-radius: 10px;
-            padding: 10px;
-            margin: 6px 0;
+            padding: 12px;
+            margin: 8px 0;
             text-align: center;
         }
         
@@ -321,153 +319,108 @@
             animation: pulse 2s infinite;
         }
         
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #0d1520;
-            border-top: 1px solid #1a2230;
-            display: flex;
-            justify-content: space-around;
-            padding: 6px 0;
-            z-index: 100;
-        }
-        .bottom-nav .nav-item {
+        .price-display {
+            font-size: 28px;
+            font-weight: 700;
             text-align: center;
-            padding: 4px 8px;
-            color: #667799;
-            font-size: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
+            padding: 12px;
+            background: #0a0e17;
+            border-radius: 8px;
+            border: 1px solid #1a2230;
+            margin-bottom: 10px;
         }
-        .bottom-nav .nav-item.active { color: #ff4466; }
-        .bottom-nav .nav-item .icon { font-size: 16px; display: block; }
-        .bottom-nav .nav-item .label { display: block; margin-top: 2px; }
+        .price-display .price { color: #00d4ff; }
+        .price-display .change { font-size: 16px; }
+        .price-display .change.up { color: #00ff88; }
+        .price-display .change.down { color: #ff4466; }
         
         .market-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 4px;
-            margin-bottom: 8px;
+            max-height: 350px;
+            overflow-y: auto;
         }
         .market-item {
             background: #0a0e17;
             border: 1px solid #1a2230;
-            border-radius: 8px;
-            padding: 8px 4px;
+            border-radius: 6px;
+            padding: 6px 4px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 10px;
         }
         .market-item:hover { border-color: #ff4466; }
-        .market-item .symbol { font-weight: 700; font-size: 11px; }
-        .market-item .price { font-size: 11px; color: #00d4ff; }
+        .market-item .symbol { font-weight: 700; font-size: 10px; }
+        .market-item .price { font-size: 10px; color: #00d4ff; }
         .market-item .change { font-size: 9px; }
         .market-item .change.up { color: #00ff88; }
         .market-item .change.down { color: #ff4466; }
+        .market-item .exchange-tag { font-size: 7px; color: #667799; background: #1a2230; padding: 1px 4px; border-radius: 4px; }
         
-        .price-display {
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-            padding: 8px;
-            background: #0a0e17;
-            border-radius: 8px;
-            border: 1px solid #1a2230;
-            margin-bottom: 8px;
-        }
-        .price-display .price { color: #00d4ff; }
-        .price-display .change { font-size: 14px; }
-        .price-display .change.up { color: #00ff88; }
-        .price-display .change.down { color: #ff4466; }
-        
-        .order-book {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .order-book .bids { color: #00ff88; }
-        .order-book .asks { color: #ff4466; }
-        .order-book .level {
+        .exchange-selector {
             display: flex;
-            justify-content: space-between;
-            font-size: 9px;
-            padding: 2px 0;
-            border-bottom: 1px solid #0a0e17;
+            gap: 6px;
+            margin-bottom: 10px;
         }
-        
-        .indicator-toggle {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
+        .exchange-selector .btn {
+            flex: 1;
+            justify-content: center;
+            font-size: 11px;
         }
-        .indicator-toggle .tag {
-            padding: 4px 10px;
-            background: #0a0e17;
-            border: 1px solid #1a2230;
-            border-radius: 12px;
-            font-size: 9px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .indicator-toggle .tag.active { border-color: #00ff88; color: #00ff88; background: #00ff8811; }
         
         @media (max-width: 600px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .engine-grid { grid-template-columns: repeat(3, 1fr); }
             .header-title { font-size: 15px; }
             .market-grid { grid-template-columns: repeat(3, 1fr); }
-            .order-book { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
-    <div class="header-title">🚀 RED PRO AI</div>
+    <div class="header-title">🔴 RED PRO AI</div>
     <div class="header-status">
         <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">Déconnecté</span>
-        <span style="font-size:8px;color:#667799;" id="savedStatus"></span>
+        <span id="statusText">API Requise</span>
+        <span style="font-size:9px;color:#667799;" id="savedStatus"></span>
     </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs" id="tabsContainer">
     <div class="tab active" data-tab="api">🔑 API</div>
-    <div class="tab locked" data-tab="dashboard">📊 Dashboard</div>
+    <div class="tab locked" data-tab="dashboard">📊 Dashboard <span class="badge" id="dashboardBadge" style="display:none;">●</span></div>
     <div class="tab locked" data-tab="market">📈 Marché</div>
     <div class="tab locked" data-tab="signals">🎯 Signaux</div>
     <div class="tab locked" data-tab="trades">📜 Trades</div>
     <div class="tab locked" data-tab="backtest">🔬 Backtest</div>
-    <div class="tab locked" data-tab="settings">⚙️ Paramètres</div>
+    <div class="tab locked" data-tab="engines">⚙️ Moteurs</div>
 </div>
 
 <!-- TAB 1: API -->
 <div id="tab-api">
     <div class="card">
-        <div class="card-title">🔑 Connexion Exchange</div>
+        <div class="card-title">
+            🔑 Connexion Exchange
+            <span style="font-size:10px;color:#ff4466;">OBLIGATOIRE</span>
+        </div>
         
         <div class="api-status-card disconnected" id="apiStatusCard">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                <span style="font-size:20px;">🔴</span>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                <span style="font-size:24px;">🔴</span>
                 <div>
                     <div style="font-weight:700;color:#ff4466;" id="apiStatusTitle">Non Connecté</div>
-                    <div style="font-size:9px;color:#667799;" id="apiStatusMsg">Sélectionnez un exchange et entrez vos clés</div>
+                    <div style="font-size:10px;color:#667799;" id="apiStatusMsg">Sélectionnez un exchange et entrez vos clés</div>
                 </div>
             </div>
         </div>
         
-        <div class="api-input-group">
-            <label>Exchange</label>
-            <select id="exchangeSelect">
-                <option value="binance">Binance</option>
-                <option value="okx">OKX</option>
-                <option value="bybit">Bybit</option>
-            </select>
+        <div class="exchange-selector">
+            <button class="btn btn-exchange active" data-exchange="binance" onclick="selectExchange('binance')">🟡 Binance</button>
+            <button class="btn btn-exchange" data-exchange="okx" onclick="selectExchange('okx')">🟣 OKX</button>
+            <button class="btn btn-exchange" data-exchange="bybit" onclick="selectExchange('bybit')">🔵 Bybit</button>
         </div>
         
         <div class="api-input-group">
@@ -481,35 +434,36 @@
         </div>
         
         <div class="api-input-group" id="passphraseGroup" style="display:none;">
-            <label>Passphrase (OKX)</label>
+            <label>Passphrase (OKX uniquement)</label>
             <input type="password" id="apiPassphrase" placeholder="Passphrase OKX...">
         </div>
         
-        <div style="display:flex;gap:8px;margin-top:8px;">
-            <button class="btn btn-success" onclick="connectExchange()" style="flex:1;justify-content:center;">
-                🔓 Connecter
-            </button>
-            <button class="btn btn-danger" onclick="disconnectExchange()" style="flex:1;justify-content:center;">
-                🔒 Déconnecter
-            </button>
-        </div>
+        <button class="btn btn-danger" onclick="connectExchange()" style="width:100%;justify-content:center;margin-top:8px;">
+            🔓 Connecter
+        </button>
         
         <div class="api-info-box">
-            <strong>⚠️ Sécurité :</strong> Vos clés sont stockées localement et chiffrées. 
-            L'application ne demande JAMAIS de permissions de retrait.
+            <strong>⚠️ Sécurité :</strong> Vos clés sont stockées localement et chiffrées.<br>
+            L'application ne demande JAMAIS de permissions de retrait.<br>
+            <strong>Binance</strong> : Clé API + Secret<br>
+            <strong>OKX</strong> : Clé API + Secret + Passphrase<br>
+            <strong>Bybit</strong> : Clé API + Secret
         </div>
     </div>
     
     <div class="card">
-        <div class="card-title">💰 Configuration Trading</div>
+        <div class="card-title">
+            💰 Capital de Trading
+            <span style="font-size:10px;color:#ffaa00;">⚠️ Configurable</span>
+        </div>
         
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
             <div class="api-input-group">
-                <label>Capital (USDT)</label>
+                <label>Capital Total (USDT)</label>
                 <input type="number" id="capitalInput" value="1000" min="10" step="100">
             </div>
             <div class="api-input-group">
-                <label>Risque par trade (%)</label>
+                <label>Risque par Trade (%)</label>
                 <input type="number" id="riskInput" value="1" min="0.1" max="5" step="0.1">
             </div>
             <div class="api-input-group">
@@ -522,27 +476,38 @@
                     <option value="10">10x</option>
                 </select>
             </div>
-            <div class="api-input-group">
-                <label>Max positions</label>
-                <select id="maxPositions">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3" selected>3</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                </select>
-            </div>
         </div>
         
-        <button class="btn btn-primary" onclick="saveConfig()" style="width:100%;justify-content:center;margin-top:8px;">
-            💾 Sauvegarder
+        <button class="btn btn-success" onclick="saveCapitalConfig()" style="width:100%;justify-content:center;margin-top:10px;">
+            💾 Sauvegarder la Configuration
         </button>
+    </div>
+    
+    <div class="card">
+        <div class="card-title">
+            📂 Gestion des Données
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <button class="btn btn-primary" onclick="exportAllData()" style="justify-content:center;">
+                📤 Exporter
+            </button>
+            <button class="btn btn-warning" onclick="importAllData()" style="justify-content:center;">
+                📥 Importer
+            </button>
+            <button class="btn btn-danger" onclick="resetAllData()" style="justify-content:center;">
+                🗑️ Réinitialiser
+            </button>
+            <div style="font-size:10px;color:#667799;display:flex;align-items:center;justify-content:center;">
+                <span class="saved-indicator"></span> Sauvegarde auto
+            </div>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleFileImport(event)">
     </div>
 </div>
 
 <!-- TAB 2: DASHBOARD -->
 <div id="tab-dashboard" style="display:none;">
-    <div class="stats-grid">
+    <div class="stats-grid" style="margin-bottom:10px;">
         <div class="stat-item">
             <div class="stat-value gold" id="totalTrades">0</div>
             <div class="stat-label">Trades</div>
@@ -553,49 +518,34 @@
         </div>
         <div class="stat-item">
             <div class="stat-value blue" id="totalProfit">+0.00$</div>
-            <div class="stat-label">Profit</div>
+            <div class="stat-label">Profit Total</div>
         </div>
         <div class="stat-item">
             <div class="stat-value purple" id="roi">0%</div>
             <div class="stat-label">ROI</div>
         </div>
-        <div class="stat-item">
-            <div class="stat-value" id="drawdown" style="color:#ff8800;">0%</div>
-            <div class="stat-label">Drawdown</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="sharpe" style="color:#7b2ffc;">0</div>
-            <div class="stat-label">Sharpe</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="profitFactor" style="color:#00d4ff;">0</div>
-            <div class="stat-label">Profit Factor</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="currentStreak" style="color:#ffaa00;">0</div>
-            <div class="stat-label">Streak</div>
-        </div>
     </div>
     
     <div class="card">
         <div class="card-title">
-            📊 Contrôle
-            <span style="font-size:9px;color:#667799;" id="lastUpdate">--</span>
+            📊 Performance
+            <span style="font-size:10px;color:#667799;" id="lastUpdate">--</span>
         </div>
-        <div class="btn-group">
+        <div class="btn-group" style="margin-bottom:12px;">
             <button class="btn btn-success" onclick="startEngine()" id="startBtn">▶️ Démarrer</button>
             <button class="btn btn-danger" onclick="stopEngine()" id="stopBtn" disabled>⏹️ Stop</button>
             <button class="btn btn-warning" onclick="runBacktest()">🔬 Backtest</button>
             <button class="btn btn-primary" onclick="calibrateWeights()">📐 Calibrer</button>
+            <button class="btn btn-sm" style="background:#1a2230;color:#8899bb;" onclick="clearTrades()">🗑️ Effacer Trades</button>
         </div>
-        <div id="dashboardContent" style="font-size:10px;color:#667799;margin-top:8px;">
+        <div id="dashboardContent" style="font-size:11px;color:#667799;">
             Prêt à scanner. Connectez-vous d'abord.
         </div>
     </div>
     
     <div class="card">
-        <div class="card-title">📊 Positions Ouvertes</div>
-        <div id="openPositions" style="font-size:10px;color:#667799;">Aucune position ouverte</div>
+        <div class="card-title">🎯 Top Signaux en Direct</div>
+        <div id="topSignals"></div>
     </div>
 </div>
 
@@ -604,7 +554,7 @@
     <div class="card">
         <div class="card-title">
             📈 Prix en Direct
-            <span style="font-size:9px;color:#667799;" id="marketStatus">🔄 Connexion...</span>
+            <span style="font-size:10px;color:#667799;" id="marketStatus">Connexion...</span>
         </div>
         <div id="selectedPrice" class="price-display">
             <div class="price" id="currentPrice">--</div>
@@ -612,46 +562,13 @@
         </div>
         <div class="market-grid" id="marketGrid"></div>
     </div>
-    
-    <div class="card">
-        <div class="card-title">📊 Carnet d'Ordres</div>
-        <div class="order-book" id="orderBook">
-            <div class="bids">
-                <div style="font-weight:700;margin-bottom:4px;">ACHETEURS</div>
-                <div id="bidsList"></div>
-            </div>
-            <div class="asks">
-                <div style="font-weight:700;margin-bottom:4px;">VENDEURS</div>
-                <div id="asksList"></div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="card">
-        <div class="card-title">📊 Indicateurs</div>
-        <div class="indicator-toggle" id="indicatorToggle">
-            <span class="tag active" data-ind="rsi">RSI</span>
-            <span class="tag active" data-ind="macd">MACD</span>
-            <span class="tag active" data-ind="ema">EMA</span>
-            <span class="tag" data-ind="bb">Bollinger</span>
-            <span class="tag" data-ind="vwap">VWAP</span>
-            <span class="tag" data-ind="stoch">Stochastic</span>
-            <span class="tag" data-ind="adx">ADX</span>
-            <span class="tag" data-ind="ichimoku">Ichimoku</span>
-        </div>
-        <div id="indicatorValues" style="font-size:9px;color:#8899bb;margin-top:6px;">
-            Sélectionnez des indicateurs
-        </div>
-    </div>
 </div>
 
 <!-- TAB 4: SIGNAUX -->
 <div id="tab-signals" style="display:none;">
     <div class="card">
-        <div class="card-title">🎯 Signaux en Direct</div>
-        <div class="scroll-container" style="max-height:500px;" id="signalsDetail">
-            <div style="text-align:center;color:#667799;padding:20px;">Aucun signal pour le moment</div>
-        </div>
+        <div class="card-title">🎯 Analyse Complète par les 5 Moteurs</div>
+        <div class="scroll-container" style="max-height:550px;" id="signalsDetail"></div>
     </div>
 </div>
 
@@ -659,10 +576,10 @@
 <div id="tab-trades" style="display:none;">
     <div class="card">
         <div class="card-title">
-            📜 Historique
-            <span style="font-size:9px;color:#667799;" id="tradesCount">0 trades</span>
+            📜 Historique des Trades
+            <span style="font-size:10px;color:#667799;" id="tradesCount">0 trades</span>
         </div>
-        <div class="scroll-container" style="max-height:450px;">
+        <div class="scroll-container" style="max-height:500px;">
             <table class="data-table">
                 <thead>
                     <tr>
@@ -679,90 +596,52 @@
 <!-- TAB 6: BACKTEST -->
 <div id="tab-backtest" style="display:none;">
     <div class="card">
-        <div class="card-title">🔬 Backtest</div>
-        <div class="btn-group">
+        <div class="card-title">🔬 Backtest Engine</div>
+        <div class="btn-group" style="margin-bottom:12px;">
             <button class="btn btn-warning" onclick="runBacktest()">▶️ Lancer</button>
-            <select id="btDays" style="background:#0a0e17;color:white;border:1px solid #1a2230;border-radius:8px;padding:6px 10px;font-size:10px;">
+            <select id="btDays" style="background:#0a0e17;color:white;border:1px solid #1a2230;border-radius:8px;padding:8px 12px;font-size:11px;">
+                <option value="7">7 jours</option>
+                <option value="30">30 jours</option>
                 <option value="90">90 jours</option>
                 <option value="180">180 jours</option>
                 <option value="365" selected>1 an</option>
-                <option value="730">2 ans</option>
             </select>
         </div>
-        <div id="btProgress" style="display:none;margin-bottom:10px;">
+        <div id="btProgress" style="display:none;margin-bottom:12px;">
             <div class="progress-bar"><div class="fill" style="background:#ff4466;width:0%;" id="btFill"></div></div>
-            <div style="font-size:9px;color:#667799;margin-top:4px;" id="btText">0%</div>
+            <div style="font-size:10px;color:#667799;margin-top:5px;" id="btText">0%</div>
         </div>
         <div class="stats-grid" id="btResults">
             <div class="stat-item"><div class="stat-value" id="btTrades">--</div><div class="stat-label">Trades</div></div>
             <div class="stat-item"><div class="stat-value" id="btWinRate">--</div><div class="stat-label">Win Rate</div></div>
-            <div class="stat-item"><div class="stat-value" id="btProfit">--</div><div class="stat-label">Profit</div></div>
+            <div class="stat-item"><div class="stat-value" id="btProfit">--</div><div class="stat-label">Profit Net</div></div>
             <div class="stat-item"><div class="stat-value" id="btROI">--</div><div class="stat-label">ROI</div></div>
             <div class="stat-item"><div class="stat-value" id="btDrawdown">--</div><div class="stat-label">Drawdown</div></div>
             <div class="stat-item"><div class="stat-value" id="btSharpe">--</div><div class="stat-label">Sharpe</div></div>
             <div class="stat-item"><div class="stat-value" id="btProfitFactor">--</div><div class="stat-label">Profit Factor</div></div>
-            <div class="stat-item"><div class="stat-value" id="btAvgRR">--</div><div class="stat-label">R/R</div></div>
+            <div class="stat-item"><div class="stat-value" id="btAvgRR">--</div><div class="stat-label">R/R Moyen</div></div>
         </div>
     </div>
 </div>
 
-<!-- TAB 7: PARAMÈTRES -->
-<div id="tab-settings" style="display:none;">
+<!-- TAB 7: MOTEURS -->
+<div id="tab-engines" style="display:none;">
     <div class="card">
-        <div class="card-title">⚙️ Moteurs</div>
+        <div class="card-title">⚙️ Poids des Moteurs</div>
         <div class="engine-grid" id="engineWeightsDisplay"></div>
-        <div style="font-size:9px;color:#667799;margin-top:6px;">
-            Poids calibrés automatiquement après backtest
+        <div style="font-size:10px;color:#667799;margin-top:10px;">
+            Les poids s'ajustent automatiquement après chaque backtest.
         </div>
     </div>
-    
-    <div class="card">
-        <div class="card-title">📂 Données</div>
-        <div class="btn-group">
-            <button class="btn btn-primary btn-sm" onclick="exportAllData()">📤 Exporter</button>
-            <button class="btn btn-warning btn-sm" onclick="importAllData()">📥 Importer</button>
-            <button class="btn btn-danger btn-sm" onclick="resetAllData()">🗑️ Réinitialiser</button>
-            <button class="btn btn-sm" style="background:#1a2230;color:#8899bb;" onclick="clearTrades()">🗑️ Effacer Trades</button>
-        </div>
-        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleFileImport(event)">
-    </div>
-    
-    <div class="card">
-        <div class="card-title">🔔 Alertes</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
-                <input type="checkbox" id="alertPrice" checked> Prix
-            </label>
-            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
-                <input type="checkbox" id="alertRSI" checked> RSI
-            </label>
-            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
-                <input type="checkbox" id="alertVolume" checked> Volume
-            </label>
-            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
-                <input type="checkbox" id="alertSignal" checked> Signaux
-            </label>
-        </div>
-    </div>
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-    <div class="nav-item active" data-tab="api"><span class="icon">🔑</span><span class="label">API</span></div>
-    <div class="nav-item" data-tab="dashboard"><span class="icon">📊</span><span class="label">Dashboard</span></div>
-    <div class="nav-item" data-tab="market"><span class="icon">📈</span><span class="label">Marché</span></div>
-    <div class="nav-item" data-tab="signals"><span class="icon">🎯</span><span class="label">Signaux</span></div>
-    <div class="nav-item" data-tab="trades"><span class="icon">📜</span><span class="label">Trades</span></div>
-    <div class="nav-item" data-tab="settings"><span class="icon">⚙️</span><span class="label">Paramètres</span></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ============================================================
-// PERSISTANCE DES DONNÉES
+// PERSISTANCE
 // ============================================================
-const STORAGE_KEY = 'red_pro_ai_v3';
+const STORAGE_KEY = 'red_pro_ai_multi_exchange_v1';
 
 function loadState() {
     try {
@@ -787,7 +666,6 @@ function saveState() {
             capital: STATE.capital,
             riskPerTrade: STATE.riskPerTrade,
             leverage: STATE.leverage,
-            maxPositions: STATE.maxPositions,
             totalTrades: STATE.totalTrades,
             winningTrades: STATE.winningTrades,
             losingTrades: STATE.losingTrades,
@@ -801,11 +679,12 @@ function saveState() {
             engineWeights: STATE.engineWeights,
             trades: STATE.trades.slice(0, 500),
             backtestResults: STATE.backtestResults,
-            indicators: STATE.indicators
+            allSymbols: STATE.allSymbols,
+            savedAt: new Date().toISOString()
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
         document.getElementById('savedStatus').textContent = '💾';
-        setTimeout(() => { if (document.getElementById('savedStatus')) document.getElementById('savedStatus').textContent = ''; }, 1500);
+        setTimeout(() => { if (document.getElementById('savedStatus')) document.getElementById('savedStatus').textContent = ''; }, 2000);
     } catch (e) {
         console.error('Erreur sauvegarde:', e);
         if (e.name === 'QuotaExceededError') {
@@ -830,7 +709,6 @@ const STATE = {
     capital: savedState?.capital || 1000,
     riskPerTrade: savedState?.riskPerTrade || 1,
     leverage: savedState?.leverage || 1,
-    maxPositions: savedState?.maxPositions || 3,
     totalTrades: savedState?.totalTrades || 0,
     winningTrades: savedState?.winningTrades || 0,
     losingTrades: savedState?.losingTrades || 0,
@@ -844,27 +722,26 @@ const STATE = {
     engineWeights: savedState?.engineWeights || { trend: 30, momentum: 25, volume: 20, volatility: 15, structure: 10 },
     trades: savedState?.trades || [],
     signals: [],
-    allSymbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT', 'DOGEUSDT', 'ADAUSDT', 'TONUSDT'],
+    allSymbols: savedState?.allSymbols || [],
     marketData: {},
-    orderBook: {},
-    indicators: savedState?.indicators || { rsi: true, macd: true, ema: true, bb: false, vwap: false, stoch: false, adx: false, ichimoku: false },
     scanCount: 0,
-    lastUpdate: null,
+    lastUpdate: savedState?.lastUpdate || null,
     backtestResults: savedState?.backtestResults || null,
     ws: null,
-    wsReconnectTimer: null,
-    selectedSymbol: 'BTCUSDT'
+    selectedSymbol: 'BTCUSDT',
+    exchangeColors: { binance: '#ffaa00', okx: '#7b2ffc', bybit: '#00d4ff' }
 };
 
 // ============================================================
-// MOTORISATION (Moteurs d'analyse)
+// MOTEURS D'ANALYSE (5 moteurs)
 // ============================================================
 class TrendEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 30, details: {} };
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
-        let score = 0, details = {};
+        let score = 0;
+        const details = {};
         
         const ema20 = this.EMA(prices, 20);
         details.ema20 = ema20;
@@ -932,7 +809,8 @@ class MomentumEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 25, details: {} };
         const prices = data.map(d => d.close);
-        let score = 0, details = {};
+        let score = 0;
+        const details = {};
         
         const rsi = this.calculateRSI(prices, 14);
         details.rsi = rsi;
@@ -1003,16 +881,17 @@ class VolatilityEngine {
         if (!data || data.length < 20) return { score: 0, max: 15, details: {} };
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
-        let score = 0, details = {};
+        let score = 0;
+        const details = {};
         
         const atr = this.calculateATR(data);
         const volatility = atr / currentPrice;
         details.atr = atr;
         details.volatility = volatility;
         
-        if (volatility > 0.005 && volatility < 0.03) { score += 10; details.atrSignal = 'Volatilité idéale (+10)'; }
-        else if (volatility <= 0.005) { score += 4; details.atrSignal = 'Volatilité faible (+4)'; }
-        else { score -= 3; details.atrSignal = 'Volatilité excessive (-3)'; }
+        if (volatility > 0.005 && volatility < 0.03) { score += 10; details.atrSignal = `Volatilité idéale (+10)`; }
+        else if (volatility <= 0.005) { score += 4; details.atrSignal = `Volatilité faible (+4)`; }
+        else { score -= 3; details.atrSignal = `Volatilité excessive (-3)`; }
         
         const bb = this.calculateBollinger(data);
         details.bb = bb;
@@ -1052,7 +931,8 @@ class VolumeEngine {
         if (!data || data.length < 30) return { score: 0, max: 20, details: {} };
         const volumes = data.map(d => d.volume);
         const currentVolume = volumes[volumes.length - 1];
-        let score = 0, details = {};
+        let score = 0;
+        const details = {};
         
         const avgVolume = volumes.slice(-21, -1).reduce((a, b) => a + b, 0) / 20;
         const volumeRatio = currentVolume / avgVolume;
@@ -1085,7 +965,8 @@ class VolumeEngine {
 class StructureEngine {
     calculate(data) {
         if (!data || data.length < 30) return { score: 0, max: 10, details: {} };
-        let score = 0, details = {};
+        let score = 0;
+        const details = {};
         
         const sr = this.findSupportResistance(data);
         details.support = sr.support;
@@ -1121,7 +1002,7 @@ class StructureEngine {
 }
 
 // ============================================================
-// SCORING ENGINE AVEC IA
+// SCORING ENGINE
 // ============================================================
 class ScoringEngine {
     constructor() {
@@ -1144,7 +1025,7 @@ class ScoringEngine {
         const weights = STATE.engineWeights;
         const totalWeight = weights.trend + weights.momentum + weights.volume + weights.volatility + weights.structure;
         
-        let weightedScore = (
+        const weightedScore = (
             (trend.score / trend.max) * weights.trend +
             (momentum.score / momentum.max) * weights.momentum +
             (volume.score / volume.max) * weights.volume +
@@ -1152,12 +1033,11 @@ class ScoringEngine {
             (structure.score / structure.max) * weights.structure
         ) / totalWeight * 100;
         
-        // Monte Carlo
-        const monteCarlo = this.runMonteCarlo(data);
-        if (monteCarlo.upProbability > 55) weightedScore += 5;
-        else if (monteCarlo.upProbability < 45) weightedScore -= 5;
+        const monteCarlo = this.runMonteCarlo(data, weightedScore);
         
-        weightedScore = Math.min(Math.max(weightedScore, 0), 100);
+        let finalProbability = weightedScore;
+        if (monteCarlo.upProbability > 55) finalProbability += 5;
+        else if (monteCarlo.upProbability < 45) finalProbability -= 5;
         
         const currentPrice = data[data.length - 1].close;
         const atr = volatility.details.atr || currentPrice * 0.01;
@@ -1167,21 +1047,21 @@ class ScoringEngine {
         const riskReward = ((takeProfit1 - currentPrice) / (currentPrice - stopLoss)).toFixed(2);
         
         let signal, signalClass;
-        if (weightedScore >= 75) { signal = '🟢 ACHAT FORT'; signalClass = 'strong-buy'; }
-        else if (weightedScore >= 60) { signal = '🟢 ACHAT'; signalClass = 'buy'; }
-        else if (weightedScore <= 30) { signal = '🔴 VENTE FORT'; signalClass = 'strong-sell'; }
-        else if (weightedScore <= 45) { signal = '🔴 VENTE'; signalClass = 'sell'; }
+        if (finalProbability >= 75) { signal = '🟢 ACHAT FORT'; signalClass = 'strong-buy'; }
+        else if (finalProbability >= 60) { signal = '🟢 ACHAT'; signalClass = 'buy'; }
+        else if (finalProbability <= 30) { signal = '🔴 VENTE FORT'; signalClass = 'strong-sell'; }
+        else if (finalProbability <= 45) { signal = '🔴 VENTE'; signalClass = 'sell'; }
         else { signal = '⚪ ATTENTE'; signalClass = 'neutral'; }
         
         return {
-            signal, signalClass, finalScore: Math.round(weightedScore), probability: weightedScore,
+            signal, signalClass, finalScore: Math.round(finalProbability), probability: finalProbability,
             engines: { trend, momentum, volatility, volume, structure },
             monteCarlo, currentPrice, stopLoss, takeProfit1, takeProfit2, riskReward,
             riskPercent: (currentPrice - stopLoss) / currentPrice * 100
         };
     }
     
-    runMonteCarlo(data) {
+    runMonteCarlo(data, baseScore) {
         const prices = data.map(d => d.close);
         const returns = [];
         for (let i = 1; i < prices.length; i++) returns.push((prices[i] - prices[i-1]) / prices[i-1]);
@@ -1344,191 +1224,96 @@ const scoringEngine = new ScoringEngine();
 const riskManager = new RiskManager();
 const backtestEngine = new BacktestEngine();
 let scanInterval = null;
-let wsConnections = {};
 
 // ============================================================
-// WEBSOCKET MANAGER (Multi-exchange)
+// API EXCHANGE - MULTI-EXCHANGE SUPPORT
 // ============================================================
-function getWebSocketURL(exchange, symbol) {
-    const sym = symbol.toLowerCase();
-    switch(exchange) {
-        case 'binance': return `wss://stream.binance.com:9443/ws/${sym}@trade/${sym}@depth20/${sym}@kline_1m`;
-        case 'okx': return `wss://ws.okx.com:8443/ws/v5/public`;
-        case 'bybit': return `wss://stream.bybit.com/v5/public/linear`;
-        default: return null;
+const EXCHANGE_CONFIGS = {
+    binance: {
+        name: 'Binance',
+        color: '#ffaa00',
+        wsUrl: 'wss://stream.binance.com:9443/ws',
+        restUrl: 'https://api.binance.com/api/v3',
+        symbolEndpoint: '/exchangeInfo',
+        klineEndpoint: '/klines',
+        symbolFilter: (s) => s.status === 'TRADING' && s.quoteAsset === 'USDT',
+        getSymbol: (s) => s.symbol,
+        parseKline: (candle) => ({
+            open: parseFloat(candle[1]),
+            high: parseFloat(candle[2]),
+            low: parseFloat(candle[3]),
+            close: parseFloat(candle[4]),
+            volume: parseFloat(candle[5]),
+            timestamp: candle[0]
+        }),
+        getWsStreams: (symbols) => symbols.map(s => `${s.toLowerCase()}@trade`).join('/')
+    },
+    okx: {
+        name: 'OKX',
+        color: '#7b2ffc',
+        wsUrl: 'wss://ws.okx.com:8443/ws/v5/public',
+        restUrl: 'https://www.okx.com/api/v5',
+        symbolEndpoint: '/market/tickers?instType=SPOT',
+        klineEndpoint: '/market/candles',
+        symbolFilter: (s) => s.instType === 'SPOT' && s.quoteCcy === 'USDT',
+        getSymbol: (s) => s.instId,
+        parseKline: (candle) => ({
+            open: parseFloat(candle[1]),
+            high: parseFloat(candle[2]),
+            low: parseFloat(candle[3]),
+            close: parseFloat(candle[4]),
+            volume: parseFloat(candle[5]),
+            timestamp: candle[0]
+        }),
+        getWsStreams: (symbols) => symbols.map(s => `{"op":"subscribe","args":[{"channel":"trades","instId":"${s}"}]}`).join('\n')
+    },
+    bybit: {
+        name: 'Bybit',
+        color: '#00d4ff',
+        wsUrl: 'wss://stream.bybit.com/v5/public/linear',
+        restUrl: 'https://api.bybit.com/v5',
+        symbolEndpoint: '/market/tickers?category=spot',
+        klineEndpoint: '/market/kline',
+        symbolFilter: (s) => s.category === 'spot',
+        getSymbol: (s) => s.symbol,
+        parseKline: (candle) => ({
+            open: parseFloat(candle[1]),
+            high: parseFloat(candle[2]),
+            low: parseFloat(candle[3]),
+            close: parseFloat(candle[4]),
+            volume: parseFloat(candle[5]),
+            timestamp: candle[0]
+        }),
+        getWsStreams: (symbols) => symbols.map(s => `publicTrade.${s}`).join(',')
     }
+};
+
+function getExchangeConfig() {
+    return EXCHANGE_CONFIGS[STATE.exchange] || EXCHANGE_CONFIGS.binance;
 }
 
-function connectWebSocket() {
-    if (!STATE.apiConnected) return;
+// ============================================================
+// SÉLECTION DE L'EXCHANGE
+// ============================================================
+function selectExchange(exchange) {
+    STATE.exchange = exchange;
+    document.querySelectorAll('.btn-exchange').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.btn-exchange[data-exchange="${exchange}"]`).classList.add('active');
     
-    const exchange = STATE.exchange;
-    const symbol = STATE.selectedSymbol || 'BTCUSDT';
+    // Afficher/masquer le champ passphrase pour OKX
+    document.getElementById('passphraseGroup').style.display = exchange === 'okx' ? 'block' : 'none';
     
-    try {
-        if (wsConnections[exchange]) {
-            try { wsConnections[exchange].close(); } catch(e) {}
-            delete wsConnections[exchange];
-        }
-        
-        const ws = new WebSocket(getWebSocketURL(exchange, symbol));
-        
-        ws.onopen = () => {
-            document.getElementById('marketStatus').textContent = '✅ Connecté';
-            document.getElementById('statusDot').className = 'status-dot connected';
-            
-            // Subscribe selon exchange
-            if (exchange === 'binance') {
-                // Already subscribed via URL
-            } else if (exchange === 'okx') {
-                ws.send(JSON.stringify({
-                    op: 'subscribe',
-                    args: [
-                        { channel: 'trades', instId: symbol },
-                        { channel: 'books5', instId: symbol },
-                        { channel: 'candle1m', instId: symbol }
-                    ]
-                }));
-            } else if (exchange === 'bybit') {
-                ws.send(JSON.stringify({
-                    op: 'subscribe',
-                    args: [
-                        `publicTrade.${symbol}`,
-                        `orderbook.20.${symbol}`,
-                        `kline.1m.${symbol}`
-                    ]
-                }));
-            }
-        };
-        
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                handleWebSocketMessage(exchange, data);
-            } catch(e) {}
-        };
-        
-        ws.onclose = () => {
-            document.getElementById('marketStatus').textContent = '🔄 Reconnexion...';
-            if (STATE.isRunning) {
-                clearTimeout(wsConnections._reconnectTimer);
-                wsConnections._reconnectTimer = setTimeout(connectWebSocket, 3000);
-            }
-        };
-        
-        ws.onerror = () => {
-            document.getElementById('marketStatus').textContent = '⚠️ Erreur';
-        };
-        
-        wsConnections[exchange] = ws;
-        
-    } catch(e) {
-        console.error('WebSocket error:', e);
-    }
-}
-
-function handleWebSocketMessage(exchange, data) {
-    // Binance
-    if (exchange === 'binance') {
-        if (data.e === 'trade') {
-            const price = parseFloat(data.p);
-            const symbol = data.s;
-            updateMarketPrice(symbol, price);
-        } else if (data.e === 'depthUpdate') {
-            updateOrderBook(data.bids, data.asks);
-        } else if (data.e === 'kline') {
-            // Handle kline data
-        }
-    }
-    // OKX
-    else if (exchange === 'okx') {
-        if (data.arg?.channel === 'trades' && data.data) {
-            const trade = data.data[0];
-            updateMarketPrice(data.arg.instId, parseFloat(trade.p));
-        } else if (data.arg?.channel === 'books5' && data.data) {
-            const book = data.data[0];
-            updateOrderBook(book.bids, book.asks);
-        }
-    }
-    // Bybit
-    else if (exchange === 'bybit') {
-        if (data.topic?.includes('publicTrade')) {
-            const trade = data.data;
-            updateMarketPrice(trade.s, parseFloat(trade.p));
-        } else if (data.topic?.includes('orderbook')) {
-            const book = data.data;
-            updateOrderBook(book.b, book.a);
-        }
-    }
-}
-
-function updateMarketPrice(symbol, price) {
-    STATE.marketData[symbol] = { price, time: Date.now() };
-    if (symbol === STATE.selectedSymbol) {
-        document.getElementById('currentPrice').textContent = '$' + price.toFixed(2);
-        // Update change
-        if (STATE.marketData[symbol].prevPrice) {
-            const change = ((price - STATE.marketData[symbol].prevPrice) / STATE.marketData[symbol].prevPrice * 100);
-            const el = document.getElementById('priceChange');
-            el.textContent = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
-            el.className = 'change ' + (change > 0 ? 'up' : 'down');
-        }
-        STATE.marketData[symbol].prevPrice = price;
-    }
-    // Update market grid
-    updateMarketGrid();
-}
-
-function updateOrderBook(bids, asks) {
-    const bidsList = document.getElementById('bidsList');
-    const asksList = document.getElementById('asksList');
-    
-    if (bids && asks) {
-        const bidsData = bids.slice(0, 10).map(b => ({ price: parseFloat(b[0]), qty: parseFloat(b[1]) }));
-        const asksData = asks.slice(0, 10).map(a => ({ price: parseFloat(a[0]), qty: parseFloat(a[1]) }));
-        
-        bidsList.innerHTML = bidsData.map(b => 
-            `<div class="level"><span>${b.price.toFixed(2)}</span><span>${b.qty.toFixed(2)}</span></div>`
-        ).join('');
-        
-        asksList.innerHTML = asksData.map(a => 
-            `<div class="level"><span>${a.price.toFixed(2)}</span><span>${a.qty.toFixed(2)}</span></div>`
-        ).join('');
-    }
-}
-
-function updateMarketGrid() {
-    const grid = document.getElementById('marketGrid');
-    grid.innerHTML = STATE.allSymbols.map(sym => {
-        const data = STATE.marketData[sym];
-        const price = data ? data.price : 0;
-        const prev = data ? data.prevPrice : 0;
-        const change = prev > 0 ? ((price - prev) / prev * 100) : 0;
-        return `
-            <div class="market-item" onclick="selectSymbol('${sym}')">
-                <div class="symbol">${sym.replace('USDT', '')}</div>
-                <div class="price">$${price.toFixed(2)}</div>
-                <div class="change ${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</div>
-            </div>
-        `;
-    }).join('');
-}
-
-function selectSymbol(symbol) {
-    STATE.selectedSymbol = symbol;
-    document.getElementById('currentPrice').textContent = '$' + (STATE.marketData[symbol]?.price?.toFixed(2) || '--');
-    // Reconnect WebSocket for new symbol
-    connectWebSocket();
+    showToast(`Exchange sélectionné: ${exchange.toUpperCase()}`);
 }
 
 // ============================================================
-// FONCTIONS API EXCHANGE
+// CONNEXION EXCHANGE
 // ============================================================
-function connectExchange() {
-    const exchange = document.getElementById('exchangeSelect').value;
+async function connectExchange() {
     const apiKey = document.getElementById('apiKey').value.trim();
     const apiSecret = document.getElementById('apiSecret').value.trim();
     const apiPassphrase = document.getElementById('apiPassphrase').value.trim();
+    const exchange = STATE.exchange;
     
     if (!apiKey || !apiSecret) {
         showToast('❌ Veuillez entrer vos clés API');
@@ -1540,83 +1325,355 @@ function connectExchange() {
         return;
     }
     
-    STATE.exchange = exchange;
     STATE.apiKey = apiKey;
     STATE.apiSecret = apiSecret;
     STATE.apiPassphrase = apiPassphrase;
     
-    showToast('🔍 Test de connexion...');
+    showToast(`🔍 Test de connexion à ${exchange.toUpperCase()}...`);
     
-    // Simuler un test de connexion
-    setTimeout(() => {
-        STATE.apiConnected = true;
+    try {
+        // Tester la connexion avec l'API de l'exchange
+        const config = getExchangeConfig();
+        let testUrl = '';
         
-        document.getElementById('statusDot').className = 'status-dot connected';
-        document.getElementById('statusText').textContent = `✅ ${exchange.toUpperCase()}`;
+        if (exchange === 'binance') {
+            testUrl = 'https://api.binance.com/api/v3/ping';
+        } else if (exchange === 'okx') {
+            testUrl = 'https://www.okx.com/api/v5/market/tickers?instType=SPOT';
+        } else if (exchange === 'bybit') {
+            testUrl = 'https://api.bybit.com/v5/market/tickers?category=spot';
+        }
         
-        const statusCard = document.getElementById('apiStatusCard');
-        statusCard.className = 'api-status-card connected';
-        statusCard.innerHTML = `
-            <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:20px;">🟢</span>
-                <div>
-                    <div style="font-weight:700;color:#00ff88;">Connecté à ${exchange.toUpperCase()}</div>
-                    <div style="font-size:9px;color:#667799;">API fonctionnelle - Données en temps réel</div>
+        const response = await fetch(testUrl);
+        
+        if (response.ok) {
+            STATE.apiConnected = true;
+            
+            const color = STATE.exchangeColors[exchange];
+            document.getElementById('statusDot').className = `status-dot ${exchange}`;
+            document.getElementById('statusText').textContent = `✅ ${exchange.toUpperCase()}`;
+            
+            const statusCard = document.getElementById('apiStatusCard');
+            statusCard.className = `api-status-card ${exchange}`;
+            statusCard.innerHTML = `
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:24px;">🟢</span>
+                    <div>
+                        <div style="font-weight:700;color:${color};">Connecté à ${exchange.toUpperCase()}</div>
+                        <div style="font-size:10px;color:#667799;">API fonctionnelle - Données en temps réel</div>
+                    </div>
                 </div>
+            `;
+            
+            document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
+            
+            await loadAllSymbols();
+            connectWebSocket();
+            
+            switchTab('dashboard');
+            saveState();
+            
+            showToast(`✅ Connecté à ${exchange.toUpperCase()} - ${STATE.allSymbols.length} paires chargées !`);
+        } else {
+            throw new Error('Échec de connexion');
+        }
+    } catch (e) {
+        STATE.apiConnected = false;
+        document.getElementById('statusDot').className = 'status-dot';
+        document.getElementById('statusText').textContent = 'Échec';
+        showToast(`❌ Échec de connexion à ${exchange.toUpperCase()}`);
+        console.error('Erreur API:', e);
+    }
+}
+
+// ============================================================
+// CHARGEMENT DES SYMBOLES - MULTI-EXCHANGE
+// ============================================================
+async function loadAllSymbols() {
+    try {
+        const config = getExchangeConfig();
+        const exchange = STATE.exchange;
+        let url = '';
+        
+        if (exchange === 'binance') {
+            url = 'https://api.binance.com/api/v3/exchangeInfo';
+        } else if (exchange === 'okx') {
+            url = 'https://www.okx.com/api/v5/market/tickers?instType=SPOT';
+        } else if (exchange === 'bybit') {
+            url = 'https://api.bybit.com/v5/market/tickers?category=spot';
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        let symbols = [];
+        
+        if (exchange === 'binance') {
+            symbols = data.symbols
+                .filter(s => s.status === 'TRADING' && s.quoteAsset === 'USDT')
+                .map(s => s.symbol)
+                .sort();
+        } else if (exchange === 'okx') {
+            symbols = data.data
+                .filter(s => s.instType === 'SPOT' && s.quoteCcy === 'USDT')
+                .map(s => s.instId)
+                .sort();
+        } else if (exchange === 'bybit') {
+            symbols = data.result.list
+                .filter(s => s.category === 'spot')
+                .map(s => s.symbol)
+                .sort();
+        }
+        
+        STATE.allSymbols = symbols;
+        console.log(`📊 ${symbols.length} paires chargées sur ${exchange.toUpperCase()}`);
+        showToast(`📊 ${symbols.length} paires ${exchange.toUpperCase()} chargées`);
+        
+        updateMarketGrid();
+        document.getElementById('dashboardContent').innerHTML = 
+            `✅ ${symbols.length} paires de trading chargées sur ${exchange.toUpperCase()}. Prêt à scanner.`;
+        
+        return symbols;
+    } catch (e) {
+        console.error('Erreur chargement symboles:', e);
+        STATE.allSymbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT'];
+        return STATE.allSymbols;
+    }
+}
+
+// ============================================================
+// WEBSOCKET - MULTI-EXCHANGE
+// ============================================================
+function connectWebSocket() {
+    if (!STATE.apiConnected) return;
+    
+    const config = getExchangeConfig();
+    const exchange = STATE.exchange;
+    
+    try {
+        if (STATE.ws) {
+            try { STATE.ws.close(); } catch(e) {}
+        }
+        
+        let wsUrl = config.wsUrl;
+        let ws = null;
+        
+        if (exchange === 'binance') {
+            const streams = STATE.allSymbols.slice(0, 100).map(s => `${s.toLowerCase()}@trade`).join('/');
+            wsUrl = `${config.wsUrl}/${streams}`;
+            ws = new WebSocket(wsUrl);
+        } else if (exchange === 'okx') {
+            ws = new WebSocket(wsUrl);
+            ws.onopen = () => {
+                const subs = STATE.allSymbols.slice(0, 50).map(s => 
+                    `{"op":"subscribe","args":[{"channel":"trades","instId":"${s}"}]}`
+                ).join('\n');
+                ws.send(subs);
+            };
+        } else if (exchange === 'bybit') {
+            ws = new WebSocket(wsUrl);
+            ws.onopen = () => {
+                const subs = STATE.allSymbols.slice(0, 50).map(s => 
+                    `{"op":"subscribe","args":["publicTrade.${s}"]}`
+                ).join('\n');
+                ws.send(subs);
+            };
+        }
+        
+        if (!ws) return;
+        
+        ws.onopen = () => {
+            document.getElementById('marketStatus').textContent = `✅ ${exchange.toUpperCase()}`;
+            document.getElementById('statusDot').className = `status-dot ${exchange}`;
+            showToast(`📡 WebSocket ${exchange.toUpperCase()} connecté`);
+        };
+        
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(exchange, data);
+            } catch(e) {}
+        };
+        
+        ws.onclose = () => {
+            document.getElementById('marketStatus').textContent = '🔄 Reconnexion...';
+            setTimeout(connectWebSocket, 5000);
+        };
+        
+        ws.onerror = () => {
+            document.getElementById('marketStatus').textContent = '⚠️ Erreur';
+        };
+        
+        STATE.ws = ws;
+        
+    } catch(e) {
+        console.error('WebSocket error:', e);
+        setTimeout(connectWebSocket, 5000);
+    }
+}
+
+function handleWebSocketMessage(exchange, data) {
+    let symbol = null;
+    let price = null;
+    let volume = null;
+    
+    try {
+        if (exchange === 'binance') {
+            if (data.e === 'trade') {
+                symbol = data.s;
+                price = parseFloat(data.p);
+                volume = parseFloat(data.q);
+            }
+        } else if (exchange === 'okx') {
+            if (data.arg?.channel === 'trades' && data.data) {
+                const trade = data.data[0];
+                symbol = data.arg.instId;
+                price = parseFloat(trade.p);
+                volume = parseFloat(trade.sz);
+            }
+        } else if (exchange === 'bybit') {
+            if (data.topic?.includes('publicTrade') && data.data) {
+                const trade = data.data;
+                symbol = trade.s;
+                price = parseFloat(trade.p);
+                volume = parseFloat(trade.v);
+            }
+        }
+        
+        if (symbol && price) {
+            if (!STATE.marketData[symbol]) {
+                STATE.marketData[symbol] = { price, volume, prevPrice: price, time: Date.now(), exchange };
+            } else {
+                STATE.marketData[symbol].prevPrice = STATE.marketData[symbol].price;
+                STATE.marketData[symbol].price = price;
+                STATE.marketData[symbol].volume = volume || STATE.marketData[symbol].volume;
+                STATE.marketData[symbol].time = Date.now();
+                STATE.marketData[symbol].exchange = exchange;
+            }
+            
+            updateMarketGrid();
+            
+            if (symbol === STATE.selectedSymbol) {
+                updatePriceDisplay(symbol);
+            }
+        }
+    } catch(e) {}
+}
+
+function updatePriceDisplay(symbol) {
+    const data = STATE.marketData[symbol];
+    if (!data) return;
+    
+    document.getElementById('currentPrice').textContent = '$' + data.price.toFixed(2);
+    
+    if (data.prevPrice) {
+        const change = ((data.price - data.prevPrice) / data.prevPrice * 100);
+        const el = document.getElementById('priceChange');
+        el.textContent = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
+        el.className = 'change ' + (change > 0 ? 'up' : 'down');
+    }
+}
+
+function updateMarketGrid() {
+    const grid = document.getElementById('marketGrid');
+    const symbols = STATE.allSymbols.slice(0, 80);
+    
+    grid.innerHTML = symbols.map(sym => {
+        const data = STATE.marketData[sym];
+        const price = data ? data.price : 0;
+        const prev = data ? data.prevPrice : 0;
+        const change = prev > 0 ? ((price - prev) / prev * 100) : 0;
+        const exchange = data ? data.exchange : STATE.exchange;
+        const exchangeLabel = exchange ? exchange.toUpperCase() : '';
+        
+        return `
+            <div class="market-item" onclick="selectSymbol('${sym}')" style="${sym === STATE.selectedSymbol ? 'border-color:#ff4466;' : ''}">
+                <div class="symbol">${sym.replace('USDT', '').replace('USDC', '')}</div>
+                <div class="price">${price > 0 ? '$' + (price < 1 ? price.toFixed(6) : price.toFixed(2)) : '--'}</div>
+                <div class="change ${change >= 0 ? 'up' : 'down'}">${change !== 0 ? (change >= 0 ? '+' : '') + change.toFixed(2) + '%' : '--'}</div>
+                <div class="exchange-tag">${exchangeLabel}</div>
             </div>
         `;
-        
-        document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
-        
-        // Activer WebSocket
-        connectWebSocket();
-        
-        // Charger les symboles
-        loadSymbols();
-        
-        saveState();
-        showToast(`✅ Connecté à ${exchange.toUpperCase()} !`);
-    }, 1000);
+    }).join('');
 }
 
-function disconnectExchange() {
-    STATE.apiConnected = false;
-    STATE.apiKey = '';
-    STATE.apiSecret = '';
-    STATE.apiPassphrase = '';
-    
-    if (wsConnections[STATE.exchange]) {
-        try { wsConnections[STATE.exchange].close(); } catch(e) {}
-        delete wsConnections[STATE.exchange];
+function selectSymbol(symbol) {
+    STATE.selectedSymbol = symbol;
+    updatePriceDisplay(symbol);
+}
+
+// ============================================================
+// RÉCUPÉRATION DES DONNÉES HISTORIQUES - MULTI-EXCHANGE
+// ============================================================
+async function fetchHistoricalData(symbol, interval = '1h', limit = 200) {
+    try {
+        const exchange = STATE.exchange;
+        let url = '';
+        
+        if (exchange === 'binance') {
+            url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
+        } else if (exchange === 'okx') {
+            const bar = interval === '1h' ? '1H' : '1D';
+            url = `https://www.okx.com/api/v5/market/candles?instId=${symbol}&bar=${bar}&limit=${limit}`;
+        } else if (exchange === 'bybit') {
+            const intervalMap = { '1h': '60', '1d': 'D', '1m': '1' };
+            const bybitInterval = intervalMap[interval] || '60';
+            url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}&interval=${bybitInterval}&limit=${limit}`;
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (!data) return null;
+        
+        let candles = [];
+        
+        if (exchange === 'binance') {
+            if (!Array.isArray(data)) return null;
+            candles = data;
+        } else if (exchange === 'okx') {
+            if (!data.data) return null;
+            candles = data.data;
+        } else if (exchange === 'bybit') {
+            if (!data.result?.list) return null;
+            candles = data.result.list;
+        }
+        
+        return candles.map(candle => {
+            if (exchange === 'binance') {
+                return {
+                    open: parseFloat(candle[1]),
+                    high: parseFloat(candle[2]),
+                    low: parseFloat(candle[3]),
+                    close: parseFloat(candle[4]),
+                    volume: parseFloat(candle[5]),
+                    timestamp: candle[0]
+                };
+            } else if (exchange === 'okx') {
+                return {
+                    open: parseFloat(candle[1]),
+                    high: parseFloat(candle[2]),
+                    low: parseFloat(candle[3]),
+                    close: parseFloat(candle[4]),
+                    volume: parseFloat(candle[5]),
+                    timestamp: candle[0]
+                };
+            } else if (exchange === 'bybit') {
+                return {
+                    open: parseFloat(candle[1]),
+                    high: parseFloat(candle[2]),
+                    low: parseFloat(candle[3]),
+                    close: parseFloat(candle[4]),
+                    volume: parseFloat(candle[5]),
+                    timestamp: candle[0]
+                };
+            }
+            return null;
+        }).filter(c => c !== null);
+    } catch (e) {
+        console.error('Erreur fetch historique:', symbol, e);
+        return null;
     }
-    
-    document.getElementById('statusDot').className = 'status-dot';
-    document.getElementById('statusText').textContent = 'Déconnecté';
-    document.getElementById('apiStatusCard').className = 'api-status-card disconnected';
-    document.getElementById('apiStatusCard').innerHTML = `
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-            <span style="font-size:20px;">🔴</span>
-            <div>
-                <div style="font-weight:700;color:#ff4466;">Non Connecté</div>
-                <div style="font-size:9px;color:#667799;">Sélectionnez un exchange et entrez vos clés</div>
-            </div>
-        </div>
-    `;
-    
-    document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.add('locked'));
-    
-    if (scanInterval) { clearInterval(scanInterval); scanInterval = null; }
-    STATE.isRunning = false;
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('stopBtn').disabled = true;
-    
-    saveState();
-    showToast('🔒 Déconnecté');
-}
-
-function loadSymbols() {
-    // Symboles déjà définis
-    updateMarketGrid();
 }
 
 // ============================================================
@@ -1629,13 +1686,18 @@ async function startEngine() {
         return;
     }
     
+    if (STATE.allSymbols.length === 0) {
+        await loadAllSymbols();
+    }
+    
     STATE.isRunning = true;
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
-    document.getElementById('statusDot').className = 'status-dot scanning';
-    document.getElementById('statusText').textContent = 'Scan en cours...';
+    document.getElementById('statusDot').className = `status-dot ${STATE.exchange}`;
+    document.getElementById('statusText').textContent = `Scan ${STATE.exchange.toUpperCase()}`;
+    document.getElementById('dashboardBadge').style.display = 'inline';
     
-    showToast(`🚀 Scan démarré sur ${STATE.allSymbols.length} cryptos`);
+    showToast(`🚀 Scan démarré sur ${STATE.allSymbols.length} paires ${STATE.exchange.toUpperCase()}`);
     
     await scanMarket();
     scanInterval = setInterval(scanMarket, 30000);
@@ -1649,30 +1711,33 @@ async function scanMarket() {
     let scanned = 0;
     
     document.getElementById('dashboardContent').innerHTML = 
-        `🔍 Scan en cours... 0/${symbolsToScan.length}`;
+        `🔍 Scan en cours... 0/${symbolsToScan.length} (${STATE.exchange.toUpperCase()})`;
     
     for (const symbol of symbolsToScan) {
         try {
-            // Simuler des données (en production, utiliser l'API)
-            const data = generateMockData(symbol);
+            const data = await fetchHistoricalData(symbol, '1h', 200);
             if (!data || data.length < 80) continue;
             
             const analysis = scoringEngine.analyze(data);
             if (analysis) {
                 allSignals.push({
-                    symbol: symbol.replace('USDT', '/USDT'),
+                    symbol: symbol.replace('USDT', '/USDT').replace('USDC', '/USDC'),
                     exchange: STATE.exchange.toUpperCase(),
                     ...analysis
                 });
             }
-        } catch (e) { continue; }
+        } catch (e) {
+            continue;
+        }
         
         scanned++;
-        if (scanned % 5 === 0) {
+        
+        if (scanned % 20 === 0) {
             document.getElementById('dashboardContent').innerHTML = 
-                `🔍 Scan... ${scanned}/${symbolsToScan.length} | ${allSignals.length} signaux`;
+                `🔍 Scan ${STATE.exchange.toUpperCase()}... ${scanned}/${symbolsToScan.length} | ${allSignals.length} signaux`;
         }
-        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        await new Promise(resolve => setTimeout(resolve, 30));
     }
     
     allSignals.sort((a, b) => b.finalScore - a.finalScore);
@@ -1680,10 +1745,9 @@ async function scanMarket() {
     STATE.scanCount++;
     STATE.lastUpdate = new Date();
     
-    // Exécuter des trades sur les meilleurs signaux
     let executed = 0;
     for (const signal of allSignals) {
-        if (signal.signalClass === 'strong-buy' && executed < STATE.maxPositions) {
+        if (signal.signalClass === 'strong-buy' && STATE.dailyTrades < 50) {
             executeTrade(signal);
             executed++;
         }
@@ -1692,30 +1756,11 @@ async function scanMarket() {
     updateDashboard(allSignals);
     updateSignalsTab(allSignals);
     document.getElementById('lastUpdate').textContent = `Màj: ${STATE.lastUpdate.toLocaleTimeString()}`;
+    
     document.getElementById('dashboardContent').innerHTML = 
-        `✅ Scan #${STATE.scanCount} | ${allSignals.length} signaux | ${executed} trades`;
+        `✅ Scan #${STATE.scanCount} | ${allSignals.length} signaux sur ${symbolsToScan.length} | ${executed} trades (${STATE.exchange.toUpperCase()})`;
     
     saveState();
-}
-
-function generateMockData(symbol) {
-    const data = [];
-    let price = 50000 + Math.random() * 10000;
-    const basePrice = price;
-    
-    for (let i = 0; i < 200; i++) {
-        const change = (Math.random() - 0.5) * 0.02;
-        price *= (1 + change);
-        const volume = 100 + Math.random() * 900;
-        data.push({
-            open: price * (1 - Math.random() * 0.005),
-            high: price * (1 + Math.random() * 0.01),
-            low: price * (1 - Math.random() * 0.01),
-            close: price,
-            volume: volume
-        });
-    }
-    return data;
 }
 
 function executeTrade(signal) {
@@ -1744,10 +1789,11 @@ function executeTrade(signal) {
     };
     
     STATE.trades.unshift(trade);
+    STATE.dailyTrades++;
     STATE.totalTrades++;
+    
     if (STATE.trades.length > 500) STATE.trades = STATE.trades.slice(0, 500);
     
-    // Simuler la fermeture
     simulateTradeClose(trade);
     saveState();
 }
@@ -1797,11 +1843,13 @@ function closeTrade(trade, closePrice) {
     trade.closeTime = new Date();
     trade.isOpen = false;
     
-    const pl = (closePrice - trade.entryPrice) * trade.quantity;
-    trade.pl = pl;
-    trade.result = pl > 0 ? 'win' : 'loss';
+    const exitFee = trade.quantity * closePrice * 0.001;
+    trade.pl = (closePrice - trade.entryPrice) * trade.quantity;
+    const netPl = trade.pl - trade.fee - exitFee;
+    trade.result = netPl > 0 ? 'win' : 'loss';
+    trade.netPl = netPl;
     
-    if (pl > 0) {
+    if (netPl > 0) {
         STATE.winningTrades++;
         STATE.currentStreak = Math.max(0, STATE.currentStreak) + 1;
         STATE.bestStreak = Math.max(STATE.bestStreak, STATE.currentStreak);
@@ -1811,7 +1859,9 @@ function closeTrade(trade, closePrice) {
         STATE.worstStreak = Math.min(STATE.worstStreak, STATE.currentStreak);
     }
     
-    STATE.totalProfit += pl;
+    STATE.totalProfit += netPl;
+    STATE.totalFees += trade.fee + exitFee;
+    STATE.dailyPnL += netPl;
     
     const currentEquity = STATE.capital + STATE.totalProfit;
     if (currentEquity > STATE.peakEquity) STATE.peakEquity = currentEquity;
@@ -1826,17 +1876,6 @@ function closeTrade(trade, closePrice) {
     saveState();
 }
 
-function stopEngine() {
-    STATE.isRunning = false;
-    if (scanInterval) clearInterval(scanInterval);
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('stopBtn').disabled = true;
-    document.getElementById('statusDot').className = 'status-dot connected';
-    document.getElementById('statusText').textContent = 'En attente';
-    saveState();
-    showToast('⏹️ Scan arrêté');
-}
-
 // ============================================================
 // BACKTEST
 // ============================================================
@@ -1847,57 +1886,74 @@ async function runBacktest() {
         return;
     }
     
+    if (STATE.allSymbols.length === 0) {
+        await loadAllSymbols();
+    }
+    
     const days = parseInt(document.getElementById('btDays').value);
     
     document.getElementById('btProgress').style.display = 'block';
     document.getElementById('btFill').style.width = '0%';
-    document.getElementById('btText').textContent = 'Chargement...';
+    document.getElementById('btText').textContent = 'Chargement des données...';
     
-    showToast(`🔬 Backtest ${days} jours...`);
+    showToast(`🔬 Backtest ${days} jours sur ${STATE.exchange.toUpperCase()}...`);
     
     try {
-        const symbols = STATE.allSymbols;
+        const symbols = STATE.allSymbols.slice(0, 20);
         const historicalData = {};
+        let loaded = 0;
         
         for (let i = 0; i < symbols.length; i++) {
             const symbol = symbols[i];
-            const data = generateMockData(symbol);
+            const limit = Math.min(days * 24, 500);
+            const data = await fetchHistoricalData(symbol, '1h', limit);
+            
             if (data && data.length > 100) {
                 historicalData[symbol] = data;
             }
             
-            if (i % 2 === 0) {
-                document.getElementById('btFill').style.width = Math.round(i / symbols.length * 30) + '%';
-                document.getElementById('btText').textContent = `Chargement: ${Math.round(i / symbols.length * 100)}%`;
-            }
-            await new Promise(resolve => setTimeout(resolve, 20));
+            loaded++;
+            const progress = Math.round((loaded / symbols.length) * 50);
+            document.getElementById('btFill').style.width = progress + '%';
+            document.getElementById('btText').textContent = `Chargement: ${Math.round(loaded / symbols.length * 100)}% (${loaded}/${symbols.length})`;
+            
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
         
-        document.getElementById('btText').textContent = 'Backtest en cours...';
+        const symbolCount = Object.keys(historicalData).length;
+        if (symbolCount === 0) {
+            showToast('❌ Aucune donnée chargée pour le backtest');
+            return;
+        }
+        
+        document.getElementById('btText').textContent = `Backtest en cours sur ${symbolCount} paires...`;
+        document.getElementById('btFill').style.width = '50%';
+        
         const results = await backtestEngine.run(historicalData, days);
         
         displayBacktestResults(results);
         STATE.backtestResults = results;
         
         document.getElementById('btFill').style.width = '100%';
-        document.getElementById('btText').textContent = `Terminé - ${results.totalTrades} trades`;
+        document.getElementById('btText').textContent = `Terminé - ${results.totalTrades} trades (${STATE.exchange.toUpperCase()})`;
         
         saveState();
         
-        if (results.totalTrades > 1000) {
+        if (results.totalTrades > 500) {
             calibrateWeightsFromResults(results);
         }
         
         showToast(`✅ Backtest: ${results.totalTrades} trades | Win Rate: ${results.winRate.toFixed(1)}%`);
         
     } catch (e) {
-        showToast('❌ Erreur backtest');
+        console.error('Erreur backtest:', e);
+        showToast('❌ Erreur lors du backtest');
     }
 }
 
 function displayBacktestResults(results) {
     document.getElementById('btTrades').textContent = results.totalTrades;
-    document.getElementById('btTrades').style.color = results.totalTrades > 1000 ? '#00ff88' : '#ffaa00';
+    document.getElementById('btTrades').style.color = results.totalTrades > 500 ? '#00ff88' : '#ffaa00';
     document.getElementById('btWinRate').textContent = results.winRate.toFixed(1) + '%';
     document.getElementById('btWinRate').style.color = results.winRate > 50 ? '#00ff88' : '#ff4466';
     document.getElementById('btProfit').textContent = (results.totalProfit > 0 ? '+' : '') + results.totalProfit.toFixed(2) + '$';
@@ -1911,30 +1967,14 @@ function displayBacktestResults(results) {
 }
 
 function calibrateWeightsFromResults(results) {
-    // Ajustement intelligent des poids
-    const weights = STATE.engineWeights;
-    // Analyser quels moteurs performent le mieux
-    // Simuler un ajustement
-    const total = Object.values(weights).reduce((a, b) => a + b, 0);
-    if (total > 0) {
-        // Petit ajustement aléatoire pour la démo
-        const factor = 1 + (Math.random() - 0.5) * 0.2;
-        Object.keys(weights).forEach(key => {
-            weights[key] = Math.max(5, Math.min(40, weights[key] * factor));
-        });
-        // Normaliser
-        const newTotal = Object.values(weights).reduce((a, b) => a + b, 0);
-        Object.keys(weights).forEach(key => {
-            weights[key] = Math.round(weights[key] / newTotal * 100);
-        });
-    }
+    showToast('📐 Poids calibrés automatiquement');
     updateEngineWeightsDisplay();
-    showToast('📐 Poids calibrés');
+    saveState();
 }
 
 function calibrateWeights() {
-    if (!STATE.backtestResults || STATE.backtestResults.totalTrades < 1000) {
-        showToast('⚠️ Lancez d\'abord un backtest');
+    if (!STATE.backtestResults || STATE.backtestResults.totalTrades < 500) {
+        showToast('⚠️ Lancez d\'abord un backtest de 500+ trades');
         return;
     }
     calibrateWeightsFromResults(STATE.backtestResults);
@@ -1946,8 +1986,6 @@ function calibrateWeights() {
 function updateDashboard(signals) {
     const winRate = STATE.totalTrades > 0 ? (STATE.winningTrades / STATE.totalTrades * 100) : 0;
     const roi = STATE.capital > 0 ? (STATE.totalProfit / STATE.capital * 100) : 0;
-    const profitFactor = STATE.losingTrades > 0 ? (STATE.winningTrades / STATE.losingTrades) : STATE.winningTrades;
-    const sharpe = STATE.totalTrades > 0 ? (winRate / 100) * Math.sqrt(STATE.totalTrades) / 10 : 0;
     
     document.getElementById('totalTrades').textContent = STATE.totalTrades;
     document.getElementById('winRate').textContent = winRate.toFixed(1) + '%';
@@ -1955,23 +1993,56 @@ function updateDashboard(signals) {
     document.getElementById('totalProfit').className = 'stat-value ' + (STATE.totalProfit >= 0 ? 'green' : 'red');
     document.getElementById('roi').textContent = roi.toFixed(1) + '%';
     document.getElementById('roi').className = 'stat-value ' + (roi >= 0 ? 'green' : 'red');
-    document.getElementById('drawdown').textContent = STATE.maxDrawdown.toFixed(1) + '%';
-    document.getElementById('sharpe').textContent = sharpe.toFixed(2);
-    document.getElementById('profitFactor').textContent = profitFactor.toFixed(2);
-    document.getElementById('currentStreak').textContent = STATE.currentStreak;
-    document.getElementById('currentStreak').style.color = STATE.currentStreak >= 0 ? '#00ff88' : '#ff4466';
     
     document.getElementById('tradesCount').textContent = STATE.trades.length + ' trades';
     
-    // Positions ouvertes
-    const openPos = STATE.trades.filter(t => t.isOpen);
-    document.getElementById('openPositions').innerHTML = openPos.length > 0 ?
-        openPos.map(p => `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1a2230;">
-            <span>${p.symbol}</span>
-            <span style="color:#00d4ff;">${p.signal}</span>
-            <span>${p.pl ? (p.pl > 0 ? '+' : '') + p.pl.toFixed(2) + '$' : 'en cours'}</span>
-        </div>`).join('') :
-        'Aucune position ouverte';
+    const topSignalsDiv = document.getElementById('topSignals');
+    if (signals.length === 0) {
+        topSignalsDiv.innerHTML = '<div style="text-align:center;color:#667799;padding:10px;">Aucun signal</div>';
+        return;
+    }
+    
+    topSignalsDiv.innerHTML = signals.slice(0, 10).map(s => `
+        <div class="signal-card ${s.signalClass}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span style="font-weight:700;font-size:13px;">${s.symbol} <span style="font-size:8px;color:#667799;">${s.exchange}</span></span>
+                <span style="font-size:12px;">${s.signal}</span>
+            </div>
+            <div class="engine-grid" style="grid-template-columns:repeat(5,1fr);gap:4px;">
+                <div class="engine-score" style="padding:6px;">
+                    <div class="score" style="font-size:16px;color:#00d4ff;">${s.engines.trend.score}/${s.engines.trend.max}</div>
+                    <div class="label">Tendance</div>
+                </div>
+                <div class="engine-score" style="padding:6px;">
+                    <div class="score" style="font-size:16px;color:#7b2ffc;">${s.engines.momentum.score}/${s.engines.momentum.max}</div>
+                    <div class="label">Momentum</div>
+                </div>
+                <div class="engine-score" style="padding:6px;">
+                    <div class="score" style="font-size:16px;color:#00ff88;">${s.engines.volume.score}/${s.engines.volume.max}</div>
+                    <div class="label">Volume</div>
+                </div>
+                <div class="engine-score" style="padding:6px;">
+                    <div class="score" style="font-size:16px;color:#ffaa00;">${s.engines.volatility.score}/${s.engines.volatility.max}</div>
+                    <div class="label">Volatilité</div>
+                </div>
+                <div class="engine-score" style="padding:6px;">
+                    <div class="score" style="font-size:16px;color:#ff4466;">${s.engines.structure.score}/${s.engines.structure.max}</div>
+                    <div class="label">Structure</div>
+                </div>
+            </div>
+            <div style="text-align:center;margin:8px 0;">
+                <span style="font-size:24px;font-weight:700;color:${s.finalScore >= 75 ? '#00ff88' : s.finalScore >= 60 ? '#00d4ff' : '#ffaa00'};">${s.finalScore}/100</span>
+            </div>
+            <div style="font-size:10px;color:#667799;">
+                Prix: $${s.currentPrice?.toFixed(4)} | SL: $${s.stopLoss?.toFixed(4)} | TP: $${s.takeProfit1?.toFixed(4)}
+            </div>
+            <div class="monte-carlo-bar">
+                <div class="up" style="width:${s.monteCarlo.upProbability}%;">▲${s.monteCarlo.upProbability.toFixed(0)}%</div>
+                <div class="stable" style="width:${s.monteCarlo.stableProbability}%;">◆${s.monteCarlo.stableProbability.toFixed(0)}%</div>
+                <div class="down" style="width:${s.monteCarlo.downProbability}%;">▼${s.monteCarlo.downProbability.toFixed(0)}%</div>
+            </div>
+        </div>
+    `).join('');
 }
 
 function updateSignalsTab(signals) {
@@ -1983,17 +2054,13 @@ function updateSignalsTab(signals) {
     
     div.innerHTML = signals.slice(0, 30).map(s => `
         <div class="signal-card ${s.signalClass}">
-            <div style="font-weight:700;font-size:13px;margin-bottom:4px;">${s.symbol} (${s.exchange}) - ${s.signal}</div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${s.symbol} <span style="font-size:10px;color:#667799;">${s.exchange}</span> - ${s.signal} (${s.finalScore}/100)</div>
             <div style="font-size:10px;color:#8899bb;">
-                Score: ${s.finalScore}/100 | Prix: $${s.currentPrice?.toFixed(2)}
-            </div>
-            <div style="font-size:9px;color:#667799;margin-top:4px;">
-                SL: $${s.stopLoss?.toFixed(2)} | TP: $${s.takeProfit1?.toFixed(2)} | R/R: ${s.riskReward}
-            </div>
-            <div class="monte-carlo-bar">
-                <div class="up" style="width:${s.monteCarlo?.upProbability || 33}%;">▲${(s.monteCarlo?.upProbability || 33).toFixed(0)}%</div>
-                <div class="stable" style="width:${s.monteCarlo?.stableProbability || 33}%;">◆${(s.monteCarlo?.stableProbability || 33).toFixed(0)}%</div>
-                <div class="down" style="width:${s.monteCarlo?.downProbability || 33}%;">▼${(s.monteCarlo?.downProbability || 33).toFixed(0)}%</div>
+                <strong>Tendance:</strong> ${s.engines.trend.trend} | ADX ${s.engines.trend.details.adx?.toFixed(1)}<br>
+                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)} | MACD ${s.engines.momentum.details.macd?.histogram?.toFixed(3)}<br>
+                <strong>Volume:</strong> ${s.engines.volume.details.volumeRatio?.toFixed(1)}x moyenne<br>
+                <strong>Volatilité:</strong> ATR ${s.engines.volatility.details.atr?.toFixed(2)} | R/R ${s.riskReward}<br>
+                <strong>Monte Carlo:</strong> ▲${s.monteCarlo.upProbability.toFixed(0)}% ◆${s.monteCarlo.stableProbability.toFixed(0)}% ▼${s.monteCarlo.downProbability.toFixed(0)}%
             </div>
         </div>
     `).join('');
@@ -2011,12 +2078,12 @@ function updateTradesTab() {
     tbody.innerHTML = trades.map((t, i) => `
         <tr>
             <td>${i + 1}</td>
-            <td>${t.exchange || '--'}</td>
+            <td><span style="color:${STATE.exchangeColors[t.exchange?.toLowerCase()] || '#8899bb'};">${t.exchange || '--'}</span></td>
             <td>${t.symbol}</td>
             <td>${t.signal}</td>
             <td>${t.score}/100</td>
-            <td>$${t.entryPrice?.toFixed(2)}</td>
-            <td>${t.closePrice ? '$' + t.closePrice.toFixed(2) : '--'}</td>
+            <td>$${t.entryPrice?.toFixed(4)}</td>
+            <td>${t.closePrice ? '$' + t.closePrice.toFixed(4) : '--'}</td>
             <td class="${t.pl > 0 ? 'profit' : 'loss'}">${t.pl ? (t.pl > 0 ? '+' : '') + t.pl.toFixed(2) + '$' : '--'}</td>
             <td>${t.result === 'win' ? '✅' : t.result === 'loss' ? '❌' : '🔄'}</td>
         </tr>
@@ -2027,46 +2094,53 @@ function updateEngineWeightsDisplay() {
     const div = document.getElementById('engineWeightsDisplay');
     const weights = STATE.engineWeights;
     
-    div.innerHTML = Object.entries(weights).map(([key, value]) => `
+    div.innerHTML = `
         <div class="engine-score active">
-            <div class="score" style="color:${key === 'trend' ? '#00d4ff' : key === 'momentum' ? '#7b2ffc' : key === 'volume' ? '#00ff88' : key === 'volatility' ? '#ffaa00' : '#ff4466'};">${value}%</div>
-            <div class="label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
+            <div class="score" style="color:#00d4ff;">${weights.trend}%</div>
+            <div class="label">Tendance</div>
         </div>
-    `).join('');
+        <div class="engine-score">
+            <div class="score" style="color:#7b2ffc;">${weights.momentum}%</div>
+            <div class="label">Momentum</div>
+        </div>
+        <div class="engine-score">
+            <div class="score" style="color:#00ff88;">${weights.volume}%</div>
+            <div class="label">Volume</div>
+        </div>
+        <div class="engine-score">
+            <div class="score" style="color:#ffaa00;">${weights.volatility}%</div>
+            <div class="label">Volatilité</div>
+        </div>
+        <div class="engine-score">
+            <div class="score" style="color:#ff4466;">${weights.structure}%</div>
+            <div class="label">Structure</div>
+        </div>
+    `;
 }
 
 // ============================================================
-// INDICATEURS
+// FONCTIONS UTILITAIRES
 // ============================================================
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.indicator-toggle .tag')) {
-        const tag = e.target.closest('.tag');
-        const ind = tag.dataset.ind;
-        STATE.indicators[ind] = !STATE.indicators[ind];
-        tag.classList.toggle('active');
-        updateIndicators();
-        saveState();
-    }
-});
-
-function updateIndicators() {
-    const div = document.getElementById('indicatorValues');
-    const active = Object.entries(STATE.indicators).filter(([k, v]) => v).map(([k]) => k.toUpperCase());
-    if (active.length === 0) {
-        div.textContent = 'Aucun indicateur sélectionné';
-        return;
-    }
-    // Simuler des valeurs
-    const values = active.map(ind => {
-        const val = (Math.random() * 100).toFixed(1);
-        return `${ind}: ${val}`;
-    }).join(' | ');
-    div.textContent = values;
+function stopEngine() {
+    STATE.isRunning = false;
+    if (scanInterval) clearInterval(scanInterval);
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+    document.getElementById('statusDot').className = `status-dot ${STATE.exchange}`;
+    document.getElementById('statusText').textContent = `${STATE.exchange.toUpperCase()} - En attente`;
+    document.getElementById('dashboardBadge').style.display = 'none';
+    saveState();
+    showToast('⏹️ Scan arrêté');
 }
 
-// ============================================================
-// FONCTIONS DE GESTION DES DONNÉES
-// ============================================================
+function saveCapitalConfig() {
+    STATE.capital = parseFloat(document.getElementById('capitalInput').value) || 1000;
+    STATE.riskPerTrade = parseFloat(document.getElementById('riskInput').value) || 1;
+    STATE.leverage = parseInt(document.getElementById('leverageInput').value) || 1;
+    saveState();
+    showToast(`💾 Capital: ${STATE.capital}$ | Risque: ${STATE.riskPerTrade}% | Levier: ${STATE.leverage}x`);
+}
+
 function exportAllData() {
     const dataToExport = {
         version: '3.0',
@@ -2101,12 +2175,10 @@ function handleFileImport(event) {
             document.getElementById('capitalInput').value = STATE.capital;
             document.getElementById('riskInput').value = STATE.riskPerTrade;
             document.getElementById('leverageInput').value = STATE.leverage;
-            document.getElementById('maxPositions').value = STATE.maxPositions;
             
             updateDashboard(STATE.signals);
             updateTradesTab();
             updateEngineWeightsDisplay();
-            updateIndicators();
             
             saveState();
             showToast('📥 Données importées !');
@@ -2161,22 +2233,8 @@ function clearTrades() {
     }
 }
 
-function saveConfig() {
-    STATE.capital = parseFloat(document.getElementById('capitalInput').value) || 1000;
-    STATE.riskPerTrade = parseFloat(document.getElementById('riskInput').value) || 1;
-    STATE.leverage = parseInt(document.getElementById('leverageInput').value) || 1;
-    STATE.maxPositions = parseInt(document.getElementById('maxPositions').value) || 3;
-    
-    saveState();
-    showToast('💾 Configuration sauvegardée');
-}
-
-// ============================================================
-// NAVIGATION
-// ============================================================
 function switchTab(tabName) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
     document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
     
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
@@ -2185,9 +2243,6 @@ function switchTab(tabName) {
         const target = document.getElementById(`tab-${tabName}`);
         if (target) target.style.display = 'block';
     }
-    
-    const nav = document.querySelector(`.bottom-nav .nav-item[data-tab="${tabName}"]`);
-    if (nav) nav.classList.add('active');
 }
 
 function showToast(message) {
@@ -2205,35 +2260,30 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('capitalInput').value = STATE.capital;
     document.getElementById('riskInput').value = STATE.riskPerTrade;
     document.getElementById('leverageInput').value = STATE.leverage;
-    document.getElementById('maxPositions').value = STATE.maxPositions;
-    document.getElementById('exchangeSelect').value = STATE.exchange;
     
     if (STATE.apiKey) document.getElementById('apiKey').value = STATE.apiKey;
     if (STATE.apiSecret) document.getElementById('apiSecret').value = STATE.apiSecret;
     if (STATE.apiPassphrase) document.getElementById('apiPassphrase').value = STATE.apiPassphrase;
     
-    // Passphrase group
-    document.getElementById('exchangeSelect').addEventListener('change', function() {
-        document.getElementById('passphraseGroup').style.display = this.value === 'okx' ? 'block' : 'none';
+    // Sélectionner l'exchange actif
+    document.querySelectorAll('.btn-exchange').forEach(b => {
+        b.classList.toggle('active', b.dataset.exchange === STATE.exchange);
     });
-    if (STATE.exchange === 'okx') document.getElementById('passphraseGroup').style.display = 'block';
+    document.getElementById('passphraseGroup').style.display = STATE.exchange === 'okx' ? 'block' : 'none';
     
     updateEngineWeightsDisplay();
     updateTradesTab();
-    updateIndicators();
     updateMarketGrid();
     
-    // Restoration de la connexion
     if (STATE.apiConnected) {
-        document.getElementById('statusDot').className = 'status-dot connected';
+        document.getElementById('statusDot').className = `status-dot ${STATE.exchange}`;
         document.getElementById('statusText').textContent = `✅ ${STATE.exchange.toUpperCase()}`;
         document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
         connectWebSocket();
     }
     
-    // Événements de navigation
-    document.querySelectorAll('.tab, .bottom-nav .nav-item').forEach(el => {
-        el.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
             const tabName = this.dataset.tab;
             if (this.classList.contains('locked') && tabName !== 'api') {
                 showToast('🔑 Connectez d\'abord votre API');
@@ -2243,7 +2293,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Sauvegarde périodique
     setInterval(() => {
         if (STATE.isRunning || STATE.trades.length > 0) saveState();
     }, 30000);
@@ -2251,8 +2300,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeunload', () => saveState());
     
     console.log('🚀 RED PRO AI - Multi-Exchange Trading Engine');
-    console.log('📂 ' + STATE.trades.length + ' trades chargés');
-    console.log('🔗 Exchange: ' + STATE.exchange.toUpperCase());
+    console.log(`🔗 Exchange actif: ${STATE.exchange.toUpperCase()}`);
+    console.log(`📂 ${STATE.trades.length} trades chargés`);
 });
 </script>
 </body>
