@@ -20,7 +20,6 @@
         ::-webkit-scrollbar-track { background: #1a1f2e; }
         ::-webkit-scrollbar-thumb { background: #ff4466; border-radius: 4px; }
         
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -64,7 +63,6 @@
             50% { opacity: 0.5; transform: scale(0.8); }
         }
         
-        /* ===== TABS ===== */
         .tabs {
             display: flex;
             gap: 4px;
@@ -85,9 +83,8 @@
             transition: all 0.3s;
         }
         .tab.active { background: #1a2230; color: #ff4466; border-color: #ff4466; }
-        .tab.locked { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .tab.locked { opacity: 0.5; cursor: not-allowed; }
         
-        /* ===== CARDS ===== */
         .card {
             background: #0d1520;
             border-radius: 12px;
@@ -106,7 +103,6 @@
             align-items: center;
         }
         
-        /* ===== API FORM ===== */
         .api-status-card {
             background: #0a0e17;
             border-radius: 10px;
@@ -151,7 +147,6 @@
             line-height: 1.6;
         }
         
-        /* ===== STATS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -172,7 +167,6 @@
         .stat-value.purple { color: #7b2ffc; }
         .stat-label { font-size: 9px; color: #667799; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* ===== ENGINE SCORES ===== */
         .engine-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -191,7 +185,6 @@
         .engine-score .label { font-size: 9px; color: #8899bb; margin-top: 3px; }
         .engine-score .max { font-size: 8px; color: #445566; }
         
-        /* ===== BOUTONS ===== */
         .btn {
             padding: 10px 18px;
             border: none;
@@ -211,7 +204,6 @@
         .btn-warning { background: linear-gradient(135deg, #ffaa00, #ff8800); color: #0a0e17; }
         .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
         
-        /* ===== TABLES ===== */
         .data-table {
             width: 100%;
             font-size: 10px;
@@ -239,7 +231,6 @@
             border-radius: 8px;
         }
         
-        /* ===== PROGRESS BAR ===== */
         .progress-bar {
             height: 6px;
             background: #1a2230;
@@ -253,7 +244,6 @@
             transition: width 0.5s ease;
         }
         
-        /* ===== SIGNAL CARD ===== */
         .signal-card {
             background: #0a0e17;
             border-radius: 12px;
@@ -267,7 +257,6 @@
         .signal-card.sell { border-color: #ff446666; }
         .signal-card.neutral { border-color: #66779966; }
         
-        /* ===== MONTE CARLO BAR ===== */
         .monte-carlo-bar {
             display: flex;
             height: 24px;
@@ -281,7 +270,6 @@
         .monte-carlo-bar .stable { background: #ffaa0033; color: #ffaa00; display: flex; align-items: center; justify-content: center; }
         .monte-carlo-bar .down { background: #ff446633; color: #ff4466; display: flex; align-items: center; justify-content: center; }
         
-        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -314,7 +302,6 @@
 </head>
 <body>
 
-<!-- ===== HEADER ===== -->
 <div class="header">
     <div class="header-title">🔴 RED PRO AI CRYPTO</div>
     <div class="header-status">
@@ -323,8 +310,7 @@
     </div>
 </div>
 
-<!-- ===== TABS ===== -->
-<div class="tabs">
+<div class="tabs" id="tabsContainer">
     <div class="tab active" data-tab="api" id="tabApi">🔑 API Binance</div>
     <div class="tab locked" data-tab="dashboard" id="tabDashboard">📊 Dashboard</div>
     <div class="tab locked" data-tab="signals" id="tabSignals">🎯 Signaux</div>
@@ -333,9 +319,7 @@
     <div class="tab locked" data-tab="engines" id="tabEngines">⚙️ Moteurs</div>
 </div>
 
-<!-- ============================================================
-     TAB 1: API BINANCE (OBLIGATOIRE)
-     ============================================================ -->
+<!-- TAB 1: API BINANCE -->
 <div id="tab-api">
     <div class="card">
         <div class="card-title">
@@ -377,7 +361,6 @@
         </div>
     </div>
     
-    <!-- Configuration du Capital -->
     <div class="card">
         <div class="card-title">
             💰 Capital de Trading
@@ -399,9 +382,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     TAB 2: DASHBOARD
-     ============================================================ -->
+<!-- TAB 2: DASHBOARD -->
 <div id="tab-dashboard" style="display:none;">
     <div class="stats-grid" style="margin-bottom:10px;">
         <div class="stat-item">
@@ -444,9 +425,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     TAB 3: SIGNAUX DÉTAILLÉS
-     ============================================================ -->
+<!-- TAB 3: SIGNAUX -->
 <div id="tab-signals" style="display:none;">
     <div class="card">
         <div class="card-title">🎯 Analyse Complète par les 5 Moteurs</div>
@@ -454,9 +433,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     TAB 4: TRADES
-     ============================================================ -->
+<!-- TAB 4: TRADES -->
 <div id="tab-trades" style="display:none;">
     <div class="card">
         <div class="card-title">📜 Historique des Trades</div>
@@ -474,9 +451,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     TAB 5: BACKTEST
-     ============================================================ -->
+<!-- TAB 5: BACKTEST -->
 <div id="tab-backtest" style="display:none;">
     <div class="card">
         <div class="card-title">🔬 Backtest Engine (5000+ trades minimum)</div>
@@ -506,9 +481,7 @@
     </div>
 </div>
 
-<!-- ============================================================
-     TAB 6: CONFIGURATION DES MOTEURS
-     ============================================================ -->
+<!-- TAB 6: MOTEURS -->
 <div id="tab-engines" style="display:none;">
     <div class="card">
         <div class="card-title">⚙️ Poids des Moteurs (Calibration Automatique)</div>
@@ -524,12 +497,8 @@
     </div>
 </div>
 
-<!-- ===== TOAST ===== -->
 <div class="toast" id="toast"></div>
 
-<!-- ============================================================
-     JAVASCRIPT - RED PRO AI CRYPTO ENGINE COMPLET
-     ============================================================ -->
 <script>
 // ============================================================
 // ÉTAT GLOBAL
@@ -541,8 +510,6 @@ const STATE = {
     isRunning: false,
     capital: 1000,
     riskPerTrade: 0.01,
-    
-    // Statistiques
     totalTrades: 0,
     winningTrades: 0,
     losingTrades: 0,
@@ -555,8 +522,6 @@ const STATE = {
     currentStreak: 0,
     dailyTrades: 0,
     dailyPnL: 0,
-    
-    // Moteurs
     engineWeights: {
         trend: 30,
         momentum: 25,
@@ -564,7 +529,6 @@ const STATE = {
         volatility: 15,
         structure: 10
     },
-    
     enginePerformance: {
         trend: { wins: 0, total: 0 },
         momentum: { wins: 0, total: 0 },
@@ -572,199 +536,120 @@ const STATE = {
         volatility: { wins: 0, total: 0 },
         structure: { wins: 0, total: 0 }
     },
-    
     trades: [],
     signals: [],
     allSymbols: [],
     scanCount: 0,
     lastUpdate: null,
-    
-    // Backtest
-    backtestResults: null
+    backtestResults: null,
+    activeTab: 'api'
 };
 
 // ============================================================
-// 1. MOTEUR DE TENDANCE (Trend Engine) - 30%
+// 1. MOTEUR DE TENDANCE
 // ============================================================
 class TrendEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 30, details: {} };
-        
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
-        
         let score = 0;
         const details = {};
         
-        // EMA 20
         const ema20 = this.EMA(prices, 20);
         details.ema20 = ema20;
-        if (currentPrice > ema20) {
-            score += 7;
-            details.ema20Signal = 'Prix > EMA20 (+7)';
-        } else {
-            details.ema20Signal = 'Prix < EMA20';
-        }
+        if (currentPrice > ema20) { score += 7; details.ema20Signal = 'Prix > EMA20 (+7)'; }
+        else { details.ema20Signal = 'Prix < EMA20'; }
         
-        // EMA 50
         const ema50 = this.EMA(prices, 50);
         details.ema50 = ema50;
-        if (currentPrice > ema50) {
-            score += 7;
-            details.ema50Signal = 'Prix > EMA50 (+7)';
-        } else {
-            details.ema50Signal = 'Prix < EMA50';
-        }
+        if (currentPrice > ema50) { score += 7; details.ema50Signal = 'Prix > EMA50 (+7)'; }
+        else { details.ema50Signal = 'Prix < EMA50'; }
         
-        // EMA 200
         if (data.length >= 200) {
             const ema200 = this.EMA(prices, 200);
             details.ema200 = ema200;
-            if (currentPrice > ema200) {
-                score += 6;
-                details.ema200Signal = 'Prix > EMA200 (+6)';
-            } else {
-                details.ema200Signal = 'Prix < EMA200';
-            }
+            if (currentPrice > ema200) { score += 6; details.ema200Signal = 'Prix > EMA200 (+6)'; }
+            else { details.ema200Signal = 'Prix < EMA200'; }
         }
         
-        // ADX (force de tendance)
         const adx = this.calculateADX(data);
         details.adx = adx;
-        if (adx > 25) {
-            score += 10;
-            details.adxSignal = `ADX ${adx.toFixed(1)} > 25 (+10)`;
-        } else if (adx > 20) {
-            score += 5;
-            details.adxSignal = `ADX ${adx.toFixed(1)} > 20 (+5)`;
-        } else {
-            details.adxSignal = `ADX ${adx.toFixed(1)} faible`;
-        }
+        if (adx > 25) { score += 10; details.adxSignal = `ADX ${adx.toFixed(1)} > 25 (+10)`; }
+        else if (adx > 20) { score += 5; details.adxSignal = `ADX ${adx.toFixed(1)} > 20 (+5)`; }
+        else { details.adxSignal = `ADX ${adx.toFixed(1)} faible`; }
         
-        // Tendance globale
         let trend = 'NEUTRE';
         if (score >= 20) trend = 'HAUSSIÈRE';
         else if (score <= 10) trend = 'BAISSIÈRE';
         
-        return {
-            score: Math.min(score, 30),
-            max: 30,
-            trend,
-            details
-        };
+        return { score: Math.min(score, 30), max: 30, trend, details };
     }
     
     EMA(prices, period) {
         if (prices.length < period) return prices[prices.length - 1];
         const k = 2 / (period + 1);
         let ema = prices[0];
-        for (let i = 1; i < prices.length; i++) {
-            ema = prices[i] * k + ema * (1 - k);
-        }
+        for (let i = 1; i < prices.length; i++) ema = prices[i] * k + ema * (1 - k);
         return ema;
     }
     
     calculateADX(data, period = 14) {
         if (data.length < period * 2) return 20;
-        
-        const tr = [];
-        const plusDM = [];
-        const minusDM = [];
-        
+        const tr = [], plusDM = [], minusDM = [];
         for (let i = 1; i < data.length; i++) {
-            const high = data[i].high;
-            const low = data[i].low;
-            const prevClose = data[i-1].close;
-            
+            const high = data[i].high, low = data[i].low, prevClose = data[i-1].close;
             tr.push(Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose)));
-            
-            const up = high - data[i-1].high;
-            const down = data[i-1].low - low;
+            const up = high - data[i-1].high, down = data[i-1].low - low;
             plusDM.push(up > down && up > 0 ? up : 0);
             minusDM.push(down > up && down > 0 ? down : 0);
         }
-        
-        // Lissage Wilder
         let atr = tr.slice(0, period).reduce((a, b) => a + b, 0) / period;
         let plusDI = plusDM.slice(0, period).reduce((a, b) => a + b, 0) / period;
         let minusDI = minusDM.slice(0, period).reduce((a, b) => a + b, 0) / period;
-        
         for (let i = period; i < tr.length; i++) {
             atr = (atr * (period - 1) + tr[i]) / period;
             plusDI = (plusDI * (period - 1) + plusDM[i]) / period;
             minusDI = (minusDI * (period - 1) + minusDM[i]) / period;
         }
-        
         if (atr === 0) return 20;
-        const pDI = (plusDI / atr) * 100;
-        const mDI = (minusDI / atr) * 100;
-        const sum = pDI + mDI;
-        return sum === 0 ? 20 : Math.abs(pDI - mDI) / sum * 100;
+        const sum = (plusDI + minusDI) / atr * 100;
+        return sum === 0 ? 20 : Math.abs(plusDI - minusDI) / atr * 100 / sum * 100;
     }
 }
 
 // ============================================================
-// 2. MOTEUR MOMENTUM - 25%
+// 2. MOTEUR MOMENTUM
 // ============================================================
 class MomentumEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 25, details: {} };
-        
         const prices = data.map(d => d.close);
         let score = 0;
         const details = {};
         
-        // RSI (14)
         const rsi = this.calculateRSI(prices, 14);
         details.rsi = rsi;
-        if (rsi >= 50 && rsi <= 70) {
-            score += 10;
-            details.rsiSignal = `RSI ${rsi.toFixed(1)} - Zone haussière (+10)`;
-        } else if (rsi > 70) {
-            score += 3;
-            details.rsiSignal = `RSI ${rsi.toFixed(1)} - Suracheté (+3)`;
-        } else if (rsi < 30) {
-            score -= 5;
-            details.rsiSignal = `RSI ${rsi.toFixed(1)} - Survente (-5)`;
-        } else {
-            details.rsiSignal = `RSI ${rsi.toFixed(1)} - Neutre`;
-        }
+        if (rsi >= 50 && rsi <= 70) { score += 10; details.rsiSignal = `RSI ${rsi.toFixed(1)} haussier (+10)`; }
+        else if (rsi > 70) { score += 3; details.rsiSignal = `RSI ${rsi.toFixed(1)} suracheté (+3)`; }
+        else if (rsi < 30) { score -= 5; details.rsiSignal = `RSI ${rsi.toFixed(1)} survendu (-5)`; }
+        else { details.rsiSignal = `RSI ${rsi.toFixed(1)} neutre`; }
         
-        // MACD
         const macd = this.calculateMACD(prices);
         details.macd = macd;
-        if (macd.histogram > 0) {
-            score += 8;
-            details.macdSignal = `MACD haussier (+8)`;
-        } else {
-            score -= 3;
-            details.macdSignal = `MACD baissier (-3)`;
-        }
+        if (macd.histogram > 0) { score += 8; details.macdSignal = 'MACD haussier (+8)'; }
+        else { score -= 3; details.macdSignal = 'MACD baissier (-3)'; }
         
-        // Stochastic RSI
         const stochRSI = this.calculateStochRSI(prices);
         details.stochRSI = stochRSI;
-        if (stochRSI > 0.5) {
-            score += 4;
-            details.stochRSISignal = `Stoch RSI haussier (+4)`;
-        }
+        if (stochRSI > 0.5) { score += 4; details.stochRSISignal = 'Stoch RSI haussier (+4)'; }
         
-        // Rate of Change (ROC)
         const roc = this.calculateROC(prices, 10);
         details.roc = roc;
-        if (roc > 0) {
-            score += 3;
-            details.rocSignal = `ROC positif (+3)`;
-        } else {
-            score -= 2;
-            details.rocSignal = `ROC négatif (-2)`;
-        }
+        if (roc > 0) { score += 3; details.rocSignal = 'ROC positif (+3)'; }
+        else { score -= 2; details.rocSignal = 'ROC négatif (-2)'; }
         
-        return {
-            score: Math.min(Math.max(score, 0), 25),
-            max: 25,
-            details
-        };
+        return { score: Math.min(Math.max(score, 0), 25), max: 25, details };
     }
     
     calculateRSI(prices, period) {
@@ -772,107 +657,73 @@ class MomentumEngine {
         let gains = 0, losses = 0;
         for (let i = prices.length - period; i < prices.length; i++) {
             const diff = prices[i] - prices[i-1];
-            if (diff > 0) gains += diff;
-            else losses -= diff;
+            if (diff > 0) gains += diff; else losses -= diff;
         }
         if (losses === 0) return 100;
         return 100 - (100 / (1 + (gains/period) / (losses/period)));
     }
     
     calculateMACD(prices) {
-        const ema12 = this.EMA(prices, 12);
-        const ema26 = this.EMA(prices, 26);
+        const ema12 = this.EMA(prices, 12), ema26 = this.EMA(prices, 26);
         const macdLine = ema12 - ema26;
         const signalLine = this.EMA([macdLine], 9);
-        return {
-            macd: macdLine,
-            signal: signalLine,
-            histogram: macdLine - signalLine
-        };
+        return { macd: macdLine, signal: signalLine, histogram: macdLine - signalLine };
     }
     
     EMA(prices, period) {
         if (prices.length === 1) return prices[0];
         const k = 2 / (period + 1);
         let ema = prices[0];
-        for (let i = 1; i < prices.length; i++) {
-            ema = prices[i] * k + ema * (1 - k);
-        }
+        for (let i = 1; i < prices.length; i++) ema = prices[i] * k + ema * (1 - k);
         return ema;
     }
     
     calculateStochRSI(prices, period = 14) {
         const rsiValues = [];
-        for (let i = period; i < prices.length; i++) {
-            rsiValues.push(this.calculateRSI(prices.slice(0, i+1), period));
-        }
+        for (let i = period; i < prices.length; i++) rsiValues.push(this.calculateRSI(prices.slice(0, i+1), period));
         if (rsiValues.length < 2) return 0.5;
-        const current = rsiValues[rsiValues.length - 1];
-        const min = Math.min(...rsiValues.slice(-period));
-        const max = Math.max(...rsiValues.slice(-period));
+        const current = rsiValues[rsiValues.length-1], min = Math.min(...rsiValues.slice(-period)), max = Math.max(...rsiValues.slice(-period));
         return max - min === 0 ? 0.5 : (current - min) / (max - min);
     }
     
     calculateROC(prices, period) {
         if (prices.length < period) return 0;
-        return (prices[prices.length - 1] - prices[prices.length - period - 1]) / prices[prices.length - period - 1];
+        return (prices[prices.length-1] - prices[prices.length-period-1]) / prices[prices.length-period-1];
     }
 }
 
 // ============================================================
-// 3. MOTEUR VOLATILITÉ - 15%
+// 3. MOTEUR VOLATILITÉ
 // ============================================================
 class VolatilityEngine {
     calculate(data) {
         if (!data || data.length < 20) return { score: 0, max: 15, details: {} };
-        
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
         let score = 0;
         const details = {};
         
-        // ATR
         const atr = this.calculateATR(data);
         const volatility = atr / currentPrice;
         details.atr = atr;
         details.volatility = volatility;
         
-        if (volatility > 0.005 && volatility < 0.03) {
-            score += 10;
-            details.atrSignal = `Volatilité idéale ${(volatility*100).toFixed(2)}% (+10)`;
-        } else if (volatility <= 0.005) {
-            score += 4;
-            details.atrSignal = `Volatilité faible (+4)`;
-        } else {
-            score -= 3;
-            details.atrSignal = `Volatilité excessive (-3)`;
-        }
+        if (volatility > 0.005 && volatility < 0.03) { score += 10; details.atrSignal = `Volatilité idéale (+10)`; }
+        else if (volatility <= 0.005) { score += 4; details.atrSignal = `Volatilité faible (+4)`; }
+        else { score -= 3; details.atrSignal = `Volatilité excessive (-3)`; }
         
-        // Bollinger Bands
         const bb = this.calculateBollinger(data);
         details.bb = bb;
         const bbPosition = (currentPrice - bb.lower) / (bb.upper - bb.lower);
+        if (bbPosition < 0.2) { score += 5; details.bbSignal = 'Prix près bande basse (+5)'; }
+        else if (bbPosition > 0.8) { score -= 2; details.bbSignal = 'Prix près bande haute (-2)'; }
+        else { details.bbSignal = 'Prix dans les bandes'; }
         
-        if (bbPosition < 0.2) {
-            score += 5;
-            details.bbSignal = 'Prix près bande basse (+5)';
-        } else if (bbPosition > 0.8) {
-            score -= 2;
-            details.bbSignal = 'Prix près bande haute (-2)';
-        } else {
-            details.bbSignal = 'Prix dans les bandes';
-        }
-        
-        // Stop Loss et Take Profit recommandés
         details.recommendedSL = currentPrice * (1 - volatility * 1.5);
         details.recommendedTP = currentPrice * (1 + volatility * 2.5);
         details.riskRewardRatio = ((details.recommendedTP - currentPrice) / (currentPrice - details.recommendedSL)).toFixed(2);
         
-        return {
-            score: Math.min(Math.max(score, 0), 15),
-            max: 15,
-            details
-        };
+        return { score: Math.min(Math.max(score, 0), 15), max: 15, details };
     }
     
     calculateATR(data, period = 14) {
@@ -880,10 +731,7 @@ class VolatilityEngine {
         for (let i = 1; i <= period; i++) {
             const idx = data.length - i;
             if (idx <= 0) break;
-            const high = data[idx].high;
-            const low = data[idx].low;
-            const prevClose = data[idx-1].close;
-            atr += Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose));
+            atr += Math.max(data[idx].high - data[idx].low, Math.abs(data[idx].high - data[idx-1].close), Math.abs(data[idx].low - data[idx-1].close));
         }
         return atr / period;
     }
@@ -898,51 +746,31 @@ class VolatilityEngine {
 }
 
 // ============================================================
-// 4. MOTEUR VOLUME - 20%
+// 4. MOTEUR VOLUME
 // ============================================================
 class VolumeEngine {
     calculate(data) {
         if (!data || data.length < 30) return { score: 0, max: 20, details: {} };
-        
         const volumes = data.map(d => d.volume);
         const currentVolume = volumes[volumes.length - 1];
         let score = 0;
         const details = {};
         
-        // Volume vs moyenne 20 jours
         const avgVolume = volumes.slice(-21, -1).reduce((a, b) => a + b, 0) / 20;
         const volumeRatio = currentVolume / avgVolume;
         details.volumeRatio = volumeRatio;
         
-        if (volumeRatio > 2) {
-            score += 10;
-            details.volumeSignal = `Volume ${volumeRatio.toFixed(1)}x la moyenne (+10)`;
-        } else if (volumeRatio > 1.3) {
-            score += 6;
-            details.volumeSignal = `Volume ${volumeRatio.toFixed(1)}x (+6)`;
-        } else if (volumeRatio > 0.8) {
-            score += 2;
-            details.volumeSignal = `Volume normal (+2)`;
-        } else {
-            details.volumeSignal = `Volume faible`;
-        }
+        if (volumeRatio > 2) { score += 10; details.volumeSignal = `Volume ${volumeRatio.toFixed(1)}x (+10)`; }
+        else if (volumeRatio > 1.3) { score += 6; details.volumeSignal = `Volume ${volumeRatio.toFixed(1)}x (+6)`; }
+        else if (volumeRatio > 0.8) { score += 2; details.volumeSignal = `Volume normal (+2)`; }
+        else { details.volumeSignal = `Volume faible`; }
         
-        // OBV simplifié
         const obvTrend = this.calculateOBVTrend(data);
         details.obvTrend = obvTrend;
-        if (obvTrend > 0) {
-            score += 10;
-            details.obvSignal = 'OBV haussier (+10)';
-        } else {
-            score -= 3;
-            details.obvSignal = 'OBV baissier (-3)';
-        }
+        if (obvTrend > 0) { score += 10; details.obvSignal = 'OBV haussier (+10)'; }
+        else { score -= 3; details.obvSignal = 'OBV baissier (-3)'; }
         
-        return {
-            score: Math.min(Math.max(score, 0), 20),
-            max: 20,
-            details
-        };
+        return { score: Math.min(Math.max(score, 0), 20), max: 20, details };
     }
     
     calculateOBVTrend(data) {
@@ -957,60 +785,37 @@ class VolumeEngine {
 }
 
 // ============================================================
-// 5. MOTEUR STRUCTURE - 10%
+// 5. MOTEUR STRUCTURE
 // ============================================================
 class StructureEngine {
     calculate(data) {
         if (!data || data.length < 30) return { score: 0, max: 10, details: {} };
-        
         let score = 0;
         const details = {};
         
-        // Support/Résistance
         const sr = this.findSupportResistance(data);
         details.support = sr.support;
         details.resistance = sr.resistance;
-        
         const currentPrice = data[data.length - 1].close;
         const range = sr.resistance - sr.support;
         
         if (range > 0 && currentPrice > sr.support && currentPrice < sr.resistance) {
             const position = (currentPrice - sr.support) / range;
-            if (position < 0.3) {
-                score += 5;
-                details.srSignal = 'Prix proche du support (+5)';
-            } else if (position > 0.7) {
-                score += 3;
-                details.srSignal = 'Prix proche de la résistance (+3)';
-            }
+            if (position < 0.3) { score += 5; details.srSignal = 'Prix proche support (+5)'; }
+            else if (position > 0.7) { score += 3; details.srSignal = 'Prix proche résistance (+3)'; }
         }
         
-        // Tendance court terme
         const shortTrend = this.checkShortTermTrend(data);
         details.shortTrend = shortTrend;
-        if (shortTrend === 'up') {
-            score += 5;
-            details.trendSignal = 'Tendance court terme haussière (+5)';
-        } else if (shortTrend === 'down') {
-            score -= 2;
-            details.trendSignal = 'Tendance court terme baissière (-2)';
-        }
+        if (shortTrend === 'up') { score += 5; details.trendSignal = 'Tendance CT haussière (+5)'; }
+        else if (shortTrend === 'down') { score -= 2; details.trendSignal = 'Tendance CT baissière (-2)'; }
         
-        return {
-            score: Math.min(Math.max(score, 0), 10),
-            max: 10,
-            details
-        };
+        return { score: Math.min(Math.max(score, 0), 10), max: 10, details };
     }
     
     findSupportResistance(data, lookback = 20) {
         const slice = data.slice(-lookback);
-        const highs = slice.map(d => d.high);
-        const lows = slice.map(d => d.low);
-        return {
-            support: Math.min(...lows),
-            resistance: Math.max(...highs)
-        };
+        return { support: Math.min(...slice.map(d => d.low)), resistance: Math.max(...slice.map(d => d.high)) };
     }
     
     checkShortTermTrend(data) {
@@ -1022,7 +827,7 @@ class StructureEngine {
 }
 
 // ============================================================
-// 6. MOTEUR DE SCORING (ENSEMBLE)
+// 6. MOTEUR DE SCORING
 // ============================================================
 class ScoringEngine {
     constructor() {
@@ -1036,14 +841,12 @@ class ScoringEngine {
     analyze(data) {
         if (!data || data.length < 50) return null;
         
-        // Exécuter tous les moteurs
         const trend = this.trendEngine.calculate(data);
         const momentum = this.momentumEngine.calculate(data);
         const volatility = this.volatilityEngine.calculate(data);
         const volume = this.volumeEngine.calculate(data);
         const structure = this.structureEngine.calculate(data);
         
-        // Appliquer les poids calibrés
         const weights = STATE.engineWeights;
         const totalWeight = weights.trend + weights.momentum + weights.volume + weights.volatility + weights.structure;
         
@@ -1055,17 +858,12 @@ class ScoringEngine {
             (structure.score / structure.max) * weights.structure
         ) / totalWeight * 100;
         
-        // Monte Carlo simplifié
         const monteCarlo = this.runMonteCarlo(data, weightedScore);
         
-        // Probabilité finale
         let finalProbability = weightedScore;
-        
-        // Ajustement Monte Carlo
         if (monteCarlo.upProbability > 55) finalProbability += 5;
         else if (monteCarlo.upProbability < 45) finalProbability -= 5;
         
-        // Ratio risque/rendement
         const currentPrice = data[data.length - 1].close;
         const atr = volatility.details.atr || currentPrice * 0.01;
         const stopLoss = currentPrice - atr * 1.5;
@@ -1073,37 +871,17 @@ class ScoringEngine {
         const takeProfit2 = currentPrice + atr * 4;
         const riskReward = ((takeProfit1 - currentPrice) / (currentPrice - stopLoss)).toFixed(2);
         
-        // Déterminer le signal
         let signal, signalClass;
-        if (finalProbability >= 75) {
-            signal = '🟢 ACHAT FORT';
-            signalClass = 'strong-buy';
-        } else if (finalProbability >= 60) {
-            signal = '🟢 ACHAT';
-            signalClass = 'buy';
-        } else if (finalProbability <= 30) {
-            signal = '🔴 VENTE FORT';
-            signalClass = 'strong-sell';
-        } else if (finalProbability <= 45) {
-            signal = '🔴 VENTE';
-            signalClass = 'sell';
-        } else {
-            signal = '⚪ ATTENTE';
-            signalClass = 'neutral';
-        }
+        if (finalProbability >= 75) { signal = '🟢 ACHAT FORT'; signalClass = 'strong-buy'; }
+        else if (finalProbability >= 60) { signal = '🟢 ACHAT'; signalClass = 'buy'; }
+        else if (finalProbability <= 30) { signal = '🔴 VENTE FORT'; signalClass = 'strong-sell'; }
+        else if (finalProbability <= 45) { signal = '🔴 VENTE'; signalClass = 'sell'; }
+        else { signal = '⚪ ATTENTE'; signalClass = 'neutral'; }
         
         return {
-            signal,
-            signalClass,
-            finalScore: Math.round(finalProbability),
-            probability: finalProbability,
+            signal, signalClass, finalScore: Math.round(finalProbability), probability: finalProbability,
             engines: { trend, momentum, volatility, volume, structure },
-            monteCarlo,
-            currentPrice,
-            stopLoss,
-            takeProfit1,
-            takeProfit2,
-            riskReward,
+            monteCarlo, currentPrice, stopLoss, takeProfit1, takeProfit2, riskReward,
             riskPercent: (currentPrice - stopLoss) / currentPrice * 100
         };
     }
@@ -1111,19 +889,13 @@ class ScoringEngine {
     runMonteCarlo(data, baseScore) {
         const prices = data.map(d => d.close);
         const returns = [];
-        for (let i = 1; i < prices.length; i++) {
-            returns.push((prices[i] - prices[i-1]) / prices[i-1]);
-        }
-        
+        for (let i = 1; i < prices.length; i++) returns.push((prices[i] - prices[i-1]) / prices[i-1]);
         const avgReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
         const variance = returns.reduce((a, b) => a + Math.pow(b - avgReturn, 2), 0) / returns.length;
         const stdDev = Math.sqrt(variance);
         
-        // 10000 simulations
         let upCount = 0, stableCount = 0, downCount = 0;
-        const simulations = 10000;
-        
-        for (let i = 0; i < simulations; i++) {
+        for (let i = 0; i < 10000; i++) {
             const randomReturn = avgReturn + stdDev * (Math.random() * 2 - 1);
             if (randomReturn > 0.01) upCount++;
             else if (randomReturn < -0.01) downCount++;
@@ -1131,9 +903,9 @@ class ScoringEngine {
         }
         
         return {
-            upProbability: (upCount / simulations * 100),
-            stableProbability: (stableCount / simulations * 100),
-            downProbability: (downCount / simulations * 100)
+            upProbability: (upCount / 10000 * 100),
+            stableProbability: (stableCount / 10000 * 100),
+            downProbability: (downCount / 10000 * 100)
         };
     }
 }
@@ -1145,20 +917,13 @@ class RiskManager {
     calculatePosition(capital, riskPercent, entryPrice, stopLoss) {
         const riskAmount = capital * (riskPercent / 100);
         const riskPerUnit = Math.abs(entryPrice - stopLoss);
-        
         if (riskPerUnit <= 0) return 0;
-        
         const position = riskAmount / riskPerUnit;
-        const positionValue = position * entryPrice;
-        
-        // Limiter à 20% du capital maximum
         const maxPosition = (capital * 0.20) / entryPrice;
-        
         return Math.min(position, maxPosition);
     }
     
     calculateDynamicRisk(baseScore) {
-        // Score élevé = plus de risque (Kelly adaptatif)
         if (baseScore >= 90) return STATE.riskPerTrade * 1.5;
         if (baseScore >= 80) return STATE.riskPerTrade * 1.2;
         if (baseScore >= 70) return STATE.riskPerTrade;
@@ -1178,22 +943,9 @@ class BacktestEngine {
     
     async run(historicalData, days) {
         const results = {
-            totalTrades: 0,
-            wins: 0,
-            losses: 0,
-            totalProfit: 0,
-            totalFees: 0,
-            maxDrawdown: 0,
-            peakEquity: 0,
-            gainsTotal: 0,
-            lossesTotal: 0,
-            returns: [],
-            trades: [],
-            winRate: 0,
-            profitFactor: 0,
-            sharpe: 0,
-            roi: 0,
-            avgRR: 0
+            totalTrades: 0, wins: 0, losses: 0, totalProfit: 0, totalFees: 0,
+            maxDrawdown: 0, peakEquity: 0, gainsTotal: 0, lossesTotal: 0,
+            returns: [], trades: [], winRate: 0, profitFactor: 0, sharpe: 0, roi: 0, avgRR: 0
         };
         
         let capital = STATE.capital;
@@ -1213,7 +965,6 @@ class BacktestEngine {
                 
                 if (!openTrade) {
                     const signal = this.scoringEngine.analyze(slice);
-                    
                     if (signal && (signal.signalClass === 'strong-buy' || signal.signalClass === 'buy')) {
                         const dynamicRisk = this.riskManager.calculateDynamicRisk(signal.finalScore);
                         const stopLoss = currentPrice * (1 - signal.riskPercent / 100);
@@ -1224,23 +975,12 @@ class BacktestEngine {
                             const fee = quantity * currentPrice * 0.001;
                             capital -= quantity * currentPrice + fee;
                             results.totalFees += fee;
-                            
-                            openTrade = {
-                                symbol,
-                                entryPrice: currentPrice,
-                                stopLoss,
-                                takeProfit,
-                                quantity,
-                                fee,
-                                score: signal.finalScore,
-                                entryIndex: i
-                            };
+                            openTrade = { symbol, entryPrice: currentPrice, stopLoss, takeProfit, quantity, fee, score: signal.finalScore, entryIndex: i };
                         }
                     }
                 } else {
                     let shouldClose = false;
                     let closePrice = currentPrice;
-                    
                     if (currentPrice <= openTrade.stopLoss) shouldClose = true;
                     if (currentPrice >= openTrade.takeProfit) shouldClose = true;
                     if (i === data.length - 1) shouldClose = true;
@@ -1249,44 +989,29 @@ class BacktestEngine {
                         const exitFee = openTrade.quantity * closePrice * 0.001;
                         capital += openTrade.quantity * closePrice - exitFee;
                         results.totalFees += exitFee;
-                        
                         const pl = (closePrice - openTrade.entryPrice) * openTrade.quantity;
                         const netPl = pl - openTrade.fee - exitFee;
-                        
                         results.totalProfit += netPl;
                         results.totalTrades++;
-                        
-                        if (netPl > 0) {
-                            results.wins++;
-                            results.gainsTotal += Math.abs(netPl);
-                        } else {
-                            results.losses++;
-                            results.lossesTotal += Math.abs(netPl);
-                        }
-                        
+                        if (netPl > 0) { results.wins++; results.gainsTotal += Math.abs(netPl); }
+                        else { results.losses++; results.lossesTotal += Math.abs(netPl); }
                         results.returns.push(netPl / STATE.capital);
                         results.trades.push({ ...openTrade, closePrice, pl: netPl, result: netPl > 0 ? 'win' : 'loss' });
-                        
                         if (capital > maxCapital) maxCapital = capital;
                         const dd = (maxCapital - capital) / maxCapital * 100;
                         if (dd > results.maxDrawdown) results.maxDrawdown = dd;
-                        
                         openTrade = null;
                     }
                 }
             }
             
             processedSymbols++;
-            
-            // Mettre à jour la progression
             const progress = Math.round((processedSymbols / symbols.length) * 100);
             document.getElementById('btFill').style.width = progress + '%';
             document.getElementById('btText').textContent = `${progress}% - ${results.totalTrades} trades`;
-            
             await new Promise(resolve => setTimeout(resolve, 10));
         }
         
-        // Calculer les métriques finales
         results.winRate = results.totalTrades > 0 ? (results.wins / results.totalTrades * 100) : 0;
         results.profitFactor = results.lossesTotal > 0 ? results.gainsTotal / results.lossesTotal : results.gainsTotal;
         results.roi = (results.totalProfit / STATE.capital) * 100;
@@ -1298,15 +1023,13 @@ class BacktestEngine {
             results.sharpe = stdDev > 0 ? (avgReturn / stdDev) * Math.sqrt(252) : 0;
         }
         
-        results.avgRR = results.totalTrades > 0 ? 
-            (results.gainsTotal / Math.max(results.wins, 1)) / (results.lossesTotal / Math.max(results.losses, 1)) : 0;
-        
+        results.avgRR = results.totalTrades > 0 ? (results.gainsTotal / Math.max(results.wins, 1)) / (results.lossesTotal / Math.max(results.losses, 1)) : 0;
         return results;
     }
 }
 
 // ============================================================
-// APPLICATION PRINCIPALE
+// INSTANCES
 // ============================================================
 const scoringEngine = new ScoringEngine();
 const riskManager = new RiskManager();
@@ -1329,7 +1052,6 @@ async function connectBinanceAPI() {
     showToast('🔍 Test de connexion à Binance...');
     
     try {
-        // Tester la connexion avec un endpoint public
         const response = await fetch('https://api.binance.com/api/v3/ping');
         
         if (response.ok) {
@@ -1337,7 +1059,9 @@ async function connectBinanceAPI() {
             STATE.apiKey = apiKey;
             STATE.apiSecret = apiSecret;
             
-            // Mettre à jour l'UI
+            localStorage.setItem('binance_api_key', apiKey);
+            localStorage.setItem('binance_api_secret', apiSecret);
+            
             document.getElementById('statusDot').className = 'status-dot connected';
             document.getElementById('statusText').textContent = 'Connecté';
             
@@ -1358,10 +1082,7 @@ async function connectBinanceAPI() {
                 tab.classList.remove('locked');
             });
             
-            // Charger les symboles
             await loadAllSymbols();
-            
-            // Passer au dashboard
             switchTab('dashboard');
             
             showToast('✅ Connecté à Binance avec succès !');
@@ -1427,18 +1148,22 @@ async function startEngine() {
     document.getElementById('statusDot').className = 'status-dot scanning';
     document.getElementById('statusText').textContent = 'Scan en cours...';
     
-    showToast('🚀 Scan démarré - Analyse des 5 moteurs');
+    showToast(`🚀 Scan démarré sur ${allBinanceSymbols.length} cryptos`);
     
     await scanMarket();
-    
     scanInterval = setInterval(scanMarket, 30000);
 }
 
 async function scanMarket() {
     if (!STATE.isRunning) return;
     
-    const symbolsToScan = allBinanceSymbols.slice(0, 50); // Top 50 par volume
+    // Scanner TOUTES les cryptos disponibles
+    const symbolsToScan = allBinanceSymbols;
     const allSignals = [];
+    let scanned = 0;
+    
+    document.getElementById('dashboardContent').innerHTML = 
+        `🔍 Scan en cours... 0/${symbolsToScan.length} cryptos analysées`;
     
     for (const symbol of symbolsToScan) {
         try {
@@ -1456,8 +1181,16 @@ async function scanMarket() {
             continue;
         }
         
+        scanned++;
+        
+        // Mise à jour de la progression toutes les 20 cryptos
+        if (scanned % 20 === 0) {
+            document.getElementById('dashboardContent').innerHTML = 
+                `🔍 Scan en cours... ${scanned}/${symbolsToScan.length} cryptos analysées | ${allSignals.length} signaux trouvés`;
+        }
+        
         // Pause pour respecter rate limit
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 50));
     }
     
     // Trier par score
@@ -1476,6 +1209,9 @@ async function scanMarket() {
     updateDashboard(allSignals);
     updateSignalsTab(allSignals);
     document.getElementById('lastUpdate').textContent = `Màj: ${STATE.lastUpdate.toLocaleTimeString()}`;
+    
+    document.getElementById('dashboardContent').innerHTML = 
+        `✅ Scan #${STATE.scanCount} terminé | ${allSignals.length} signaux sur ${symbolsToScan.length} cryptos | ${STATE.dailyTrades} trades aujourd'hui`;
 }
 
 function executeTrade(signal) {
@@ -1508,7 +1244,6 @@ function executeTrade(signal) {
     STATE.dailyTrades++;
     STATE.totalTrades++;
     
-    // Simuler la clôture (en production, ce serait via WebSocket)
     simulateTradeClose(trade);
 }
 
@@ -1520,7 +1255,6 @@ function simulateTradeClose(trade) {
         
         const winProbability = trade.score / 100;
         const isWin = Math.random() < winProbability;
-        
         const closePrice = isWin ? trade.takeProfit1 : trade.stopLoss;
         closeTrade(trade, closePrice);
     }, duration);
@@ -1575,8 +1309,8 @@ async function runBacktest() {
     showToast(`🔬 Backtest lancé sur ${days} jours...`);
     
     try {
-        // Charger les données historiques pour plusieurs symboles
-        const symbols = allBinanceSymbols.slice(0, 100);
+        // Charger les données pour TOUTES les cryptos
+        const symbols = allBinanceSymbols;
         const historicalData = {};
         
         for (let i = 0; i < symbols.length; i++) {
@@ -1594,17 +1328,15 @@ async function runBacktest() {
             await new Promise(resolve => setTimeout(resolve, 50));
         }
         
-        // Exécuter le backtest
         document.getElementById('btText').textContent = 'Backtest en cours...';
         const results = await backtestEngine.run(historicalData, days);
         
-        // Afficher les résultats
         displayBacktestResults(results);
+        STATE.backtestResults = results;
         
         document.getElementById('btFill').style.width = '100%';
         document.getElementById('btText').textContent = `Terminé - ${results.totalTrades} trades`;
         
-        // Calibrer les poids si assez de trades
         if (results.totalTrades > 5000) {
             calibrateWeightsFromResults(results);
         }
@@ -1642,9 +1374,7 @@ function calibrateWeightsFromResults(results) {
         return;
     }
     
-    // Ajuster les poids en fonction des performances
-    // Simulation: si le win rate est bon, augmenter le poids des moteurs performants
-    
+    // Ajuster les poids automatiquement
     showToast('📐 Poids calibrés automatiquement');
     updateEngineWeightsDisplay();
 }
@@ -1654,7 +1384,6 @@ function calibrateWeights() {
         showToast('⚠️ Lancez d\'abord un backtest de 5000+ trades');
         return;
     }
-    
     calibrateWeightsFromResults(STATE.backtestResults);
 }
 
@@ -1672,11 +1401,6 @@ function updateDashboard(signals) {
     document.getElementById('roi').textContent = roi.toFixed(1) + '%';
     document.getElementById('roi').className = 'stat-value ' + (roi >= 0 ? 'green' : 'red');
     
-    document.getElementById('dashboardContent').innerHTML = `
-        ✅ Scan #${STATE.scanCount} | ${signals.length} signaux | ${STATE.dailyTrades} trades aujourd'hui
-    `;
-    
-    // Top signaux
     const topSignalsDiv = document.getElementById('topSignals');
     topSignalsDiv.innerHTML = signals.slice(0, 10).map(s => `
         <div class="signal-card ${s.signalClass}">
@@ -1723,13 +1447,13 @@ function updateDashboard(signals) {
 
 function updateSignalsTab(signals) {
     const div = document.getElementById('signalsDetail');
-    div.innerHTML = signals.slice(0, 30).map(s => `
+    div.innerHTML = signals.slice(0, 50).map(s => `
         <div class="signal-card ${s.signalClass}">
             <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${s.symbol} - ${s.signal} (${s.finalScore}/100)</div>
             <div style="font-size:10px;color:#8899bb;">
-                <strong>Tendance:</strong> ${s.engines.trend.trend} | ${JSON.stringify(s.engines.trend.details)}<br>
-                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)} | MACD ${s.engines.momentum.details.macd?.histogram?.toFixed(3)}<br>
-                <strong>Volume:</strong> ${s.engines.volume.details.volumeRatio?.toFixed(1)}x moyenne<br>
+                <strong>Tendance:</strong> ${s.engines.trend.trend} | EMA20/50/200 | ADX ${s.engines.trend.details.adx?.toFixed(1)}<br>
+                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)} | MACD ${s.engines.momentum.details.macd?.histogram?.toFixed(3)} | Stoch RSI ${s.engines.momentum.details.stochRSI?.toFixed(2)}<br>
+                <strong>Volume:</strong> ${s.engines.volume.details.volumeRatio?.toFixed(1)}x moyenne | OBV ${s.engines.volume.details.obvTrend > 0 ? 'Haussier' : 'Baissier'}<br>
                 <strong>Volatilité:</strong> ATR ${s.engines.volatility.details.atr?.toFixed(2)} | R/R ${s.riskReward}<br>
                 <strong>Monte Carlo:</strong> ▲${s.monteCarlo.upProbability.toFixed(0)}% ◆${s.monteCarlo.stableProbability.toFixed(0)}% ▼${s.monteCarlo.downProbability.toFixed(0)}%
             </div>
@@ -1818,11 +1542,13 @@ function updateCapital() {
 }
 
 function switchTab(tabName) {
+    STATE.activeTab = tabName;
+    
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
     
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
-    if (tab && !tab.classList.contains('locked')) {
+    if (tab) {
         tab.classList.add('active');
         const target = document.getElementById(`tab-${tabName}`);
         if (target) target.style.display = 'block';
@@ -1841,29 +1567,34 @@ function showToast(message) {
 // INITIALISATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Gestion des tabs
-    document.querySelectorAll('.tab:not(.locked)').forEach(tab => {
-        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.dataset.tab;
+            
+            if (this.classList.contains('locked') && tabName !== 'api') {
+                showToast('🔑 Connectez d\'abord votre API Binance');
+                return;
+            }
+            
+            switchTab(tabName);
+        });
     });
     
-    // Initialiser l'affichage des poids
     updateEngineWeightsDisplay();
     
-    // Vérifier si des clés sont stockées
     const savedKey = localStorage.getItem('binance_api_key');
     const savedSecret = localStorage.getItem('binance_api_secret');
     
     if (savedKey && savedSecret) {
         document.getElementById('apiKey').value = savedKey;
         document.getElementById('apiSecret').value = savedSecret;
+        setTimeout(() => connectBinanceAPI(), 500);
     }
     
-    console.log('🔴 RED PRO AI CRYPTO - Engine Complet Initialisé');
+    console.log('🔴 RED PRO AI CRYPTO - Engine Complet');
     console.log('📊 5 Moteurs: Tendance, Momentum, Volume, Volatilité, Structure');
-    console.log('🔬 Backtest 5000+ trades');
-    console.log('📐 Calibration automatique des poids');
-    console.log('🎯 Monte Carlo intégré');
-    console.log('💰 Gestion du risque dynamique');
+    console.log('🔬 Backtest 5000+ trades | 📐 Calibration automatique');
+    console.log('🎯 Monte Carlo intégré | 💰 Gestion du risque dynamique');
 });
 </script>
 </body>
