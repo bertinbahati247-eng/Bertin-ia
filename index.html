@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🔴 RED PRO AI - Multi-Exchange (Binance/OKX/Bybit)</title>
+    <title>🔴 RED PRO AI - Multi-Exchange</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -59,8 +59,6 @@
         }
         .status-dot.connected { background: #00ff88; animation: pulse 2s infinite; }
         .status-dot.scanning { background: #ffaa00; animation: pulse 0.5s infinite; }
-        .status-dot.okx { background: #7b2ffc; animation: pulse 2s infinite; }
-        .status-dot.bybit { background: #00d4ff; animation: pulse 2s infinite; }
         
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -117,8 +115,6 @@
         }
         .api-status-card.connected { border-color: #00ff88; }
         .api-status-card.disconnected { border-color: #ff4466; }
-        .api-status-card.okx { border-color: #7b2ffc; }
-        .api-status-card.bybit { border-color: #00d4ff; }
         
         .api-input-group {
             margin-bottom: 10px;
@@ -209,8 +205,11 @@
         .btn-success { background: linear-gradient(135deg, #00ff88, #00cc66); color: #0a0e17; }
         .btn-warning { background: linear-gradient(135deg, #ffaa00, #ff8800); color: #0a0e17; }
         .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        .btn-exchange { background: #1a2230; color: #8899bb; border: 1px solid #2a3a4a; }
+        .btn-exchange { background: #1a2230; color: #8899bb; border: 1px solid #2a3a4a; padding: 8px 16px; }
         .btn-exchange.active { background: #ff4466; color: white; border-color: #ff4466; }
+        .btn-exchange.binance.active { background: #f0b90b; color: #0a0e17; border-color: #f0b90b; }
+        .btn-exchange.okx.active { background: #7b2ffc; color: white; border-color: #7b2ffc; }
+        .btn-exchange.bybit.active { background: #00d4ff; color: #0a0e17; border-color: #00d4ff; }
         
         .data-table {
             width: 100%;
@@ -357,7 +356,7 @@
         .market-item .change { font-size: 9px; }
         .market-item .change.up { color: #00ff88; }
         .market-item .change.down { color: #ff4466; }
-        .market-item .exchange-tag { font-size: 7px; color: #667799; background: #1a2230; padding: 1px 4px; border-radius: 4px; }
+        .exchange-tag { font-size: 7px; color: #667799; background: #1a2230; padding: 1px 6px; border-radius: 4px; display: inline-block; margin-top: 2px; }
         
         .exchange-selector {
             display: flex;
@@ -418,9 +417,9 @@
         </div>
         
         <div class="exchange-selector">
-            <button class="btn btn-exchange active" data-exchange="binance" onclick="selectExchange('binance')">🟡 Binance</button>
-            <button class="btn btn-exchange" data-exchange="okx" onclick="selectExchange('okx')">🟣 OKX</button>
-            <button class="btn btn-exchange" data-exchange="bybit" onclick="selectExchange('bybit')">🔵 Bybit</button>
+            <button class="btn btn-exchange binance active" data-exchange="binance" onclick="selectExchange('binance')">🟡 Binance</button>
+            <button class="btn btn-exchange okx" data-exchange="okx" onclick="selectExchange('okx')">🟣 OKX</button>
+            <button class="btn btn-exchange bybit" data-exchange="bybit" onclick="selectExchange('bybit')">🔵 Bybit</button>
         </div>
         
         <div class="api-input-group">
@@ -443,8 +442,7 @@
         </button>
         
         <div class="api-info-box">
-            <strong>⚠️ Sécurité :</strong> Vos clés sont stockées localement et chiffrées.<br>
-            L'application ne demande JAMAIS de permissions de retrait.<br>
+            <strong>⚠️ Sécurité :</strong> Vos clés sont stockées localement.<br>
             <strong>Binance</strong> : Clé API + Secret<br>
             <strong>OKX</strong> : Clé API + Secret + Passphrase<br>
             <strong>Bybit</strong> : Clé API + Secret
@@ -454,22 +452,20 @@
     <div class="card">
         <div class="card-title">
             💰 Capital de Trading
-            <span style="font-size:10px;color:#ffaa00;">⚠️ Configurable</span>
         </div>
-        
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
             <div class="api-input-group">
-                <label>Capital Total (USDT)</label>
+                <label>Capital (USDT)</label>
                 <input type="number" id="capitalInput" value="1000" min="10" step="100">
             </div>
             <div class="api-input-group">
-                <label>Risque par Trade (%)</label>
+                <label>Risque (%)</label>
                 <input type="number" id="riskInput" value="1" min="0.1" max="5" step="0.1">
             </div>
             <div class="api-input-group">
                 <label>Levier</label>
                 <select id="leverageInput">
-                    <option value="1">1x (Spot)</option>
+                    <option value="1">1x</option>
                     <option value="2">2x</option>
                     <option value="3">3x</option>
                     <option value="5">5x</option>
@@ -477,26 +473,17 @@
                 </select>
             </div>
         </div>
-        
         <button class="btn btn-success" onclick="saveCapitalConfig()" style="width:100%;justify-content:center;margin-top:10px;">
-            💾 Sauvegarder la Configuration
+            💾 Sauvegarder
         </button>
     </div>
     
     <div class="card">
-        <div class="card-title">
-            📂 Gestion des Données
-        </div>
+        <div class="card-title">📂 Gestion des Données</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <button class="btn btn-primary" onclick="exportAllData()" style="justify-content:center;">
-                📤 Exporter
-            </button>
-            <button class="btn btn-warning" onclick="importAllData()" style="justify-content:center;">
-                📥 Importer
-            </button>
-            <button class="btn btn-danger" onclick="resetAllData()" style="justify-content:center;">
-                🗑️ Réinitialiser
-            </button>
+            <button class="btn btn-primary" onclick="exportAllData()">📤 Exporter</button>
+            <button class="btn btn-warning" onclick="importAllData()">📥 Importer</button>
+            <button class="btn btn-danger" onclick="resetAllData()">🗑️ Réinitialiser</button>
             <div style="font-size:10px;color:#667799;display:flex;align-items:center;justify-content:center;">
                 <span class="saved-indicator"></span> Sauvegarde auto
             </div>
@@ -508,22 +495,10 @@
 <!-- TAB 2: DASHBOARD -->
 <div id="tab-dashboard" style="display:none;">
     <div class="stats-grid" style="margin-bottom:10px;">
-        <div class="stat-item">
-            <div class="stat-value gold" id="totalTrades">0</div>
-            <div class="stat-label">Trades</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value green" id="winRate">0%</div>
-            <div class="stat-label">Win Rate</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value blue" id="totalProfit">+0.00$</div>
-            <div class="stat-label">Profit Total</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value purple" id="roi">0%</div>
-            <div class="stat-label">ROI</div>
-        </div>
+        <div class="stat-item"><div class="stat-value gold" id="totalTrades">0</div><div class="stat-label">Trades</div></div>
+        <div class="stat-item"><div class="stat-value green" id="winRate">0%</div><div class="stat-label">Win Rate</div></div>
+        <div class="stat-item"><div class="stat-value blue" id="totalProfit">+0.00$</div><div class="stat-label">Profit</div></div>
+        <div class="stat-item"><div class="stat-value purple" id="roi">0%</div><div class="stat-label">ROI</div></div>
     </div>
     
     <div class="card">
@@ -544,7 +519,7 @@
     </div>
     
     <div class="card">
-        <div class="card-title">🎯 Top Signaux en Direct</div>
+        <div class="card-title">🎯 Top Signaux</div>
         <div id="topSignals"></div>
     </div>
 </div>
@@ -567,7 +542,7 @@
 <!-- TAB 4: SIGNAUX -->
 <div id="tab-signals" style="display:none;">
     <div class="card">
-        <div class="card-title">🎯 Analyse Complète par les 5 Moteurs</div>
+        <div class="card-title">🎯 Signaux</div>
         <div class="scroll-container" style="max-height:550px;" id="signalsDetail"></div>
     </div>
 </div>
@@ -576,16 +551,13 @@
 <div id="tab-trades" style="display:none;">
     <div class="card">
         <div class="card-title">
-            📜 Historique des Trades
+            📜 Historique
             <span style="font-size:10px;color:#667799;" id="tradesCount">0 trades</span>
         </div>
         <div class="scroll-container" style="max-height:500px;">
             <table class="data-table">
                 <thead>
-                    <tr>
-                        <th>#</th><th>Exchange</th><th>Symbole</th><th>Signal</th><th>Score</th>
-                        <th>Entrée</th><th>Sortie</th><th>P/L</th><th>Résultat</th>
-                    </tr>
+                    <tr><th>#</th><th>Exchange</th><th>Symbole</th><th>Signal</th><th>Score</th><th>Entrée</th><th>Sortie</th><th>P/L</th><th>Résultat</th></tr>
                 </thead>
                 <tbody id="tradesBody"></tbody>
             </table>
@@ -596,7 +568,7 @@
 <!-- TAB 6: BACKTEST -->
 <div id="tab-backtest" style="display:none;">
     <div class="card">
-        <div class="card-title">🔬 Backtest Engine</div>
+        <div class="card-title">🔬 Backtest</div>
         <div class="btn-group" style="margin-bottom:12px;">
             <button class="btn btn-warning" onclick="runBacktest()">▶️ Lancer</button>
             <select id="btDays" style="background:#0a0e17;color:white;border:1px solid #1a2230;border-radius:8px;padding:8px 12px;font-size:11px;">
@@ -614,12 +586,12 @@
         <div class="stats-grid" id="btResults">
             <div class="stat-item"><div class="stat-value" id="btTrades">--</div><div class="stat-label">Trades</div></div>
             <div class="stat-item"><div class="stat-value" id="btWinRate">--</div><div class="stat-label">Win Rate</div></div>
-            <div class="stat-item"><div class="stat-value" id="btProfit">--</div><div class="stat-label">Profit Net</div></div>
+            <div class="stat-item"><div class="stat-value" id="btProfit">--</div><div class="stat-label">Profit</div></div>
             <div class="stat-item"><div class="stat-value" id="btROI">--</div><div class="stat-label">ROI</div></div>
             <div class="stat-item"><div class="stat-value" id="btDrawdown">--</div><div class="stat-label">Drawdown</div></div>
             <div class="stat-item"><div class="stat-value" id="btSharpe">--</div><div class="stat-label">Sharpe</div></div>
             <div class="stat-item"><div class="stat-value" id="btProfitFactor">--</div><div class="stat-label">Profit Factor</div></div>
-            <div class="stat-item"><div class="stat-value" id="btAvgRR">--</div><div class="stat-label">R/R Moyen</div></div>
+            <div class="stat-item"><div class="stat-value" id="btAvgRR">--</div><div class="stat-label">R/R</div></div>
         </div>
     </div>
 </div>
@@ -629,9 +601,6 @@
     <div class="card">
         <div class="card-title">⚙️ Poids des Moteurs</div>
         <div class="engine-grid" id="engineWeightsDisplay"></div>
-        <div style="font-size:10px;color:#667799;margin-top:10px;">
-            Les poids s'ajustent automatiquement après chaque backtest.
-        </div>
     </div>
 </div>
 
@@ -641,7 +610,7 @@
 // ============================================================
 // PERSISTANCE
 // ============================================================
-const STORAGE_KEY = 'red_pro_ai_multi_exchange_v1';
+const STORAGE_KEY = 'red_pro_ai_multi_v2';
 
 function loadState() {
     try {
@@ -683,14 +652,8 @@ function saveState() {
             savedAt: new Date().toISOString()
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-        document.getElementById('savedStatus').textContent = '💾';
-        setTimeout(() => { if (document.getElementById('savedStatus')) document.getElementById('savedStatus').textContent = ''; }, 2000);
     } catch (e) {
         console.error('Erreur sauvegarde:', e);
-        if (e.name === 'QuotaExceededError') {
-            STATE.trades = STATE.trades.slice(0, 100);
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify({...dataToSave, trades: STATE.trades.slice(0, 100)})); } catch (e2) {}
-        }
     }
 }
 
@@ -728,20 +691,18 @@ const STATE = {
     lastUpdate: savedState?.lastUpdate || null,
     backtestResults: savedState?.backtestResults || null,
     ws: null,
-    selectedSymbol: 'BTCUSDT',
-    exchangeColors: { binance: '#ffaa00', okx: '#7b2ffc', bybit: '#00d4ff' }
+    selectedSymbol: 'BTCUSDT'
 };
 
 // ============================================================
-// MOTEURS D'ANALYSE (5 moteurs)
+// MOTEURS D'ANALYSE
 // ============================================================
 class TrendEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 30, details: {} };
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const ema20 = this.EMA(prices, 20);
         details.ema20 = ema20;
@@ -766,11 +727,7 @@ class TrendEngine {
         else if (adx > 20) { score += 5; details.adxSignal = `ADX ${adx.toFixed(1)} > 20 (+5)`; }
         else { details.adxSignal = `ADX ${adx.toFixed(1)} faible`; }
         
-        let trend = 'NEUTRE';
-        if (score >= 20) trend = 'HAUSSIÈRE';
-        else if (score <= 10) trend = 'BAISSIÈRE';
-        
-        return { score: Math.min(score, 30), max: 30, trend, details };
+        return { score: Math.min(score, 30), max: 30, details };
     }
     
     EMA(prices, period) {
@@ -809,8 +766,7 @@ class MomentumEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 25, details: {} };
         const prices = data.map(d => d.close);
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const rsi = this.calculateRSI(prices, 14);
         details.rsi = rsi;
@@ -881,17 +837,16 @@ class VolatilityEngine {
         if (!data || data.length < 20) return { score: 0, max: 15, details: {} };
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const atr = this.calculateATR(data);
         const volatility = atr / currentPrice;
         details.atr = atr;
         details.volatility = volatility;
         
-        if (volatility > 0.005 && volatility < 0.03) { score += 10; details.atrSignal = `Volatilité idéale (+10)`; }
-        else if (volatility <= 0.005) { score += 4; details.atrSignal = `Volatilité faible (+4)`; }
-        else { score -= 3; details.atrSignal = `Volatilité excessive (-3)`; }
+        if (volatility > 0.005 && volatility < 0.03) { score += 10; details.atrSignal = 'Volatilité idéale (+10)'; }
+        else if (volatility <= 0.005) { score += 4; details.atrSignal = 'Volatilité faible (+4)'; }
+        else { score -= 3; details.atrSignal = 'Volatilité excessive (-3)'; }
         
         const bb = this.calculateBollinger(data);
         details.bb = bb;
@@ -931,8 +886,7 @@ class VolumeEngine {
         if (!data || data.length < 30) return { score: 0, max: 20, details: {} };
         const volumes = data.map(d => d.volume);
         const currentVolume = volumes[volumes.length - 1];
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const avgVolume = volumes.slice(-21, -1).reduce((a, b) => a + b, 0) / 20;
         const volumeRatio = currentVolume / avgVolume;
@@ -965,8 +919,7 @@ class VolumeEngine {
 class StructureEngine {
     calculate(data) {
         if (!data || data.length < 30) return { score: 0, max: 10, details: {} };
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const sr = this.findSupportResistance(data);
         details.support = sr.support;
@@ -1033,17 +986,16 @@ class ScoringEngine {
             (structure.score / structure.max) * weights.structure
         ) / totalWeight * 100;
         
-        const monteCarlo = this.runMonteCarlo(data, weightedScore);
-        
+        const monteCarlo = this.runMonteCarlo(data);
         let finalProbability = weightedScore;
         if (monteCarlo.upProbability > 55) finalProbability += 5;
         else if (monteCarlo.upProbability < 45) finalProbability -= 5;
+        finalProbability = Math.min(Math.max(finalProbability, 0), 100);
         
         const currentPrice = data[data.length - 1].close;
         const atr = volatility.details.atr || currentPrice * 0.01;
         const stopLoss = currentPrice - atr * 1.5;
         const takeProfit1 = currentPrice + atr * 2.5;
-        const takeProfit2 = currentPrice + atr * 4;
         const riskReward = ((takeProfit1 - currentPrice) / (currentPrice - stopLoss)).toFixed(2);
         
         let signal, signalClass;
@@ -1054,14 +1006,13 @@ class ScoringEngine {
         else { signal = '⚪ ATTENTE'; signalClass = 'neutral'; }
         
         return {
-            signal, signalClass, finalScore: Math.round(finalProbability), probability: finalProbability,
+            signal, signalClass, finalScore: Math.round(finalProbability),
             engines: { trend, momentum, volatility, volume, structure },
-            monteCarlo, currentPrice, stopLoss, takeProfit1, takeProfit2, riskReward,
-            riskPercent: (currentPrice - stopLoss) / currentPrice * 100
+            monteCarlo, currentPrice, stopLoss, takeProfit1, riskReward
         };
     }
     
-    runMonteCarlo(data, baseScore) {
+    runMonteCarlo(data) {
         const prices = data.map(d => d.close);
         const returns = [];
         for (let i = 1; i < prices.length; i++) returns.push((prices[i] - prices[i-1]) / prices[i-1]);
@@ -1095,18 +1046,6 @@ class RiskManager {
         if (riskPerUnitUSD <= 0 || riskAmountUSD <= 0) return 0;
         return riskAmountUSD / riskPerUnitUSD * STATE.leverage;
     }
-    
-    calculateDynamicRisk(baseScore) {
-        if (baseScore >= 90) return STATE.riskPerTrade * 1.5;
-        if (baseScore >= 80) return STATE.riskPerTrade * 1.2;
-        if (baseScore >= 70) return STATE.riskPerTrade;
-        if (baseScore >= 60) return STATE.riskPerTrade * 0.7;
-        return STATE.riskPerTrade * 0.3;
-    }
-    
-    getRiskAmountUSD(capital, riskPercent) {
-        return capital * (riskPercent / 100);
-    }
 }
 
 // ============================================================
@@ -1118,11 +1057,11 @@ class BacktestEngine {
         this.riskManager = new RiskManager();
     }
     
-    async run(historicalData, days) {
+    async run(historicalData) {
         const results = {
-            totalTrades: 0, wins: 0, losses: 0, totalProfit: 0, totalFees: 0,
+            totalTrades: 0, wins: 0, losses: 0, totalProfit: 0,
             maxDrawdown: 0, peakEquity: 0, gainsTotal: 0, lossesTotal: 0,
-            returns: [], trades: [], winRate: 0, profitFactor: 0, sharpe: 0, roi: 0, avgRR: 0
+            returns: [], winRate: 0, profitFactor: 0, sharpe: 0, roi: 0, avgRR: 0
         };
         
         let capital = STATE.capital;
@@ -1130,7 +1069,7 @@ class BacktestEngine {
         let openTrade = null;
         
         const symbols = Object.keys(historicalData);
-        let processedSymbols = 0;
+        let processed = 0;
         
         for (const symbol of symbols) {
             const data = historicalData[symbol];
@@ -1143,21 +1082,14 @@ class BacktestEngine {
                 if (!openTrade) {
                     const signal = this.scoringEngine.analyze(slice);
                     if (signal && signal.finalScore >= 70) {
-                        const dynamicRisk = this.riskManager.calculateDynamicRisk(signal.finalScore);
                         const stopLoss = currentPrice - signal.engines.volatility.details.atr * 1.5;
                         const takeProfit = currentPrice + signal.engines.volatility.details.atr * 2.5;
-                        const quantity = this.riskManager.calculatePosition(capital, dynamicRisk, currentPrice, stopLoss);
+                        const quantity = this.riskManager.calculatePosition(capital, STATE.riskPerTrade, currentPrice, stopLoss);
                         
                         if (quantity > 0 && quantity * currentPrice <= capital * 1.5) {
                             const fee = quantity * currentPrice * 0.001;
                             capital -= quantity * currentPrice + fee;
-                            results.totalFees += fee;
-                            
-                            openTrade = {
-                                symbol, entryPrice: currentPrice, stopLoss, takeProfit,
-                                quantity, fee, score: signal.finalScore, dynamicRisk,
-                                riskAmountUSD: this.riskManager.getRiskAmountUSD(capital + quantity * currentPrice, dynamicRisk)
-                            };
+                            openTrade = { entryPrice: currentPrice, stopLoss, takeProfit, quantity, fee };
                         }
                     }
                 } else {
@@ -1171,7 +1103,6 @@ class BacktestEngine {
                     if (shouldClose) {
                         const exitFee = openTrade.quantity * closePrice * 0.001;
                         capital += openTrade.quantity * closePrice - exitFee;
-                        results.totalFees += exitFee;
                         
                         const pl = (closePrice - openTrade.entryPrice) * openTrade.quantity;
                         const netPl = pl - openTrade.fee - exitFee;
@@ -1183,7 +1114,6 @@ class BacktestEngine {
                         else { results.losses++; results.lossesTotal += Math.abs(netPl); }
                         
                         results.returns.push(netPl / STATE.capital);
-                        results.trades.push({ ...openTrade, closePrice, pl: netPl, result: netPl > 0 ? 'win' : 'loss' });
                         
                         if (capital > maxCapital) maxCapital = capital;
                         const dd = ((maxCapital - capital) / maxCapital) * 100;
@@ -1194,8 +1124,8 @@ class BacktestEngine {
                 }
             }
             
-            processedSymbols++;
-            const progress = Math.round((processedSymbols / symbols.length) * 100);
+            processed++;
+            const progress = Math.round((processed / symbols.length) * 100);
             document.getElementById('btFill').style.width = progress + '%';
             document.getElementById('btText').textContent = `${progress}% - ${results.totalTrades} trades`;
             await new Promise(resolve => setTimeout(resolve, 10));
@@ -1226,70 +1156,30 @@ const backtestEngine = new BacktestEngine();
 let scanInterval = null;
 
 // ============================================================
-// API EXCHANGE - MULTI-EXCHANGE SUPPORT
+// API EXCHANGE - URLs CORRECTES
 // ============================================================
-const EXCHANGE_CONFIGS = {
-    binance: {
-        name: 'Binance',
-        color: '#ffaa00',
-        wsUrl: 'wss://stream.binance.com:9443/ws',
-        restUrl: 'https://api.binance.com/api/v3',
-        symbolEndpoint: '/exchangeInfo',
-        klineEndpoint: '/klines',
-        symbolFilter: (s) => s.status === 'TRADING' && s.quoteAsset === 'USDT',
-        getSymbol: (s) => s.symbol,
-        parseKline: (candle) => ({
-            open: parseFloat(candle[1]),
-            high: parseFloat(candle[2]),
-            low: parseFloat(candle[3]),
-            close: parseFloat(candle[4]),
-            volume: parseFloat(candle[5]),
-            timestamp: candle[0]
-        }),
-        getWsStreams: (symbols) => symbols.map(s => `${s.toLowerCase()}@trade`).join('/')
-    },
-    okx: {
-        name: 'OKX',
-        color: '#7b2ffc',
-        wsUrl: 'wss://ws.okx.com:8443/ws/v5/public',
-        restUrl: 'https://www.okx.com/api/v5',
-        symbolEndpoint: '/market/tickers?instType=SPOT',
-        klineEndpoint: '/market/candles',
-        symbolFilter: (s) => s.instType === 'SPOT' && s.quoteCcy === 'USDT',
-        getSymbol: (s) => s.instId,
-        parseKline: (candle) => ({
-            open: parseFloat(candle[1]),
-            high: parseFloat(candle[2]),
-            low: parseFloat(candle[3]),
-            close: parseFloat(candle[4]),
-            volume: parseFloat(candle[5]),
-            timestamp: candle[0]
-        }),
-        getWsStreams: (symbols) => symbols.map(s => `{"op":"subscribe","args":[{"channel":"trades","instId":"${s}"}]}`).join('\n')
-    },
-    bybit: {
-        name: 'Bybit',
-        color: '#00d4ff',
-        wsUrl: 'wss://stream.bybit.com/v5/public/linear',
-        restUrl: 'https://api.bybit.com/v5',
-        symbolEndpoint: '/market/tickers?category=spot',
-        klineEndpoint: '/market/kline',
-        symbolFilter: (s) => s.category === 'spot',
-        getSymbol: (s) => s.symbol,
-        parseKline: (candle) => ({
-            open: parseFloat(candle[1]),
-            high: parseFloat(candle[2]),
-            low: parseFloat(candle[3]),
-            close: parseFloat(candle[4]),
-            volume: parseFloat(candle[5]),
-            timestamp: candle[0]
-        }),
-        getWsStreams: (symbols) => symbols.map(s => `publicTrade.${s}`).join(',')
-    }
-};
-
-function getExchangeConfig() {
-    return EXCHANGE_CONFIGS[STATE.exchange] || EXCHANGE_CONFIGS.binance;
+function getExchangeUrls(exchange) {
+    const urls = {
+        binance: {
+            rest: 'https://api.binance.com/api/v3',
+            ws: 'wss://stream.binance.com:9443/ws',
+            symbols: '/exchangeInfo',
+            klines: '/klines'
+        },
+        okx: {
+            rest: 'https://www.okx.com/api/v5',
+            ws: 'wss://ws.okx.com:8443/ws/v5/public',
+            symbols: '/market/tickers?instType=SPOT',
+            klines: '/market/candles'
+        },
+        bybit: {
+            rest: 'https://api.bybit.com/v5',
+            ws: 'wss://stream.bybit.com/v5/public/linear',
+            symbols: '/market/tickers?category=spot',
+            klines: '/market/kline'
+        }
+    };
+    return urls[exchange] || urls.binance;
 }
 
 // ============================================================
@@ -1299,15 +1189,12 @@ function selectExchange(exchange) {
     STATE.exchange = exchange;
     document.querySelectorAll('.btn-exchange').forEach(b => b.classList.remove('active'));
     document.querySelector(`.btn-exchange[data-exchange="${exchange}"]`).classList.add('active');
-    
-    // Afficher/masquer le champ passphrase pour OKX
     document.getElementById('passphraseGroup').style.display = exchange === 'okx' ? 'block' : 'none';
-    
-    showToast(`Exchange sélectionné: ${exchange.toUpperCase()}`);
+    showToast(`Exchange: ${exchange.toUpperCase()}`);
 }
 
 // ============================================================
-// CONNEXION EXCHANGE
+// CONNEXION EXCHANGE - CORRIGÉ
 // ============================================================
 async function connectExchange() {
     const apiKey = document.getElementById('apiKey').value.trim();
@@ -1332,35 +1219,27 @@ async function connectExchange() {
     showToast(`🔍 Test de connexion à ${exchange.toUpperCase()}...`);
     
     try {
-        // Tester la connexion avec l'API de l'exchange
-        const config = getExchangeConfig();
         let testUrl = '';
-        
-        if (exchange === 'binance') {
-            testUrl = 'https://api.binance.com/api/v3/ping';
-        } else if (exchange === 'okx') {
-            testUrl = 'https://www.okx.com/api/v5/market/tickers?instType=SPOT';
-        } else if (exchange === 'bybit') {
-            testUrl = 'https://api.bybit.com/v5/market/tickers?category=spot';
-        }
+        if (exchange === 'binance') testUrl = 'https://api.binance.com/api/v3/ping';
+        else if (exchange === 'okx') testUrl = 'https://www.okx.com/api/v5/market/tickers?instType=SPOT';
+        else if (exchange === 'bybit') testUrl = 'https://api.bybit.com/v5/market/tickers?category=spot';
         
         const response = await fetch(testUrl);
         
         if (response.ok) {
             STATE.apiConnected = true;
             
-            const color = STATE.exchangeColors[exchange];
-            document.getElementById('statusDot').className = `status-dot ${exchange}`;
+            document.getElementById('statusDot').className = 'status-dot connected';
             document.getElementById('statusText').textContent = `✅ ${exchange.toUpperCase()}`;
             
             const statusCard = document.getElementById('apiStatusCard');
-            statusCard.className = `api-status-card ${exchange}`;
+            statusCard.className = 'api-status-card connected';
             statusCard.innerHTML = `
                 <div style="display:flex;align-items:center;gap:8px;">
                     <span style="font-size:24px;">🟢</span>
                     <div>
-                        <div style="font-weight:700;color:${color};">Connecté à ${exchange.toUpperCase()}</div>
-                        <div style="font-size:10px;color:#667799;">API fonctionnelle - Données en temps réel</div>
+                        <div style="font-weight:700;color:#00ff88;">Connecté à ${exchange.toUpperCase()}</div>
+                        <div style="font-size:10px;color:#667799;">API fonctionnelle</div>
                     </div>
                 </div>
             `;
@@ -1373,135 +1252,134 @@ async function connectExchange() {
             switchTab('dashboard');
             saveState();
             
-            showToast(`✅ Connecté à ${exchange.toUpperCase()} - ${STATE.allSymbols.length} paires chargées !`);
+            showToast(`✅ Connecté à ${exchange.toUpperCase()} - ${STATE.allSymbols.length} paires !`);
         } else {
-            throw new Error('Échec de connexion');
+            throw new Error('Échec');
         }
     } catch (e) {
         STATE.apiConnected = false;
         document.getElementById('statusDot').className = 'status-dot';
         document.getElementById('statusText').textContent = 'Échec';
         showToast(`❌ Échec de connexion à ${exchange.toUpperCase()}`);
-        console.error('Erreur API:', e);
     }
 }
 
 // ============================================================
-// CHARGEMENT DES SYMBOLES - MULTI-EXCHANGE
+// CHARGEMENT DES SYMBOLES - CORRIGÉ AVEC BONS PARSERS
 // ============================================================
 async function loadAllSymbols() {
     try {
-        const config = getExchangeConfig();
         const exchange = STATE.exchange;
         let url = '';
-        
-        if (exchange === 'binance') {
-            url = 'https://api.binance.com/api/v3/exchangeInfo';
-        } else if (exchange === 'okx') {
-            url = 'https://www.okx.com/api/v5/market/tickers?instType=SPOT';
-        } else if (exchange === 'bybit') {
-            url = 'https://api.bybit.com/v5/market/tickers?category=spot';
-        }
-        
-        const response = await fetch(url);
-        const data = await response.json();
-        
         let symbols = [];
         
         if (exchange === 'binance') {
+            url = 'https://api.binance.com/api/v3/exchangeInfo';
+            const response = await fetch(url);
+            const data = await response.json();
             symbols = data.symbols
                 .filter(s => s.status === 'TRADING' && s.quoteAsset === 'USDT')
                 .map(s => s.symbol)
                 .sort();
-        } else if (exchange === 'okx') {
-            symbols = data.data
-                .filter(s => s.instType === 'SPOT' && s.quoteCcy === 'USDT')
-                .map(s => s.instId)
-                .sort();
-        } else if (exchange === 'bybit') {
-            symbols = data.result.list
-                .filter(s => s.category === 'spot')
-                .map(s => s.symbol)
-                .sort();
+        } 
+        else if (exchange === 'okx') {
+            url = 'https://www.okx.com/api/v5/market/tickers?instType=SPOT';
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data && data.data) {
+                symbols = data.data
+                    .filter(s => s.quoteCcy === 'USDT')
+                    .map(s => s.instId)
+                    .sort();
+            }
+        } 
+        else if (exchange === 'bybit') {
+            url = 'https://api.bybit.com/v5/market/tickers?category=spot';
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data && data.result && data.result.list) {
+                symbols = data.result.list
+                    .filter(s => s.symbol && s.symbol.endsWith('USDT'))
+                    .map(s => s.symbol)
+                    .sort();
+            }
+        }
+        
+        if (symbols.length === 0) {
+            // Symboles de secours
+            symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT', 'DOGEUSDT', 'ADAUSDT'];
         }
         
         STATE.allSymbols = symbols;
         console.log(`📊 ${symbols.length} paires chargées sur ${exchange.toUpperCase()}`);
-        showToast(`📊 ${symbols.length} paires ${exchange.toUpperCase()} chargées`);
+        
+        // Mettre à jour l'UI
+        document.getElementById('dashboardContent').innerHTML = 
+            `✅ ${symbols.length} paires de trading chargées sur ${exchange.toUpperCase()}`;
         
         updateMarketGrid();
-        document.getElementById('dashboardContent').innerHTML = 
-            `✅ ${symbols.length} paires de trading chargées sur ${exchange.toUpperCase()}. Prêt à scanner.`;
-        
         return symbols;
+        
     } catch (e) {
         console.error('Erreur chargement symboles:', e);
-        STATE.allSymbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT'];
+        STATE.allSymbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT', 'DOGEUSDT', 'ADAUSDT'];
         return STATE.allSymbols;
     }
 }
 
 // ============================================================
-// WEBSOCKET - MULTI-EXCHANGE
+// WEBSOCKET - CORRIGÉ
 // ============================================================
 function connectWebSocket() {
     if (!STATE.apiConnected) return;
     
-    const config = getExchangeConfig();
     const exchange = STATE.exchange;
+    const symbols = STATE.allSymbols.slice(0, 50);
     
     try {
         if (STATE.ws) {
             try { STATE.ws.close(); } catch(e) {}
         }
         
-        let wsUrl = config.wsUrl;
-        let ws = null;
-        
+        let wsUrl = '';
         if (exchange === 'binance') {
-            const streams = STATE.allSymbols.slice(0, 100).map(s => `${s.toLowerCase()}@trade`).join('/');
-            wsUrl = `${config.wsUrl}/${streams}`;
-            ws = new WebSocket(wsUrl);
+            wsUrl = `wss://stream.binance.com:9443/ws/${symbols.map(s => `${s.toLowerCase()}@trade`).join('/')}`;
         } else if (exchange === 'okx') {
-            ws = new WebSocket(wsUrl);
-            ws.onopen = () => {
-                const subs = STATE.allSymbols.slice(0, 50).map(s => 
-                    `{"op":"subscribe","args":[{"channel":"trades","instId":"${s}"}]}`
-                ).join('\n');
-                ws.send(subs);
-            };
+            wsUrl = 'wss://ws.okx.com:8443/ws/v5/public';
         } else if (exchange === 'bybit') {
-            ws = new WebSocket(wsUrl);
-            ws.onopen = () => {
-                const subs = STATE.allSymbols.slice(0, 50).map(s => 
-                    `{"op":"subscribe","args":["publicTrade.${s}"]}`
-                ).join('\n');
-                ws.send(subs);
-            };
+            wsUrl = 'wss://stream.bybit.com/v5/public/linear';
         }
         
-        if (!ws) return;
+        const ws = new WebSocket(wsUrl);
         
         ws.onopen = () => {
             document.getElementById('marketStatus').textContent = `✅ ${exchange.toUpperCase()}`;
-            document.getElementById('statusDot').className = `status-dot ${exchange}`;
-            showToast(`📡 WebSocket ${exchange.toUpperCase()} connecté`);
+            document.getElementById('statusDot').className = 'status-dot connected';
+            
+            // Subscription pour OKX et Bybit
+            if (exchange === 'okx') {
+                const subs = symbols.map(s => 
+                    `{"op":"subscribe","args":[{"channel":"trades","instId":"${s}"}]}`
+                ).join('\n');
+                ws.send(subs);
+            } else if (exchange === 'bybit') {
+                const subs = symbols.map(s => 
+                    `{"op":"subscribe","args":["publicTrade.${s}"]}`
+                ).join('\n');
+                ws.send(subs);
+            }
         };
         
         ws.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                handleWebSocketMessage(exchange, data);
+                handleWsMessage(exchange, data);
             } catch(e) {}
         };
         
         ws.onclose = () => {
             document.getElementById('marketStatus').textContent = '🔄 Reconnexion...';
             setTimeout(connectWebSocket, 5000);
-        };
-        
-        ws.onerror = () => {
-            document.getElementById('marketStatus').textContent = '⚠️ Erreur';
         };
         
         STATE.ws = ws;
@@ -1512,71 +1390,55 @@ function connectWebSocket() {
     }
 }
 
-function handleWebSocketMessage(exchange, data) {
-    let symbol = null;
-    let price = null;
-    let volume = null;
+function handleWsMessage(exchange, data) {
+    let symbol = null, price = null;
     
     try {
-        if (exchange === 'binance') {
-            if (data.e === 'trade') {
-                symbol = data.s;
-                price = parseFloat(data.p);
-                volume = parseFloat(data.q);
-            }
-        } else if (exchange === 'okx') {
-            if (data.arg?.channel === 'trades' && data.data) {
-                const trade = data.data[0];
-                symbol = data.arg.instId;
-                price = parseFloat(trade.p);
-                volume = parseFloat(trade.sz);
-            }
-        } else if (exchange === 'bybit') {
-            if (data.topic?.includes('publicTrade') && data.data) {
-                const trade = data.data;
-                symbol = trade.s;
-                price = parseFloat(trade.p);
-                volume = parseFloat(trade.v);
-            }
+        if (exchange === 'binance' && data.e === 'trade') {
+            symbol = data.s;
+            price = parseFloat(data.p);
+        } else if (exchange === 'okx' && data.arg?.channel === 'trades' && data.data) {
+            const trade = data.data[0];
+            symbol = data.arg.instId;
+            price = parseFloat(trade.p);
+        } else if (exchange === 'bybit' && data.topic?.includes('publicTrade') && data.data) {
+            const trade = data.data;
+            symbol = trade.s;
+            price = parseFloat(trade.p);
         }
         
         if (symbol && price) {
             if (!STATE.marketData[symbol]) {
-                STATE.marketData[symbol] = { price, volume, prevPrice: price, time: Date.now(), exchange };
+                STATE.marketData[symbol] = { price, prevPrice: price, time: Date.now(), exchange };
             } else {
                 STATE.marketData[symbol].prevPrice = STATE.marketData[symbol].price;
                 STATE.marketData[symbol].price = price;
-                STATE.marketData[symbol].volume = volume || STATE.marketData[symbol].volume;
                 STATE.marketData[symbol].time = Date.now();
-                STATE.marketData[symbol].exchange = exchange;
             }
             
             updateMarketGrid();
             
             if (symbol === STATE.selectedSymbol) {
-                updatePriceDisplay(symbol);
+                document.getElementById('currentPrice').textContent = '$' + price.toFixed(2);
+                if (STATE.marketData[symbol].prevPrice) {
+                    const change = ((price - STATE.marketData[symbol].prevPrice) / STATE.marketData[symbol].prevPrice * 100);
+                    const el = document.getElementById('priceChange');
+                    el.textContent = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
+                    el.className = 'change ' + (change > 0 ? 'up' : 'down');
+                }
             }
         }
     } catch(e) {}
 }
 
-function updatePriceDisplay(symbol) {
-    const data = STATE.marketData[symbol];
-    if (!data) return;
-    
-    document.getElementById('currentPrice').textContent = '$' + data.price.toFixed(2);
-    
-    if (data.prevPrice) {
-        const change = ((data.price - data.prevPrice) / data.prevPrice * 100);
-        const el = document.getElementById('priceChange');
-        el.textContent = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
-        el.className = 'change ' + (change > 0 ? 'up' : 'down');
-    }
-}
-
 function updateMarketGrid() {
     const grid = document.getElementById('marketGrid');
     const symbols = STATE.allSymbols.slice(0, 80);
+    
+    if (symbols.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#667799;padding:20px;">Aucune paire chargée</div>';
+        return;
+    }
     
     grid.innerHTML = symbols.map(sym => {
         const data = STATE.marketData[sym];
@@ -1584,14 +1446,13 @@ function updateMarketGrid() {
         const prev = data ? data.prevPrice : 0;
         const change = prev > 0 ? ((price - prev) / prev * 100) : 0;
         const exchange = data ? data.exchange : STATE.exchange;
-        const exchangeLabel = exchange ? exchange.toUpperCase() : '';
         
         return `
             <div class="market-item" onclick="selectSymbol('${sym}')" style="${sym === STATE.selectedSymbol ? 'border-color:#ff4466;' : ''}">
-                <div class="symbol">${sym.replace('USDT', '').replace('USDC', '')}</div>
+                <div class="symbol">${sym.replace('USDT', '')}</div>
                 <div class="price">${price > 0 ? '$' + (price < 1 ? price.toFixed(6) : price.toFixed(2)) : '--'}</div>
                 <div class="change ${change >= 0 ? 'up' : 'down'}">${change !== 0 ? (change >= 0 ? '+' : '') + change.toFixed(2) + '%' : '--'}</div>
-                <div class="exchange-tag">${exchangeLabel}</div>
+                <span class="exchange-tag">${exchange.toUpperCase()}</span>
             </div>
         `;
     }).join('');
@@ -1599,11 +1460,14 @@ function updateMarketGrid() {
 
 function selectSymbol(symbol) {
     STATE.selectedSymbol = symbol;
-    updatePriceDisplay(symbol);
+    const data = STATE.marketData[symbol];
+    if (data) {
+        document.getElementById('currentPrice').textContent = '$' + data.price.toFixed(2);
+    }
 }
 
 // ============================================================
-// RÉCUPÉRATION DES DONNÉES HISTORIQUES - MULTI-EXCHANGE
+// RÉCUPÉRATION DES DONNÉES HISTORIQUES
 // ============================================================
 async function fetchHistoricalData(symbol, interval = '1h', limit = 200) {
     try {
@@ -1616,7 +1480,7 @@ async function fetchHistoricalData(symbol, interval = '1h', limit = 200) {
             const bar = interval === '1h' ? '1H' : '1D';
             url = `https://www.okx.com/api/v5/market/candles?instId=${symbol}&bar=${bar}&limit=${limit}`;
         } else if (exchange === 'bybit') {
-            const intervalMap = { '1h': '60', '1d': 'D', '1m': '1' };
+            const intervalMap = { '1h': '60', '1d': 'D' };
             const bybitInterval = intervalMap[interval] || '60';
             url = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${symbol}&interval=${bybitInterval}&limit=${limit}`;
         }
@@ -1627,51 +1491,21 @@ async function fetchHistoricalData(symbol, interval = '1h', limit = 200) {
         if (!data) return null;
         
         let candles = [];
+        if (exchange === 'binance' && Array.isArray(data)) candles = data;
+        else if (exchange === 'okx' && data.data) candles = data.data;
+        else if (exchange === 'bybit' && data.result?.list) candles = data.result.list;
+        else return null;
         
-        if (exchange === 'binance') {
-            if (!Array.isArray(data)) return null;
-            candles = data;
-        } else if (exchange === 'okx') {
-            if (!data.data) return null;
-            candles = data.data;
-        } else if (exchange === 'bybit') {
-            if (!data.result?.list) return null;
-            candles = data.result.list;
-        }
-        
-        return candles.map(candle => {
-            if (exchange === 'binance') {
-                return {
-                    open: parseFloat(candle[1]),
-                    high: parseFloat(candle[2]),
-                    low: parseFloat(candle[3]),
-                    close: parseFloat(candle[4]),
-                    volume: parseFloat(candle[5]),
-                    timestamp: candle[0]
-                };
-            } else if (exchange === 'okx') {
-                return {
-                    open: parseFloat(candle[1]),
-                    high: parseFloat(candle[2]),
-                    low: parseFloat(candle[3]),
-                    close: parseFloat(candle[4]),
-                    volume: parseFloat(candle[5]),
-                    timestamp: candle[0]
-                };
-            } else if (exchange === 'bybit') {
-                return {
-                    open: parseFloat(candle[1]),
-                    high: parseFloat(candle[2]),
-                    low: parseFloat(candle[3]),
-                    close: parseFloat(candle[4]),
-                    volume: parseFloat(candle[5]),
-                    timestamp: candle[0]
-                };
-            }
-            return null;
-        }).filter(c => c !== null);
+        return candles.map(candle => ({
+            open: parseFloat(candle[1]),
+            high: parseFloat(candle[2]),
+            low: parseFloat(candle[3]),
+            close: parseFloat(candle[4]),
+            volume: parseFloat(candle[5]),
+            timestamp: candle[0]
+        }));
     } catch (e) {
-        console.error('Erreur fetch historique:', symbol, e);
+        console.error('Erreur fetch:', symbol, e);
         return null;
     }
 }
@@ -1693,11 +1527,11 @@ async function startEngine() {
     STATE.isRunning = true;
     document.getElementById('startBtn').disabled = true;
     document.getElementById('stopBtn').disabled = false;
-    document.getElementById('statusDot').className = `status-dot ${STATE.exchange}`;
-    document.getElementById('statusText').textContent = `Scan ${STATE.exchange.toUpperCase()}`;
+    document.getElementById('statusDot').className = 'status-dot scanning';
+    document.getElementById('statusText').textContent = 'Scan en cours...';
     document.getElementById('dashboardBadge').style.display = 'inline';
     
-    showToast(`🚀 Scan démarré sur ${STATE.allSymbols.length} paires ${STATE.exchange.toUpperCase()}`);
+    showToast(`🚀 Scan démarré sur ${STATE.allSymbols.length} paires`);
     
     await scanMarket();
     scanInterval = setInterval(scanMarket, 30000);
@@ -1711,7 +1545,7 @@ async function scanMarket() {
     let scanned = 0;
     
     document.getElementById('dashboardContent').innerHTML = 
-        `🔍 Scan en cours... 0/${symbolsToScan.length} (${STATE.exchange.toUpperCase()})`;
+        `🔍 Scan en cours... 0/${symbolsToScan.length}`;
     
     for (const symbol of symbolsToScan) {
         try {
@@ -1721,22 +1555,18 @@ async function scanMarket() {
             const analysis = scoringEngine.analyze(data);
             if (analysis) {
                 allSignals.push({
-                    symbol: symbol.replace('USDT', '/USDT').replace('USDC', '/USDC'),
+                    symbol: symbol.replace('USDT', '/USDT'),
                     exchange: STATE.exchange.toUpperCase(),
                     ...analysis
                 });
             }
-        } catch (e) {
-            continue;
-        }
+        } catch (e) { continue; }
         
         scanned++;
-        
         if (scanned % 20 === 0) {
             document.getElementById('dashboardContent').innerHTML = 
-                `🔍 Scan ${STATE.exchange.toUpperCase()}... ${scanned}/${symbolsToScan.length} | ${allSignals.length} signaux`;
+                `🔍 Scan... ${scanned}/${symbolsToScan.length} | ${allSignals.length} signaux`;
         }
-        
         await new Promise(resolve => setTimeout(resolve, 30));
     }
     
@@ -1745,135 +1575,25 @@ async function scanMarket() {
     STATE.scanCount++;
     STATE.lastUpdate = new Date();
     
-    let executed = 0;
-    for (const signal of allSignals) {
-        if (signal.signalClass === 'strong-buy' && STATE.dailyTrades < 50) {
-            executeTrade(signal);
-            executed++;
-        }
-    }
-    
     updateDashboard(allSignals);
     updateSignalsTab(allSignals);
     document.getElementById('lastUpdate').textContent = `Màj: ${STATE.lastUpdate.toLocaleTimeString()}`;
-    
     document.getElementById('dashboardContent').innerHTML = 
-        `✅ Scan #${STATE.scanCount} | ${allSignals.length} signaux sur ${symbolsToScan.length} | ${executed} trades (${STATE.exchange.toUpperCase()})`;
+        `✅ Scan #${STATE.scanCount} | ${allSignals.length} signaux sur ${symbolsToScan.length}`;
     
     saveState();
 }
 
-function executeTrade(signal) {
-    const currentEquity = STATE.capital + STATE.totalProfit;
-    const dynamicRisk = riskManager.calculateDynamicRisk(signal.finalScore);
-    const quantity = riskManager.calculatePosition(currentEquity, dynamicRisk, signal.currentPrice, signal.stopLoss);
-    
-    if (quantity <= 0) return;
-    
-    const trade = {
-        id: Date.now(),
-        exchange: STATE.exchange.toUpperCase(),
-        symbol: signal.symbol,
-        signal: signal.signal,
-        score: signal.finalScore,
-        entryPrice: signal.currentPrice,
-        stopLoss: signal.stopLoss,
-        takeProfit1: signal.takeProfit1,
-        quantity,
-        riskPercent: dynamicRisk,
-        riskAmountUSD: riskManager.getRiskAmountUSD(currentEquity, dynamicRisk),
-        entryTime: new Date(),
-        isOpen: true,
-        pl: null,
-        result: null
-    };
-    
-    STATE.trades.unshift(trade);
-    STATE.dailyTrades++;
-    STATE.totalTrades++;
-    
-    if (STATE.trades.length > 500) STATE.trades = STATE.trades.slice(0, 500);
-    
-    simulateTradeClose(trade);
+function stopEngine() {
+    STATE.isRunning = false;
+    if (scanInterval) clearInterval(scanInterval);
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'En attente';
+    document.getElementById('dashboardBadge').style.display = 'none';
     saveState();
-}
-
-function simulateTradeClose(trade) {
-    const duration = 300000 + Math.random() * 14400000;
-    const checkInterval = 30000;
-    let elapsed = 0;
-    
-    const checkClose = setInterval(() => {
-        elapsed += checkInterval;
-        
-        if (!trade.isOpen || elapsed >= duration) {
-            clearInterval(checkClose);
-            if (trade.isOpen) {
-                const randomMove = (Math.random() - 0.5) * 0.02;
-                const closePrice = trade.entryPrice * (1 + randomMove);
-                closeTrade(trade, closePrice);
-            }
-            return;
-        }
-        
-        const scoreBias = (trade.score - 50) / 1000;
-        const randomMove = scoreBias + (Math.random() - 0.48) * 0.002;
-        const currentPrice = trade.entryPrice * (1 + randomMove * (elapsed / 60000));
-        
-        if (currentPrice > trade.entryPrice) {
-            const newStop = currentPrice * 0.99;
-            if (newStop > trade.stopLoss) trade.stopLoss = newStop;
-        }
-        
-        let shouldClose = false;
-        let closePrice = currentPrice;
-        
-        if (currentPrice <= trade.stopLoss) shouldClose = true;
-        if (currentPrice >= trade.takeProfit1) shouldClose = true;
-        
-        if (shouldClose) {
-            clearInterval(checkClose);
-            closeTrade(trade, closePrice);
-        }
-    }, checkInterval);
-}
-
-function closeTrade(trade, closePrice) {
-    trade.closePrice = closePrice;
-    trade.closeTime = new Date();
-    trade.isOpen = false;
-    
-    const exitFee = trade.quantity * closePrice * 0.001;
-    trade.pl = (closePrice - trade.entryPrice) * trade.quantity;
-    const netPl = trade.pl - trade.fee - exitFee;
-    trade.result = netPl > 0 ? 'win' : 'loss';
-    trade.netPl = netPl;
-    
-    if (netPl > 0) {
-        STATE.winningTrades++;
-        STATE.currentStreak = Math.max(0, STATE.currentStreak) + 1;
-        STATE.bestStreak = Math.max(STATE.bestStreak, STATE.currentStreak);
-    } else {
-        STATE.losingTrades++;
-        STATE.currentStreak = Math.min(0, STATE.currentStreak) - 1;
-        STATE.worstStreak = Math.min(STATE.worstStreak, STATE.currentStreak);
-    }
-    
-    STATE.totalProfit += netPl;
-    STATE.totalFees += trade.fee + exitFee;
-    STATE.dailyPnL += netPl;
-    
-    const currentEquity = STATE.capital + STATE.totalProfit;
-    if (currentEquity > STATE.peakEquity) STATE.peakEquity = currentEquity;
-    
-    if (STATE.peakEquity > 0) {
-        const dd = ((STATE.peakEquity - currentEquity) / STATE.peakEquity) * 100;
-        STATE.maxDrawdown = Math.max(STATE.maxDrawdown, dd);
-    }
-    
-    updateDashboard(STATE.signals);
-    updateTradesTab();
-    saveState();
+    showToast('⏹️ Scan arrêté');
 }
 
 // ============================================================
@@ -1894,20 +1614,18 @@ async function runBacktest() {
     
     document.getElementById('btProgress').style.display = 'block';
     document.getElementById('btFill').style.width = '0%';
-    document.getElementById('btText').textContent = 'Chargement des données...';
+    document.getElementById('btText').textContent = 'Chargement...';
     
-    showToast(`🔬 Backtest ${days} jours sur ${STATE.exchange.toUpperCase()}...`);
+    showToast(`🔬 Backtest ${days} jours...`);
     
     try {
         const symbols = STATE.allSymbols.slice(0, 20);
         const historicalData = {};
         let loaded = 0;
         
-        for (let i = 0; i < symbols.length; i++) {
-            const symbol = symbols[i];
+        for (const symbol of symbols) {
             const limit = Math.min(days * 24, 500);
             const data = await fetchHistoricalData(symbol, '1h', limit);
-            
             if (data && data.length > 100) {
                 historicalData[symbol] = data;
             }
@@ -1915,69 +1633,50 @@ async function runBacktest() {
             loaded++;
             const progress = Math.round((loaded / symbols.length) * 50);
             document.getElementById('btFill').style.width = progress + '%';
-            document.getElementById('btText').textContent = `Chargement: ${Math.round(loaded / symbols.length * 100)}% (${loaded}/${symbols.length})`;
-            
-            await new Promise(resolve => setTimeout(resolve, 50));
+            document.getElementById('btText').textContent = `Chargement: ${Math.round(loaded / symbols.length * 100)}%`;
+            await new Promise(resolve => setTimeout(resolve, 30));
         }
         
         const symbolCount = Object.keys(historicalData).length;
         if (symbolCount === 0) {
-            showToast('❌ Aucune donnée chargée pour le backtest');
+            showToast('❌ Aucune donnée chargée');
             return;
         }
         
-        document.getElementById('btText').textContent = `Backtest en cours sur ${symbolCount} paires...`;
+        document.getElementById('btText').textContent = `Backtest en cours...`;
         document.getElementById('btFill').style.width = '50%';
         
-        const results = await backtestEngine.run(historicalData, days);
+        const results = await backtestEngine.run(historicalData);
         
-        displayBacktestResults(results);
+        document.getElementById('btTrades').textContent = results.totalTrades;
+        document.getElementById('btTrades').style.color = results.totalTrades > 500 ? '#00ff88' : '#ffaa00';
+        document.getElementById('btWinRate').textContent = results.winRate.toFixed(1) + '%';
+        document.getElementById('btWinRate').style.color = results.winRate > 50 ? '#00ff88' : '#ff4466';
+        document.getElementById('btProfit').textContent = (results.totalProfit > 0 ? '+' : '') + results.totalProfit.toFixed(2) + '$';
+        document.getElementById('btProfit').style.color = results.totalProfit > 0 ? '#00ff88' : '#ff4466';
+        document.getElementById('btROI').textContent = results.roi.toFixed(1) + '%';
+        document.getElementById('btROI').style.color = results.roi > 0 ? '#00ff88' : '#ff4466';
+        document.getElementById('btDrawdown').textContent = results.maxDrawdown.toFixed(1) + '%';
+        document.getElementById('btSharpe').textContent = results.sharpe.toFixed(2);
+        document.getElementById('btProfitFactor').textContent = results.profitFactor.toFixed(2);
+        document.getElementById('btAvgRR').textContent = results.avgRR.toFixed(2);
+        
         STATE.backtestResults = results;
-        
         document.getElementById('btFill').style.width = '100%';
-        document.getElementById('btText').textContent = `Terminé - ${results.totalTrades} trades (${STATE.exchange.toUpperCase()})`;
+        document.getElementById('btText').textContent = `Terminé - ${results.totalTrades} trades`;
         
         saveState();
-        
-        if (results.totalTrades > 500) {
-            calibrateWeightsFromResults(results);
-        }
-        
         showToast(`✅ Backtest: ${results.totalTrades} trades | Win Rate: ${results.winRate.toFixed(1)}%`);
         
     } catch (e) {
         console.error('Erreur backtest:', e);
-        showToast('❌ Erreur lors du backtest');
+        showToast('❌ Erreur backtest');
     }
-}
-
-function displayBacktestResults(results) {
-    document.getElementById('btTrades').textContent = results.totalTrades;
-    document.getElementById('btTrades').style.color = results.totalTrades > 500 ? '#00ff88' : '#ffaa00';
-    document.getElementById('btWinRate').textContent = results.winRate.toFixed(1) + '%';
-    document.getElementById('btWinRate').style.color = results.winRate > 50 ? '#00ff88' : '#ff4466';
-    document.getElementById('btProfit').textContent = (results.totalProfit > 0 ? '+' : '') + results.totalProfit.toFixed(2) + '$';
-    document.getElementById('btProfit').style.color = results.totalProfit > 0 ? '#00ff88' : '#ff4466';
-    document.getElementById('btROI').textContent = results.roi.toFixed(1) + '%';
-    document.getElementById('btROI').style.color = results.roi > 0 ? '#00ff88' : '#ff4466';
-    document.getElementById('btDrawdown').textContent = results.maxDrawdown.toFixed(1) + '%';
-    document.getElementById('btSharpe').textContent = results.sharpe.toFixed(2);
-    document.getElementById('btProfitFactor').textContent = results.profitFactor.toFixed(2);
-    document.getElementById('btAvgRR').textContent = results.avgRR.toFixed(2);
-}
-
-function calibrateWeightsFromResults(results) {
-    showToast('📐 Poids calibrés automatiquement');
-    updateEngineWeightsDisplay();
-    saveState();
 }
 
 function calibrateWeights() {
-    if (!STATE.backtestResults || STATE.backtestResults.totalTrades < 500) {
-        showToast('⚠️ Lancez d\'abord un backtest de 500+ trades');
-        return;
-    }
-    calibrateWeightsFromResults(STATE.backtestResults);
+    showToast('📐 Poids calibrés');
+    updateEngineWeightsDisplay();
 }
 
 // ============================================================
@@ -2008,28 +1707,6 @@ function updateDashboard(signals) {
                 <span style="font-weight:700;font-size:13px;">${s.symbol} <span style="font-size:8px;color:#667799;">${s.exchange}</span></span>
                 <span style="font-size:12px;">${s.signal}</span>
             </div>
-            <div class="engine-grid" style="grid-template-columns:repeat(5,1fr);gap:4px;">
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#00d4ff;">${s.engines.trend.score}/${s.engines.trend.max}</div>
-                    <div class="label">Tendance</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#7b2ffc;">${s.engines.momentum.score}/${s.engines.momentum.max}</div>
-                    <div class="label">Momentum</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#00ff88;">${s.engines.volume.score}/${s.engines.volume.max}</div>
-                    <div class="label">Volume</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#ffaa00;">${s.engines.volatility.score}/${s.engines.volatility.max}</div>
-                    <div class="label">Volatilité</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#ff4466;">${s.engines.structure.score}/${s.engines.structure.max}</div>
-                    <div class="label">Structure</div>
-                </div>
-            </div>
             <div style="text-align:center;margin:8px 0;">
                 <span style="font-size:24px;font-weight:700;color:${s.finalScore >= 75 ? '#00ff88' : s.finalScore >= 60 ? '#00d4ff' : '#ffaa00'};">${s.finalScore}/100</span>
             </div>
@@ -2056,10 +1733,9 @@ function updateSignalsTab(signals) {
         <div class="signal-card ${s.signalClass}">
             <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${s.symbol} <span style="font-size:10px;color:#667799;">${s.exchange}</span> - ${s.signal} (${s.finalScore}/100)</div>
             <div style="font-size:10px;color:#8899bb;">
-                <strong>Tendance:</strong> ${s.engines.trend.trend} | ADX ${s.engines.trend.details.adx?.toFixed(1)}<br>
-                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)} | MACD ${s.engines.momentum.details.macd?.histogram?.toFixed(3)}<br>
+                <strong>Tendance:</strong> ADX ${s.engines.trend.details.adx?.toFixed(1)}<br>
+                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)}<br>
                 <strong>Volume:</strong> ${s.engines.volume.details.volumeRatio?.toFixed(1)}x moyenne<br>
-                <strong>Volatilité:</strong> ATR ${s.engines.volatility.details.atr?.toFixed(2)} | R/R ${s.riskReward}<br>
                 <strong>Monte Carlo:</strong> ▲${s.monteCarlo.upProbability.toFixed(0)}% ◆${s.monteCarlo.stableProbability.toFixed(0)}% ▼${s.monteCarlo.downProbability.toFixed(0)}%
             </div>
         </div>
@@ -2078,7 +1754,7 @@ function updateTradesTab() {
     tbody.innerHTML = trades.map((t, i) => `
         <tr>
             <td>${i + 1}</td>
-            <td><span style="color:${STATE.exchangeColors[t.exchange?.toLowerCase()] || '#8899bb'};">${t.exchange || '--'}</span></td>
+            <td>${t.exchange || '--'}</td>
             <td>${t.symbol}</td>
             <td>${t.signal}</td>
             <td>${t.score}/100</td>
@@ -2094,45 +1770,17 @@ function updateEngineWeightsDisplay() {
     const div = document.getElementById('engineWeightsDisplay');
     const weights = STATE.engineWeights;
     
-    div.innerHTML = `
+    div.innerHTML = Object.entries(weights).map(([key, value]) => `
         <div class="engine-score active">
-            <div class="score" style="color:#00d4ff;">${weights.trend}%</div>
-            <div class="label">Tendance</div>
+            <div class="score" style="color:${key === 'trend' ? '#00d4ff' : key === 'momentum' ? '#7b2ffc' : key === 'volume' ? '#00ff88' : key === 'volatility' ? '#ffaa00' : '#ff4466'};">${value}%</div>
+            <div class="label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
         </div>
-        <div class="engine-score">
-            <div class="score" style="color:#7b2ffc;">${weights.momentum}%</div>
-            <div class="label">Momentum</div>
-        </div>
-        <div class="engine-score">
-            <div class="score" style="color:#00ff88;">${weights.volume}%</div>
-            <div class="label">Volume</div>
-        </div>
-        <div class="engine-score">
-            <div class="score" style="color:#ffaa00;">${weights.volatility}%</div>
-            <div class="label">Volatilité</div>
-        </div>
-        <div class="engine-score">
-            <div class="score" style="color:#ff4466;">${weights.structure}%</div>
-            <div class="label">Structure</div>
-        </div>
-    `;
+    `).join('');
 }
 
 // ============================================================
 // FONCTIONS UTILITAIRES
 // ============================================================
-function stopEngine() {
-    STATE.isRunning = false;
-    if (scanInterval) clearInterval(scanInterval);
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('stopBtn').disabled = true;
-    document.getElementById('statusDot').className = `status-dot ${STATE.exchange}`;
-    document.getElementById('statusText').textContent = `${STATE.exchange.toUpperCase()} - En attente`;
-    document.getElementById('dashboardBadge').style.display = 'none';
-    saveState();
-    showToast('⏹️ Scan arrêté');
-}
-
 function saveCapitalConfig() {
     STATE.capital = parseFloat(document.getElementById('capitalInput').value) || 1000;
     STATE.riskPerTrade = parseFloat(document.getElementById('riskInput').value) || 1;
@@ -2142,20 +1790,15 @@ function saveCapitalConfig() {
 }
 
 function exportAllData() {
-    const dataToExport = {
-        version: '3.0',
-        exportedAt: new Date().toISOString(),
-        ...STATE,
-        trades: STATE.trades.slice(0, 500)
-    };
-    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+    const data = { ...STATE, trades: STATE.trades.slice(0, 500) };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `red_pro_ai_backup_${new Date().toISOString().slice(0,10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('📤 Données exportées !');
+    showToast('📤 Exporté !');
 }
 
 function importAllData() {
@@ -2165,48 +1808,34 @@ function importAllData() {
 function handleFileImport(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
             const imported = JSON.parse(e.target.result);
             Object.assign(STATE, imported);
-            
             document.getElementById('capitalInput').value = STATE.capital;
             document.getElementById('riskInput').value = STATE.riskPerTrade;
             document.getElementById('leverageInput').value = STATE.leverage;
-            
             updateDashboard(STATE.signals);
             updateTradesTab();
             updateEngineWeightsDisplay();
-            
             saveState();
-            showToast('📥 Données importées !');
-        } catch (e) {
-            showToast('❌ Fichier invalide');
-        }
+            showToast('📥 Importé !');
+        } catch (e) { showToast('❌ Fichier invalide'); }
     };
     reader.readAsText(file);
     event.target.value = '';
 }
 
 function resetAllData() {
-    if (confirm('⚠️ Réinitialiser TOUTES les données ?')) {
+    if (confirm('⚠️ Réinitialiser ?')) {
         STATE.totalTrades = 0;
         STATE.winningTrades = 0;
         STATE.losingTrades = 0;
         STATE.totalProfit = 0;
-        STATE.totalFees = 0;
-        STATE.peakEquity = 0;
-        STATE.maxDrawdown = 0;
-        STATE.bestStreak = 0;
-        STATE.worstStreak = 0;
-        STATE.currentStreak = 0;
         STATE.trades = [];
         STATE.backtestResults = null;
         STATE.engineWeights = { trend: 30, momentum: 25, volume: 20, volatility: 15, structure: 10 };
-        STATE.signals = [];
-        
         updateDashboard(STATE.signals);
         updateTradesTab();
         updateEngineWeightsDisplay();
@@ -2216,16 +1845,12 @@ function resetAllData() {
 }
 
 function clearTrades() {
-    if (confirm('Effacer tous les trades ?')) {
+    if (confirm('Effacer les trades ?')) {
         STATE.trades = [];
         STATE.totalTrades = 0;
         STATE.winningTrades = 0;
         STATE.losingTrades = 0;
         STATE.totalProfit = 0;
-        STATE.totalFees = 0;
-        STATE.peakEquity = 0;
-        STATE.maxDrawdown = 0;
-        
         updateDashboard(STATE.signals);
         updateTradesTab();
         saveState();
@@ -2236,7 +1861,6 @@ function clearTrades() {
 function switchTab(tabName) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
-    
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
     if (tab) {
         tab.classList.add('active');
@@ -2265,7 +1889,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (STATE.apiSecret) document.getElementById('apiSecret').value = STATE.apiSecret;
     if (STATE.apiPassphrase) document.getElementById('apiPassphrase').value = STATE.apiPassphrase;
     
-    // Sélectionner l'exchange actif
     document.querySelectorAll('.btn-exchange').forEach(b => {
         b.classList.toggle('active', b.dataset.exchange === STATE.exchange);
     });
@@ -2276,7 +1899,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMarketGrid();
     
     if (STATE.apiConnected) {
-        document.getElementById('statusDot').className = `status-dot ${STATE.exchange}`;
+        document.getElementById('statusDot').className = 'status-dot connected';
         document.getElementById('statusText').textContent = `✅ ${STATE.exchange.toUpperCase()}`;
         document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
         connectWebSocket();
@@ -2293,14 +1916,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    setInterval(() => {
-        if (STATE.isRunning || STATE.trades.length > 0) saveState();
-    }, 30000);
-    
+    setInterval(() => { if (STATE.isRunning || STATE.trades.length > 0) saveState(); }, 30000);
     window.addEventListener('beforeunload', () => saveState());
     
-    console.log('🚀 RED PRO AI - Multi-Exchange Trading Engine');
-    console.log(`🔗 Exchange actif: ${STATE.exchange.toUpperCase()}`);
+    console.log('🚀 RED PRO AI - Multi-Exchange');
+    console.log(`🔗 Exchange: ${STATE.exchange.toUpperCase()}`);
     console.log(`📂 ${STATE.trades.length} trades chargés`);
 });
 </script>
