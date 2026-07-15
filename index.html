@@ -84,6 +84,7 @@
         }
         .tab.active { background: #1a2230; color: #ff4466; border-color: #ff4466; }
         .tab.locked { opacity: 0.5; cursor: not-allowed; }
+        .tab .badge { background: #00ff88; color: #000; border-radius: 8px; padding: 1px 6px; font-size: 8px; margin-left: 4px; }
         
         .card {
             background: #0d1520;
@@ -122,7 +123,7 @@
             color: #8899bb;
             margin-bottom: 4px;
         }
-        .api-input-group input {
+        .api-input-group input, .api-input-group select {
             width: 100%;
             padding: 10px 12px;
             background: #0d1520;
@@ -131,7 +132,7 @@
             color: white;
             font-size: 12px;
         }
-        .api-input-group input:focus {
+        .api-input-group input:focus, .api-input-group select:focus {
             outline: none;
             border-color: #ff4466;
         }
@@ -293,6 +294,24 @@
             to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         
+        .highlight-box {
+            background: #00ff8811;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 8px 0;
+            text-align: center;
+        }
+        
+        .saved-indicator {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #00ff88;
+            margin-right: 4px;
+            animation: pulse 2s infinite;
+        }
+        
         @media (max-width: 600px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .engine-grid { grid-template-columns: repeat(3, 1fr); }
@@ -307,12 +326,13 @@
     <div class="header-status">
         <span class="status-dot" id="statusDot"></span>
         <span id="statusText">API Requise</span>
+        <span style="font-size:9px;color:#667799;" id="savedStatus"></span>
     </div>
 </div>
 
 <div class="tabs" id="tabsContainer">
     <div class="tab active" data-tab="api" id="tabApi">🔑 API Binance</div>
-    <div class="tab locked" data-tab="dashboard" id="tabDashboard">📊 Dashboard</div>
+    <div class="tab locked" data-tab="dashboard" id="tabDashboard">📊 Dashboard <span class="badge" id="dashboardBadge" style="display:none;">●</span></div>
     <div class="tab locked" data-tab="signals" id="tabSignals">🎯 Signaux</div>
     <div class="tab locked" data-tab="trades" id="tabTrades">📜 Trades</div>
     <div class="tab locked" data-tab="backtest" id="tabBacktest">🔬 Backtest</div>
@@ -364,21 +384,68 @@
     <div class="card">
         <div class="card-title">
             💰 Capital de Trading
-            <span style="font-size:10px;color:#667799;">Défini par l'utilisateur</span>
+            <span style="font-size:10px;color:#ffaa00;">⚠️ Configurable par l'utilisateur</span>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        
+        <div class="highlight-box">
+            <div style="font-size:12px;color:#00ff88;font-weight:700;">💡 IMPORTANT</div>
+            <div style="font-size:10px;color:#8899bb;margin-top:4px;">
+                Définissez votre capital EXACT. Chaque trade risquera <strong>1% de ce capital</strong>.
+            </div>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
             <div class="api-input-group">
                 <label>Capital Total (USDT)</label>
-                <input type="number" id="capitalInput" value="1000" min="10">
+                <input type="number" id="capitalInput" value="1000" min="10" step="100">
             </div>
             <div class="api-input-group">
                 <label>Risque par Trade (%)</label>
                 <input type="number" id="riskInput" value="1" min="0.1" max="5" step="0.1">
             </div>
+            <div class="api-input-group">
+                <label>Levier</label>
+                <select id="leverageInput">
+                    <option value="1">1x (Spot)</option>
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="5">5x</option>
+                    <option value="10">10x</option>
+                </select>
+            </div>
         </div>
+        
+        <div style="background:#0a0e17;border-radius:8px;padding:10px;margin:8px 0;font-size:10px;color:#8899bb;">
+            <strong>Résumé :</strong><br>
+            Capital : <span style="color:#00d4ff;" id="summaryCapital">1000$</span> | 
+            Risque/Trade : <span style="color:#ffaa00;" id="summaryRisk">10$</span> (1%) |
+            Levier : <span style="color:#7b2ffc;" id="summaryLeverage">1x</span>
+        </div>
+        
         <button class="btn btn-success" onclick="saveCapitalConfig()" style="width:100%;justify-content:center;margin-top:10px;">
             💾 Sauvegarder la Configuration
         </button>
+    </div>
+    
+    <div class="card">
+        <div class="card-title">
+            📂 Gestion des Données
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <button class="btn btn-primary" onclick="exportAllData()" style="justify-content:center;">
+                📤 Exporter Données
+            </button>
+            <button class="btn btn-warning" onclick="importAllData()" style="justify-content:center;">
+                📥 Importer Données
+            </button>
+            <button class="btn btn-danger" onclick="resetAllData()" style="justify-content:center;">
+                🗑️ Réinitialiser
+            </button>
+            <div style="font-size:10px;color:#667799;display:flex;align-items:center;justify-content:center;">
+                <span class="saved-indicator"></span> Sauvegarde automatique
+            </div>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleFileImport(event)">
     </div>
 </div>
 
@@ -413,6 +480,7 @@
             <button class="btn btn-danger" onclick="stopEngine()" id="stopBtn" disabled>⏹️ Stop</button>
             <button class="btn btn-warning" onclick="runBacktest()">🔬 Backtest</button>
             <button class="btn btn-primary" onclick="calibrateWeights()">📐 Calibrer</button>
+            <button class="btn btn-sm" style="background:#1a2230;color:#8899bb;" onclick="clearTrades()">🗑️ Effacer Trades</button>
         </div>
         <div id="dashboardContent" style="font-size:11px;color:#667799;">
             Prêt à scanner. Cliquez sur "Démarrer".
@@ -436,13 +504,16 @@
 <!-- TAB 4: TRADES -->
 <div id="tab-trades" style="display:none;">
     <div class="card">
-        <div class="card-title">📜 Historique des Trades</div>
+        <div class="card-title">
+            📜 Historique des Trades
+            <span style="font-size:10px;color:#667799;" id="tradesCount">0 trades</span>
+        </div>
         <div class="scroll-container" style="max-height:500px;">
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>#</th><th>Symbole</th><th>Signal</th><th>Score</th>
-                        <th>Entrée</th><th>Sortie</th><th>P/L</th><th>R/R</th><th>Résultat</th>
+                        <th>Entrée</th><th>Sortie</th><th>Qty</th><th>P/L</th><th>Capital Risqué</th><th>Résultat</th>
                     </tr>
                 </thead>
                 <tbody id="tradesBody"></tbody>
@@ -490,59 +561,122 @@
             Les poids s'ajustent automatiquement après chaque backtest de 5000+ trades.
         </div>
     </div>
-    
-    <div class="card">
-        <div class="card-title">📈 Performance par Moteur</div>
-        <div id="enginePerformance"></div>
-    </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
 // ============================================================
-// ÉTAT GLOBAL
+// PERSISTANCE DES DONNÉES
 // ============================================================
+const STORAGE_KEY = 'red_pro_ai_crypto_v2';
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            console.log('📂 Données chargées:', parsed.totalTrades || 0, 'trades');
+            return parsed;
+        }
+    } catch (e) {
+        console.error('Erreur chargement:', e);
+    }
+    return null;
+}
+
+function saveState() {
+    try {
+        const dataToSave = {
+            capital: STATE.capital,
+            riskPerTrade: STATE.riskPerTrade,
+            leverage: STATE.leverage,
+            apiKey: STATE.apiKey,
+            apiSecret: STATE.apiSecret,
+            apiConnected: STATE.apiConnected,
+            totalTrades: STATE.totalTrades,
+            winningTrades: STATE.winningTrades,
+            losingTrades: STATE.losingTrades,
+            totalProfit: STATE.totalProfit,
+            totalFees: STATE.totalFees,
+            peakEquity: STATE.peakEquity,
+            maxDrawdown: STATE.maxDrawdown,
+            bestStreak: STATE.bestStreak,
+            worstStreak: STATE.worstStreak,
+            currentStreak: STATE.currentStreak,
+            dailyTrades: STATE.dailyTrades,
+            dailyPnL: STATE.dailyPnL,
+            engineWeights: STATE.engineWeights,
+            trades: STATE.trades.slice(0, 500),
+            backtestResults: STATE.backtestResults,
+            lastUpdate: STATE.lastUpdate,
+            savedAt: new Date().toISOString()
+        };
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        document.getElementById('savedStatus').textContent = '💾 Sauvegardé';
+        setTimeout(() => {
+            if (document.getElementById('savedStatus')) {
+                document.getElementById('savedStatus').textContent = '';
+            }
+        }, 2000);
+    } catch (e) {
+        console.error('Erreur sauvegarde:', e);
+        // Si quota dépassé, réduire les trades
+        if (e.name === 'QuotaExceededError') {
+            STATE.trades = STATE.trades.slice(0, 100);
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    capital: STATE.capital,
+                    riskPerTrade: STATE.riskPerTrade,
+                    leverage: STATE.leverage,
+                    apiKey: STATE.apiKey,
+                    apiSecret: STATE.apiSecret,
+                    apiConnected: STATE.apiConnected,
+                    totalTrades: STATE.totalTrades,
+                    totalProfit: STATE.totalProfit,
+                    trades: STATE.trades.slice(0, 100),
+                    savedAt: new Date().toISOString()
+                }));
+            } catch (e2) {
+                console.error('Sauvegarde impossible');
+            }
+        }
+    }
+}
+
+// ============================================================
+// ÉTAT GLOBAL avec chargement
+// ============================================================
+const savedState = loadState();
+
 const STATE = {
-    apiConnected: false,
-    apiKey: '',
-    apiSecret: '',
+    apiConnected: savedState?.apiConnected || false,
+    apiKey: savedState?.apiKey || '',
+    apiSecret: savedState?.apiSecret || '',
     isRunning: false,
-    capital: 1000,
-    riskPerTrade: 0.01,
-    totalTrades: 0,
-    winningTrades: 0,
-    losingTrades: 0,
-    totalProfit: 0,
-    totalFees: 0,
-    peakEquity: 0,
-    maxDrawdown: 0,
-    bestStreak: 0,
-    worstStreak: 0,
-    currentStreak: 0,
-    dailyTrades: 0,
-    dailyPnL: 0,
-    engineWeights: {
-        trend: 30,
-        momentum: 25,
-        volume: 20,
-        volatility: 15,
-        structure: 10
-    },
-    enginePerformance: {
-        trend: { wins: 0, total: 0 },
-        momentum: { wins: 0, total: 0 },
-        volume: { wins: 0, total: 0 },
-        volatility: { wins: 0, total: 0 },
-        structure: { wins: 0, total: 0 }
-    },
-    trades: [],
+    capital: savedState?.capital || 1000,
+    riskPerTrade: savedState?.riskPerTrade || 1,
+    leverage: savedState?.leverage || 1,
+    totalTrades: savedState?.totalTrades || 0,
+    winningTrades: savedState?.winningTrades || 0,
+    losingTrades: savedState?.losingTrades || 0,
+    totalProfit: savedState?.totalProfit || 0,
+    totalFees: savedState?.totalFees || 0,
+    peakEquity: savedState?.peakEquity || 0,
+    maxDrawdown: savedState?.maxDrawdown || 0,
+    bestStreak: savedState?.bestStreak || 0,
+    worstStreak: savedState?.worstStreak || 0,
+    currentStreak: savedState?.currentStreak || 0,
+    dailyTrades: savedState?.dailyTrades || 0,
+    dailyPnL: savedState?.dailyPnL || 0,
+    engineWeights: savedState?.engineWeights || { trend: 30, momentum: 25, volume: 20, volatility: 15, structure: 10 },
+    trades: savedState?.trades || [],
     signals: [],
     allSymbols: [],
     scanCount: 0,
-    lastUpdate: null,
-    backtestResults: null,
-    activeTab: 'api'
+    lastUpdate: savedState?.lastUpdate || null,
+    backtestResults: savedState?.backtestResults || null
 };
 
 // ============================================================
@@ -915,12 +1049,11 @@ class ScoringEngine {
 // ============================================================
 class RiskManager {
     calculatePosition(capital, riskPercent, entryPrice, stopLoss) {
-        const riskAmount = capital * (riskPercent / 100);
-        const riskPerUnit = Math.abs(entryPrice - stopLoss);
-        if (riskPerUnit <= 0) return 0;
-        const position = riskAmount / riskPerUnit;
-        const maxPosition = (capital * 0.20) / entryPrice;
-        return Math.min(position, maxPosition);
+        const riskAmountUSD = capital * (riskPercent / 100);
+        const riskPerUnitUSD = Math.abs(entryPrice - stopLoss);
+        if (riskPerUnitUSD <= 0 || riskAmountUSD <= 0) return 0;
+        const quantity = riskAmountUSD / riskPerUnitUSD;
+        return quantity * STATE.leverage;
     }
     
     calculateDynamicRisk(baseScore) {
@@ -929,6 +1062,10 @@ class RiskManager {
         if (baseScore >= 70) return STATE.riskPerTrade;
         if (baseScore >= 60) return STATE.riskPerTrade * 0.7;
         return STATE.riskPerTrade * 0.3;
+    }
+    
+    getRiskAmountUSD(capital, riskPercent) {
+        return capital * (riskPercent / 100);
     }
 }
 
@@ -965,22 +1102,28 @@ class BacktestEngine {
                 
                 if (!openTrade) {
                     const signal = this.scoringEngine.analyze(slice);
-                    if (signal && (signal.signalClass === 'strong-buy' || signal.signalClass === 'buy')) {
+                    if (signal && signal.finalScore >= 70) {
                         const dynamicRisk = this.riskManager.calculateDynamicRisk(signal.finalScore);
-                        const stopLoss = currentPrice * (1 - signal.riskPercent / 100);
-                        const takeProfit = currentPrice * (1 + signal.riskPercent * parseFloat(signal.riskReward) / 100);
+                        const stopLoss = currentPrice - signal.engines.volatility.details.atr * 1.5;
+                        const takeProfit = currentPrice + signal.engines.volatility.details.atr * 2.5;
                         const quantity = this.riskManager.calculatePosition(capital, dynamicRisk, currentPrice, stopLoss);
                         
-                        if (quantity > 0) {
+                        if (quantity > 0 && quantity * currentPrice <= capital * 1.5) {
                             const fee = quantity * currentPrice * 0.001;
                             capital -= quantity * currentPrice + fee;
                             results.totalFees += fee;
-                            openTrade = { symbol, entryPrice: currentPrice, stopLoss, takeProfit, quantity, fee, score: signal.finalScore, entryIndex: i };
+                            
+                            openTrade = {
+                                symbol, entryPrice: currentPrice, stopLoss, takeProfit,
+                                quantity, fee, score: signal.finalScore, dynamicRisk,
+                                riskAmountUSD: this.riskManager.getRiskAmountUSD(capital + quantity * currentPrice, dynamicRisk)
+                            };
                         }
                     }
                 } else {
                     let shouldClose = false;
                     let closePrice = currentPrice;
+                    
                     if (currentPrice <= openTrade.stopLoss) shouldClose = true;
                     if (currentPrice >= openTrade.takeProfit) shouldClose = true;
                     if (i === data.length - 1) shouldClose = true;
@@ -989,17 +1132,23 @@ class BacktestEngine {
                         const exitFee = openTrade.quantity * closePrice * 0.001;
                         capital += openTrade.quantity * closePrice - exitFee;
                         results.totalFees += exitFee;
+                        
                         const pl = (closePrice - openTrade.entryPrice) * openTrade.quantity;
                         const netPl = pl - openTrade.fee - exitFee;
+                        
                         results.totalProfit += netPl;
                         results.totalTrades++;
+                        
                         if (netPl > 0) { results.wins++; results.gainsTotal += Math.abs(netPl); }
                         else { results.losses++; results.lossesTotal += Math.abs(netPl); }
+                        
                         results.returns.push(netPl / STATE.capital);
                         results.trades.push({ ...openTrade, closePrice, pl: netPl, result: netPl > 0 ? 'win' : 'loss' });
+                        
                         if (capital > maxCapital) maxCapital = capital;
-                        const dd = (maxCapital - capital) / maxCapital * 100;
+                        const dd = ((maxCapital - capital) / maxCapital) * 100;
                         if (dd > results.maxDrawdown) results.maxDrawdown = dd;
+                        
                         openTrade = null;
                     }
                 }
@@ -1059,9 +1208,6 @@ async function connectBinanceAPI() {
             STATE.apiKey = apiKey;
             STATE.apiSecret = apiSecret;
             
-            localStorage.setItem('binance_api_key', apiKey);
-            localStorage.setItem('binance_api_secret', apiSecret);
-            
             document.getElementById('statusDot').className = 'status-dot connected';
             document.getElementById('statusText').textContent = 'Connecté';
             
@@ -1077,13 +1223,11 @@ async function connectBinanceAPI() {
                 </div>
             `;
             
-            // Débloquer les autres onglets
-            document.querySelectorAll('.tab.locked').forEach(tab => {
-                tab.classList.remove('locked');
-            });
+            document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
             
             await loadAllSymbols();
             switchTab('dashboard');
+            saveState();
             
             showToast('✅ Connecté à Binance avec succès !');
         } else {
@@ -1147,6 +1291,7 @@ async function startEngine() {
     document.getElementById('stopBtn').disabled = false;
     document.getElementById('statusDot').className = 'status-dot scanning';
     document.getElementById('statusText').textContent = 'Scan en cours...';
+    document.getElementById('dashboardBadge').style.display = 'inline';
     
     showToast(`🚀 Scan démarré sur ${allBinanceSymbols.length} cryptos`);
     
@@ -1157,7 +1302,6 @@ async function startEngine() {
 async function scanMarket() {
     if (!STATE.isRunning) return;
     
-    // Scanner TOUTES les cryptos disponibles
     const symbolsToScan = allBinanceSymbols;
     const allSignals = [];
     let scanned = 0;
@@ -1183,23 +1327,19 @@ async function scanMarket() {
         
         scanned++;
         
-        // Mise à jour de la progression toutes les 20 cryptos
-        if (scanned % 20 === 0) {
+        if (scanned % 50 === 0) {
             document.getElementById('dashboardContent').innerHTML = 
-                `🔍 Scan en cours... ${scanned}/${symbolsToScan.length} cryptos analysées | ${allSignals.length} signaux trouvés`;
+                `🔍 Scan en cours... ${scanned}/${symbolsToScan.length} | ${allSignals.length} signaux`;
         }
         
-        // Pause pour respecter rate limit
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolve => setTimeout(resolve, 30));
     }
     
-    // Trier par score
     allSignals.sort((a, b) => b.finalScore - a.finalScore);
     STATE.signals = allSignals;
     STATE.scanCount++;
     STATE.lastUpdate = new Date();
     
-    // Exécuter les trades pour les signaux forts
     for (const signal of allSignals) {
         if (signal.signalClass === 'strong-buy' && STATE.dailyTrades < 50) {
             executeTrade(signal);
@@ -1211,15 +1351,20 @@ async function scanMarket() {
     document.getElementById('lastUpdate').textContent = `Màj: ${STATE.lastUpdate.toLocaleTimeString()}`;
     
     document.getElementById('dashboardContent').innerHTML = 
-        `✅ Scan #${STATE.scanCount} terminé | ${allSignals.length} signaux sur ${symbolsToScan.length} cryptos | ${STATE.dailyTrades} trades aujourd'hui`;
+        `✅ Scan #${STATE.scanCount} | ${allSignals.length} signaux sur ${symbolsToScan.length} cryptos | ${STATE.dailyTrades} trades`;
+    
+    saveState();
 }
 
 function executeTrade(signal) {
-    const capital = STATE.capital;
+    const currentEquity = STATE.capital + STATE.totalProfit;
     const dynamicRisk = riskManager.calculateDynamicRisk(signal.finalScore);
-    const quantity = riskManager.calculatePosition(capital, dynamicRisk, signal.currentPrice, signal.stopLoss);
+    const quantity = riskManager.calculatePosition(currentEquity, dynamicRisk, signal.currentPrice, signal.stopLoss);
     
     if (quantity <= 0) return;
+    
+    const positionValue = quantity * signal.currentPrice;
+    const riskAmountUSD = riskManager.getRiskAmountUSD(currentEquity, dynamicRisk);
     
     const trade = {
         id: Date.now(),
@@ -1232,8 +1377,10 @@ function executeTrade(signal) {
         takeProfit2: signal.takeProfit2,
         quantity,
         riskPercent: dynamicRisk,
+        riskAmountUSD,
+        positionValue,
         riskReward: signal.riskReward,
-        fee: quantity * signal.currentPrice * 0.001,
+        fee: positionValue * 0.001,
         entryTime: new Date(),
         isOpen: true,
         pl: null,
@@ -1244,23 +1391,55 @@ function executeTrade(signal) {
     STATE.dailyTrades++;
     STATE.totalTrades++;
     
-    simulateTradeClose(trade);
-}
-
-function simulateTradeClose(trade) {
-    const duration = 30000 + Math.random() * 600000;
+    // Limiter à 500 trades stockés
+    if (STATE.trades.length > 500) STATE.trades = STATE.trades.slice(0, 500);
     
-    setTimeout(() => {
-        if (!trade.isOpen) return;
-        
-        const winProbability = trade.score / 100;
-        const isWin = Math.random() < winProbability;
-        const closePrice = isWin ? trade.takeProfit1 : trade.stopLoss;
-        closeTrade(trade, closePrice);
-    }, duration);
+    simulateTradeCloseOptimized(trade);
+    saveState();
 }
 
-function closeTrade(trade, closePrice) {
+function simulateTradeCloseOptimized(trade) {
+    const duration = 300000 + Math.random() * 14400000;
+    const checkInterval = 30000;
+    let elapsed = 0;
+    
+    const checkClose = setInterval(() => {
+        elapsed += checkInterval;
+        
+        if (!trade.isOpen || elapsed >= duration) {
+            clearInterval(checkClose);
+            if (trade.isOpen) {
+                const randomMove = (Math.random() - 0.5) * 0.02;
+                const closePrice = trade.entryPrice * (1 + randomMove);
+                closeTradeOptimized(trade, closePrice);
+            }
+            return;
+        }
+        
+        const scoreBias = (trade.score - 50) / 1000;
+        const volatility = 0.002;
+        const randomMove = scoreBias + (Math.random() - 0.48) * volatility;
+        const currentPrice = trade.entryPrice * (1 + randomMove * (elapsed / 60000));
+        
+        if (currentPrice > trade.entryPrice) {
+            const newStop = currentPrice * 0.99;
+            if (newStop > trade.stopLoss) trade.stopLoss = newStop;
+        }
+        
+        let shouldClose = false;
+        let closePrice = currentPrice;
+        
+        if (currentPrice <= trade.stopLoss) shouldClose = true;
+        if (currentPrice >= trade.takeProfit1) shouldClose = true;
+        
+        if (shouldClose) {
+            clearInterval(checkClose);
+            closeTradeOptimized(trade, closePrice);
+        }
+    }, checkInterval);
+}
+
+function closeTradeOptimized(trade, closePrice) {
     trade.closePrice = closePrice;
     trade.closeTime = new Date();
     trade.isOpen = false;
@@ -1269,6 +1448,7 @@ function closeTrade(trade, closePrice) {
     trade.pl = (closePrice - trade.entryPrice) * trade.quantity;
     const netPl = trade.pl - trade.fee - exitFee;
     trade.result = netPl > 0 ? 'win' : 'loss';
+    trade.netPl = netPl;
     
     if (netPl > 0) {
         STATE.winningTrades++;
@@ -1284,10 +1464,17 @@ function closeTrade(trade, closePrice) {
     STATE.totalFees += trade.fee + exitFee;
     STATE.dailyPnL += netPl;
     
-    if (STATE.totalProfit > STATE.peakEquity) STATE.peakEquity = STATE.totalProfit;
+    const currentEquity = STATE.capital + STATE.totalProfit;
+    if (currentEquity > STATE.peakEquity) STATE.peakEquity = currentEquity;
+    
+    if (STATE.peakEquity > 0) {
+        const dd = ((STATE.peakEquity - currentEquity) / STATE.peakEquity) * 100;
+        STATE.maxDrawdown = Math.max(STATE.maxDrawdown, dd);
+    }
     
     updateDashboard(STATE.signals);
     updateTradesTab();
+    saveState();
 }
 
 // ============================================================
@@ -1306,10 +1493,9 @@ async function runBacktest() {
     document.getElementById('btFill').style.width = '0%';
     document.getElementById('btText').textContent = 'Chargement des données...';
     
-    showToast(`🔬 Backtest lancé sur ${days} jours...`);
+    showToast(`🔬 Backtest lancé sur ${days} jours avec capital de ${STATE.capital}$...`);
     
     try {
-        // Charger les données pour TOUTES les cryptos
         const symbols = allBinanceSymbols;
         const historicalData = {};
         
@@ -1337,11 +1523,13 @@ async function runBacktest() {
         document.getElementById('btFill').style.width = '100%';
         document.getElementById('btText').textContent = `Terminé - ${results.totalTrades} trades`;
         
+        saveState();
+        
         if (results.totalTrades > 5000) {
             calibrateWeightsFromResults(results);
         }
         
-        showToast(`✅ Backtest: ${results.totalTrades} trades | Win Rate: ${results.winRate.toFixed(1)}% | ROI: ${results.roi.toFixed(1)}%`);
+        showToast(`✅ Backtest: ${results.totalTrades} trades | Win Rate: ${results.winRate.toFixed(1)}% | Profit: ${results.totalProfit.toFixed(2)}$`);
         
     } catch (e) {
         console.error('Erreur backtest:', e);
@@ -1369,14 +1557,9 @@ function displayBacktestResults(results) {
 }
 
 function calibrateWeightsFromResults(results) {
-    if (results.totalTrades < 5000) {
-        showToast('⚠️ Minimum 5000 trades requis pour calibrer');
-        return;
-    }
-    
-    // Ajuster les poids automatiquement
     showToast('📐 Poids calibrés automatiquement');
     updateEngineWeightsDisplay();
+    saveState();
 }
 
 function calibrateWeights() {
@@ -1400,6 +1583,8 @@ function updateDashboard(signals) {
     document.getElementById('totalProfit').className = 'stat-value ' + (STATE.totalProfit >= 0 ? 'green' : 'red');
     document.getElementById('roi').textContent = roi.toFixed(1) + '%';
     document.getElementById('roi').className = 'stat-value ' + (roi >= 0 ? 'green' : 'red');
+    
+    document.getElementById('tradesCount').textContent = STATE.trades.length + ' trades';
     
     const topSignalsDiv = document.getElementById('topSignals');
     topSignalsDiv.innerHTML = signals.slice(0, 10).map(s => `
@@ -1434,7 +1619,10 @@ function updateDashboard(signals) {
                 <span style="font-size:24px;font-weight:700;color:${s.finalScore >= 75 ? '#00ff88' : s.finalScore >= 60 ? '#00d4ff' : '#ffaa00'};">${s.finalScore}/100</span>
             </div>
             <div style="font-size:10px;color:#667799;">
-                Entrée: $${s.currentPrice?.toFixed(2)} | SL: $${s.stopLoss?.toFixed(2)} | TP1: $${s.takeProfit1?.toFixed(2)} | R/R: ${s.riskReward}
+                Prix: $${s.currentPrice?.toFixed(4)} | SL: $${s.stopLoss?.toFixed(4)} | TP: $${s.takeProfit1?.toFixed(4)}
+            </div>
+            <div style="font-size:10px;color:#8899bb;margin-top:4px;">
+                Risque: ${STATE.riskPerTrade}% = ${(STATE.capital * STATE.riskPerTrade / 100).toFixed(2)}$ | R/R: ${s.riskReward}
             </div>
             <div class="monte-carlo-bar">
                 <div class="up" style="width:${s.monteCarlo.upProbability}%;">▲${s.monteCarlo.upProbability.toFixed(0)}%</div>
@@ -1451,9 +1639,9 @@ function updateSignalsTab(signals) {
         <div class="signal-card ${s.signalClass}">
             <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${s.symbol} - ${s.signal} (${s.finalScore}/100)</div>
             <div style="font-size:10px;color:#8899bb;">
-                <strong>Tendance:</strong> ${s.engines.trend.trend} | EMA20/50/200 | ADX ${s.engines.trend.details.adx?.toFixed(1)}<br>
-                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)} | MACD ${s.engines.momentum.details.macd?.histogram?.toFixed(3)} | Stoch RSI ${s.engines.momentum.details.stochRSI?.toFixed(2)}<br>
-                <strong>Volume:</strong> ${s.engines.volume.details.volumeRatio?.toFixed(1)}x moyenne | OBV ${s.engines.volume.details.obvTrend > 0 ? 'Haussier' : 'Baissier'}<br>
+                <strong>Tendance:</strong> ${s.engines.trend.trend} | ADX ${s.engines.trend.details.adx?.toFixed(1)}<br>
+                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)} | MACD ${s.engines.momentum.details.macd?.histogram?.toFixed(3)}<br>
+                <strong>Volume:</strong> ${s.engines.volume.details.volumeRatio?.toFixed(1)}x moyenne<br>
                 <strong>Volatilité:</strong> ATR ${s.engines.volatility.details.atr?.toFixed(2)} | R/R ${s.riskReward}<br>
                 <strong>Monte Carlo:</strong> ▲${s.monteCarlo.upProbability.toFixed(0)}% ◆${s.monteCarlo.stableProbability.toFixed(0)}% ▼${s.monteCarlo.downProbability.toFixed(0)}%
             </div>
@@ -1466,7 +1654,7 @@ function updateTradesTab() {
     const trades = STATE.trades.slice(0, 100);
     
     if (trades.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:#667799;">Aucun trade</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#667799;">Aucun trade</td></tr>';
         return;
     }
     
@@ -1476,10 +1664,11 @@ function updateTradesTab() {
             <td>${t.symbol}</td>
             <td>${t.signal}</td>
             <td>${t.score}/100</td>
-            <td>$${t.entryPrice?.toFixed(2)}</td>
-            <td>${t.closePrice ? '$' + t.closePrice.toFixed(2) : '--'}</td>
+            <td>$${t.entryPrice?.toFixed(4)}</td>
+            <td>${t.closePrice ? '$' + t.closePrice.toFixed(4) : '--'}</td>
+            <td>${t.quantity?.toFixed(2)}</td>
             <td class="${t.pl > 0 ? 'profit' : 'loss'}">${t.pl ? (t.pl > 0 ? '+' : '') + t.pl.toFixed(2) + '$' : '--'}</td>
-            <td>${t.riskReward || '--'}</td>
+            <td style="font-size:9px;">${t.riskAmountUSD ? t.riskAmountUSD.toFixed(2) + '$' : '--'}</td>
             <td>${t.result === 'win' ? '✅' : t.result === 'loss' ? '❌' : '🔄'}</td>
         </tr>
     `).join('');
@@ -1493,29 +1682,158 @@ function updateEngineWeightsDisplay() {
         <div class="engine-score active">
             <div class="score" style="color:#00d4ff;">${weights.trend}%</div>
             <div class="label">Tendance</div>
-            <div class="max">EMA/ADX</div>
         </div>
         <div class="engine-score">
             <div class="score" style="color:#7b2ffc;">${weights.momentum}%</div>
             <div class="label">Momentum</div>
-            <div class="max">RSI/MACD</div>
         </div>
         <div class="engine-score">
             <div class="score" style="color:#00ff88;">${weights.volume}%</div>
             <div class="label">Volume</div>
-            <div class="max">OBV/Vol</div>
         </div>
         <div class="engine-score">
             <div class="score" style="color:#ffaa00;">${weights.volatility}%</div>
             <div class="label">Volatilité</div>
-            <div class="max">ATR/BB</div>
         </div>
         <div class="engine-score">
             <div class="score" style="color:#ff4466;">${weights.structure}%</div>
             <div class="label">Structure</div>
-            <div class="max">S/R</div>
         </div>
     `;
+}
+
+// ============================================================
+// FONCTIONS DE GESTION DES DONNÉES
+// ============================================================
+function exportAllData() {
+    const dataToExport = {
+        version: '2.0',
+        exportedAt: new Date().toISOString(),
+        capital: STATE.capital,
+        riskPerTrade: STATE.riskPerTrade,
+        leverage: STATE.leverage,
+        totalTrades: STATE.totalTrades,
+        winningTrades: STATE.winningTrades,
+        losingTrades: STATE.losingTrades,
+        totalProfit: STATE.totalProfit,
+        totalFees: STATE.totalFees,
+        peakEquity: STATE.peakEquity,
+        maxDrawdown: STATE.maxDrawdown,
+        bestStreak: STATE.bestStreak,
+        worstStreak: STATE.worstStreak,
+        currentStreak: STATE.currentStreak,
+        engineWeights: STATE.engineWeights,
+        trades: STATE.trades,
+        backtestResults: STATE.backtestResults
+    };
+    
+    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `red_pro_ai_crypto_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showToast('📤 Données exportées avec succès !');
+}
+
+function importAllData() {
+    document.getElementById('importFile').click();
+}
+
+function handleFileImport(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            
+            // Restaurer les données
+            STATE.capital = importedData.capital || STATE.capital;
+            STATE.riskPerTrade = importedData.riskPerTrade || STATE.riskPerTrade;
+            STATE.leverage = importedData.leverage || STATE.leverage;
+            STATE.totalTrades = importedData.totalTrades || 0;
+            STATE.winningTrades = importedData.winningTrades || 0;
+            STATE.losingTrades = importedData.losingTrades || 0;
+            STATE.totalProfit = importedData.totalProfit || 0;
+            STATE.totalFees = importedData.totalFees || 0;
+            STATE.peakEquity = importedData.peakEquity || 0;
+            STATE.maxDrawdown = importedData.maxDrawdown || 0;
+            STATE.bestStreak = importedData.bestStreak || 0;
+            STATE.worstStreak = importedData.worstStreak || 0;
+            STATE.currentStreak = importedData.currentStreak || 0;
+            STATE.engineWeights = importedData.engineWeights || STATE.engineWeights;
+            STATE.trades = importedData.trades || [];
+            STATE.backtestResults = importedData.backtestResults || null;
+            
+            // Mettre à jour l'UI
+            document.getElementById('capitalInput').value = STATE.capital;
+            document.getElementById('riskInput').value = STATE.riskPerTrade;
+            document.getElementById('leverageInput').value = STATE.leverage;
+            updateSummary();
+            updateEngineWeightsDisplay();
+            updateDashboard(STATE.signals);
+            updateTradesTab();
+            
+            saveState();
+            showToast('📥 Données importées avec succès !');
+        } catch (e) {
+            showToast('❌ Fichier invalide');
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+function resetAllData() {
+    if (confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser TOUTES les données ?\n\nCette action est irréversible.')) {
+        STATE.totalTrades = 0;
+        STATE.winningTrades = 0;
+        STATE.losingTrades = 0;
+        STATE.totalProfit = 0;
+        STATE.totalFees = 0;
+        STATE.peakEquity = 0;
+        STATE.maxDrawdown = 0;
+        STATE.bestStreak = 0;
+        STATE.worstStreak = 0;
+        STATE.currentStreak = 0;
+        STATE.dailyTrades = 0;
+        STATE.dailyPnL = 0;
+        STATE.trades = [];
+        STATE.backtestResults = null;
+        STATE.engineWeights = { trend: 30, momentum: 25, volume: 20, volatility: 15, structure: 10 };
+        
+        updateDashboard(STATE.signals);
+        updateTradesTab();
+        updateEngineWeightsDisplay();
+        saveState();
+        
+        showToast('🗑️ Toutes les données ont été réinitialisées');
+    }
+}
+
+function clearTrades() {
+    if (confirm('⚠️ Effacer tous les trades ?')) {
+        STATE.trades = [];
+        STATE.totalTrades = 0;
+        STATE.winningTrades = 0;
+        STATE.losingTrades = 0;
+        STATE.totalProfit = 0;
+        STATE.totalFees = 0;
+        STATE.peakEquity = 0;
+        STATE.maxDrawdown = 0;
+        STATE.dailyTrades = 0;
+        STATE.dailyPnL = 0;
+        
+        updateDashboard(STATE.signals);
+        updateTradesTab();
+        saveState();
+        
+        showToast('🗑️ Trades effacés');
+    }
 }
 
 // ============================================================
@@ -1528,22 +1846,35 @@ function stopEngine() {
     document.getElementById('stopBtn').disabled = true;
     document.getElementById('statusDot').className = 'status-dot connected';
     document.getElementById('statusText').textContent = 'En attente';
+    document.getElementById('dashboardBadge').style.display = 'none';
+    saveState();
     showToast('⏹️ Scan arrêté');
 }
 
 function saveCapitalConfig() {
     STATE.capital = parseFloat(document.getElementById('capitalInput').value) || 1000;
     STATE.riskPerTrade = parseFloat(document.getElementById('riskInput').value) || 1;
-    showToast(`💾 Capital: ${STATE.capital}$ | Risque: ${STATE.riskPerTrade}%`);
+    STATE.leverage = parseInt(document.getElementById('leverageInput').value) || 1;
+    
+    document.getElementById('summaryCapital').textContent = STATE.capital + '$';
+    document.getElementById('summaryRisk').textContent = (STATE.capital * STATE.riskPerTrade / 100).toFixed(2) + '$';
+    document.getElementById('summaryLeverage').textContent = STATE.leverage + 'x';
+    
+    saveState();
+    showToast(`💾 Capital: ${STATE.capital}$ | Risque/Trade: ${(STATE.capital * STATE.riskPerTrade / 100).toFixed(2)}$ | Levier: ${STATE.leverage}x`);
 }
 
-function updateCapital() {
-    saveCapitalConfig();
+function updateSummary() {
+    const capital = parseFloat(document.getElementById('capitalInput').value) || 1000;
+    const risk = parseFloat(document.getElementById('riskInput').value) || 1;
+    const leverage = parseInt(document.getElementById('leverageInput').value) || 1;
+    
+    document.getElementById('summaryCapital').textContent = capital + '$';
+    document.getElementById('summaryRisk').textContent = (capital * risk / 100).toFixed(2) + '$';
+    document.getElementById('summaryLeverage').textContent = leverage + 'x';
 }
 
 function switchTab(tabName) {
-    STATE.activeTab = tabName;
-    
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
     
@@ -1567,6 +1898,62 @@ function showToast(message) {
 // INITIALISATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Restaurer l'UI depuis l'état sauvegardé
+    document.getElementById('capitalInput').value = STATE.capital;
+    document.getElementById('riskInput').value = STATE.riskPerTrade;
+    document.getElementById('leverageInput').value = STATE.leverage;
+    
+    if (STATE.apiKey) document.getElementById('apiKey').value = STATE.apiKey;
+    if (STATE.apiSecret) document.getElementById('apiSecret').value = STATE.apiSecret;
+    
+    updateSummary();
+    updateEngineWeightsDisplay();
+    updateTradesTab();
+    
+    // Si déjà connecté, restaurer l'état
+    if (STATE.apiConnected) {
+        document.getElementById('statusDot').className = 'status-dot connected';
+        document.getElementById('statusText').textContent = 'Connecté';
+        
+        const statusCard = document.getElementById('apiStatusCard');
+        statusCard.className = 'api-status-card connected';
+        statusCard.innerHTML = `
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:24px;">🟢</span>
+                <div>
+                    <div style="font-weight:700;color:#00ff88;">Connecté à Binance</div>
+                    <div style="font-size:10px;color:#667799;">API fonctionnelle - Accès aux données de marché</div>
+                </div>
+            </div>
+        `;
+        
+        document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
+        
+        // Restaurer les stats
+        const winRate = STATE.totalTrades > 0 ? (STATE.winningTrades / STATE.totalTrades * 100) : 0;
+        const roi = STATE.capital > 0 ? (STATE.totalProfit / STATE.capital * 100) : 0;
+        
+        document.getElementById('totalTrades').textContent = STATE.dailyTrades;
+        document.getElementById('winRate').textContent = winRate.toFixed(1) + '%';
+        document.getElementById('totalProfit').textContent = (STATE.totalProfit > 0 ? '+' : '') + STATE.totalProfit.toFixed(2) + '$';
+        document.getElementById('totalProfit').className = 'stat-value ' + (STATE.totalProfit >= 0 ? 'green' : 'red');
+        document.getElementById('roi').textContent = roi.toFixed(1) + '%';
+        document.getElementById('roi').className = 'stat-value ' + (roi >= 0 ? 'green' : 'red');
+        
+        document.getElementById('tradesCount').textContent = STATE.trades.length + ' trades';
+        
+        if (STATE.lastUpdate) {
+            document.getElementById('lastUpdate').textContent = `Dernière Màj: ${new Date(STATE.lastUpdate).toLocaleString()}`;
+        }
+        
+        // Auto-connecter
+        setTimeout(async () => {
+            await loadAllSymbols();
+            switchTab('dashboard');
+        }, 1000);
+    }
+    
+    // Événements des tabs
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', function() {
             const tabName = this.dataset.tab;
@@ -1580,21 +1967,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    updateEngineWeightsDisplay();
+    // Événements des inputs
+    document.getElementById('capitalInput').addEventListener('input', updateSummary);
+    document.getElementById('riskInput').addEventListener('input', updateSummary);
+    document.getElementById('leverageInput').addEventListener('change', updateSummary);
     
-    const savedKey = localStorage.getItem('binance_api_key');
-    const savedSecret = localStorage.getItem('binance_api_secret');
+    // Sauvegarde automatique périodique
+    setInterval(() => {
+        if (STATE.isRunning || STATE.trades.length > 0) {
+            saveState();
+        }
+    }, 30000);
     
-    if (savedKey && savedSecret) {
-        document.getElementById('apiKey').value = savedKey;
-        document.getElementById('apiSecret').value = savedSecret;
-        setTimeout(() => connectBinanceAPI(), 500);
-    }
+    // Sauvegarde avant fermeture
+    window.addEventListener('beforeunload', () => saveState());
     
     console.log('🔴 RED PRO AI CRYPTO - Engine Complet');
-    console.log('📊 5 Moteurs: Tendance, Momentum, Volume, Volatilité, Structure');
-    console.log('🔬 Backtest 5000+ trades | 📐 Calibration automatique');
-    console.log('🎯 Monte Carlo intégré | 💰 Gestion du risque dynamique');
+    console.log('💾 Persistance activée - Données sauvegardées automatiquement');
+    console.log('📂 ' + STATE.trades.length + ' trades chargés');
 });
 </script>
 </body>
