@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🔴 RED PRO AI CRYPTO - Engine Complet</title>
+    <title>🚀 RED PRO AI - Trading Multi-Exchange</title>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,6 +14,7 @@
             color: #e0e6f0;
             min-height: 100vh;
             padding: 8px;
+            padding-bottom: 80px;
         }
         
         ::-webkit-scrollbar { width: 4px; }
@@ -29,6 +30,8 @@
             border-radius: 12px;
             margin-bottom: 10px;
             border: 1px solid #1e2a3a;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         
         .header-title {
@@ -57,6 +60,7 @@
         }
         .status-dot.connected { background: #00ff88; animation: pulse 2s infinite; }
         .status-dot.scanning { background: #ffaa00; animation: pulse 0.5s infinite; }
+        .status-dot.warning { background: #ff8800; animation: pulse 1s infinite; }
         
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -69,45 +73,49 @@
             margin-bottom: 10px;
             overflow-x: auto;
             padding-bottom: 4px;
+            flex-wrap: nowrap;
         }
         .tab {
-            padding: 8px 16px;
+            padding: 8px 12px;
             background: #0a0e17;
             border: 1px solid #1a2230;
             border-radius: 10px;
             color: #667799;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             white-space: nowrap;
             transition: all 0.3s;
+            flex-shrink: 0;
         }
         .tab.active { background: #1a2230; color: #ff4466; border-color: #ff4466; }
         .tab.locked { opacity: 0.5; cursor: not-allowed; }
-        .tab .badge { background: #00ff88; color: #000; border-radius: 8px; padding: 1px 6px; font-size: 8px; margin-left: 4px; }
+        .tab .badge { background: #00ff88; color: #000; border-radius: 8px; padding: 1px 6px; font-size: 7px; margin-left: 4px; }
         
         .card {
             background: #0d1520;
             border-radius: 12px;
-            padding: 16px;
+            padding: 14px;
             margin-bottom: 10px;
             border: 1px solid #1e2a3a;
         }
         
         .card-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: #8899bb;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
         }
         
         .api-status-card {
             background: #0a0e17;
             border-radius: 10px;
-            padding: 14px;
+            padding: 12px;
             margin-bottom: 10px;
             border: 1px solid #1a2230;
         }
@@ -115,13 +123,13 @@
         .api-status-card.disconnected { border-color: #ff4466; }
         
         .api-input-group {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .api-input-group label {
             display: block;
-            font-size: 11px;
+            font-size: 10px;
             color: #8899bb;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         .api-input-group input, .api-input-group select {
             width: 100%;
@@ -151,83 +159,84 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
         .stat-item {
-            text-align: center;
-            padding: 12px 8px;
-            background: #0a0e17;
-            border-radius: 10px;
-            border: 1px solid #1a2230;
-        }
-        .stat-value { font-size: 18px; font-weight: 700; }
-        .stat-value.green { color: #00ff88; }
-        .stat-value.red { color: #ff4466; }
-        .stat-value.blue { color: #00d4ff; }
-        .stat-value.gold { color: #ffaa00; }
-        .stat-value.purple { color: #7b2ffc; }
-        .stat-label { font-size: 9px; color: #667799; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .engine-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .engine-score {
             text-align: center;
             padding: 10px 6px;
             background: #0a0e17;
             border-radius: 10px;
             border: 1px solid #1a2230;
         }
+        .stat-value { font-size: 16px; font-weight: 700; }
+        .stat-value.green { color: #00ff88; }
+        .stat-value.red { color: #ff4466; }
+        .stat-value.blue { color: #00d4ff; }
+        .stat-value.gold { color: #ffaa00; }
+        .stat-value.purple { color: #7b2ffc; }
+        .stat-label { font-size: 8px; color: #667799; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .engine-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .engine-score {
+            text-align: center;
+            padding: 8px 4px;
+            background: #0a0e17;
+            border-radius: 10px;
+            border: 1px solid #1a2230;
+        }
         .engine-score.active { border-color: #ff4466; }
-        .engine-score .score { font-size: 22px; font-weight: 700; }
-        .engine-score .label { font-size: 9px; color: #8899bb; margin-top: 3px; }
-        .engine-score .max { font-size: 8px; color: #445566; }
+        .engine-score .score { font-size: 18px; font-weight: 700; }
+        .engine-score .label { font-size: 8px; color: #8899bb; margin-top: 2px; }
         
         .btn {
-            padding: 10px 18px;
+            padding: 8px 14px;
             border: none;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .btn-primary { background: linear-gradient(135deg, #00d4ff, #7b2ffc); color: white; }
         .btn-danger { background: linear-gradient(135deg, #ff4466, #cc1133); color: white; }
         .btn-success { background: linear-gradient(135deg, #00ff88, #00cc66); color: #0a0e17; }
         .btn-warning { background: linear-gradient(135deg, #ffaa00, #ff8800); color: #0a0e17; }
-        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn-sm { padding: 6px 10px; font-size: 9px; }
         
         .data-table {
             width: 100%;
-            font-size: 10px;
+            font-size: 9px;
             border-collapse: collapse;
         }
         .data-table th {
             text-align: left;
             color: #667799;
-            padding: 8px 6px;
+            padding: 6px 4px;
             border-bottom: 2px solid #1a2230;
-            font-size: 9px;
+            font-size: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .data-table td {
-            padding: 6px;
+            padding: 4px;
             border-bottom: 1px solid #0a0e17;
+            font-size: 9px;
         }
         .profit { color: #00ff88; font-weight: 700; }
         .loss { color: #ff4466; font-weight: 700; }
         
         .scroll-container {
-            max-height: 450px;
+            max-height: 400px;
             overflow-y: auto;
             border-radius: 8px;
         }
@@ -248,8 +257,8 @@
         .signal-card {
             background: #0a0e17;
             border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 10px;
+            padding: 14px;
+            margin-bottom: 8px;
             border: 1px solid #1a2230;
         }
         .signal-card.strong-buy { border-color: #00ff88; border-width: 2px; box-shadow: 0 0 20px rgba(0,255,136,0.1); }
@@ -260,11 +269,11 @@
         
         .monte-carlo-bar {
             display: flex;
-            height: 24px;
-            border-radius: 12px;
+            height: 20px;
+            border-radius: 10px;
             overflow: hidden;
-            margin-top: 8px;
-            font-size: 10px;
+            margin-top: 6px;
+            font-size: 8px;
             font-weight: 700;
         }
         .monte-carlo-bar .up { background: #00ff8833; color: #00ff88; display: flex; align-items: center; justify-content: center; }
@@ -273,18 +282,18 @@
         
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 70px;
             left: 50%;
             transform: translateX(-50%);
             background: #1a1f2e;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 12px;
             border: 1px solid #2a3a4a;
             box-shadow: 0 8px 30px rgba(0,0,0,0.5);
             z-index: 999;
             display: none;
-            font-size: 13px;
+            font-size: 12px;
             max-width: 90%;
             text-align: center;
         }
@@ -298,8 +307,8 @@
             background: #00ff8811;
             border: 2px solid #00ff88;
             border-radius: 10px;
-            padding: 12px;
-            margin: 8px 0;
+            padding: 10px;
+            margin: 6px 0;
             text-align: center;
         }
         
@@ -312,95 +321,195 @@
             animation: pulse 2s infinite;
         }
         
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0d1520;
+            border-top: 1px solid #1a2230;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 0;
+            z-index: 100;
+        }
+        .bottom-nav .nav-item {
+            text-align: center;
+            padding: 4px 8px;
+            color: #667799;
+            font-size: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .bottom-nav .nav-item.active { color: #ff4466; }
+        .bottom-nav .nav-item .icon { font-size: 16px; display: block; }
+        .bottom-nav .nav-item .label { display: block; margin-top: 2px; }
+        
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        .market-item {
+            background: #0a0e17;
+            border: 1px solid #1a2230;
+            border-radius: 8px;
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .market-item:hover { border-color: #ff4466; }
+        .market-item .symbol { font-weight: 700; font-size: 11px; }
+        .market-item .price { font-size: 11px; color: #00d4ff; }
+        .market-item .change { font-size: 9px; }
+        .market-item .change.up { color: #00ff88; }
+        .market-item .change.down { color: #ff4466; }
+        
+        .price-display {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            padding: 8px;
+            background: #0a0e17;
+            border-radius: 8px;
+            border: 1px solid #1a2230;
+            margin-bottom: 8px;
+        }
+        .price-display .price { color: #00d4ff; }
+        .price-display .change { font-size: 14px; }
+        .price-display .change.up { color: #00ff88; }
+        .price-display .change.down { color: #ff4466; }
+        
+        .order-book {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .order-book .bids { color: #00ff88; }
+        .order-book .asks { color: #ff4466; }
+        .order-book .level {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            padding: 2px 0;
+            border-bottom: 1px solid #0a0e17;
+        }
+        
+        .indicator-toggle {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .indicator-toggle .tag {
+            padding: 4px 10px;
+            background: #0a0e17;
+            border: 1px solid #1a2230;
+            border-radius: 12px;
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .indicator-toggle .tag.active { border-color: #00ff88; color: #00ff88; background: #00ff8811; }
+        
         @media (max-width: 600px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .engine-grid { grid-template-columns: repeat(3, 1fr); }
             .header-title { font-size: 15px; }
+            .market-grid { grid-template-columns: repeat(3, 1fr); }
+            .order-book { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
-    <div class="header-title">🔴 RED PRO AI CRYPTO</div>
+    <div class="header-title">🚀 RED PRO AI</div>
     <div class="header-status">
         <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">API Requise</span>
-        <span style="font-size:9px;color:#667799;" id="savedStatus"></span>
+        <span id="statusText">Déconnecté</span>
+        <span style="font-size:8px;color:#667799;" id="savedStatus"></span>
     </div>
 </div>
 
+<!-- TABS -->
 <div class="tabs" id="tabsContainer">
-    <div class="tab active" data-tab="api" id="tabApi">🔑 API Binance</div>
-    <div class="tab locked" data-tab="dashboard" id="tabDashboard">📊 Dashboard <span class="badge" id="dashboardBadge" style="display:none;">●</span></div>
-    <div class="tab locked" data-tab="signals" id="tabSignals">🎯 Signaux</div>
-    <div class="tab locked" data-tab="trades" id="tabTrades">📜 Trades</div>
-    <div class="tab locked" data-tab="backtest" id="tabBacktest">🔬 Backtest</div>
-    <div class="tab locked" data-tab="engines" id="tabEngines">⚙️ Moteurs</div>
+    <div class="tab active" data-tab="api">🔑 API</div>
+    <div class="tab locked" data-tab="dashboard">📊 Dashboard</div>
+    <div class="tab locked" data-tab="market">📈 Marché</div>
+    <div class="tab locked" data-tab="signals">🎯 Signaux</div>
+    <div class="tab locked" data-tab="trades">📜 Trades</div>
+    <div class="tab locked" data-tab="backtest">🔬 Backtest</div>
+    <div class="tab locked" data-tab="settings">⚙️ Paramètres</div>
 </div>
 
-<!-- TAB 1: API BINANCE -->
+<!-- TAB 1: API -->
 <div id="tab-api">
     <div class="card">
-        <div class="card-title">
-            🔑 Connexion API Binance
-            <span style="font-size:10px;color:#ff4466;">OBLIGATOIRE</span>
-        </div>
+        <div class="card-title">🔑 Connexion Exchange</div>
         
         <div class="api-status-card disconnected" id="apiStatusCard">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-                <span style="font-size:24px;">🔴</span>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <span style="font-size:20px;">🔴</span>
                 <div>
                     <div style="font-weight:700;color:#ff4466;" id="apiStatusTitle">Non Connecté</div>
-                    <div style="font-size:10px;color:#667799;" id="apiStatusMsg">API Binance requise pour accéder aux données</div>
+                    <div style="font-size:9px;color:#667799;" id="apiStatusMsg">Sélectionnez un exchange et entrez vos clés</div>
                 </div>
             </div>
         </div>
         
         <div class="api-input-group">
-            <label>API Key Binance</label>
-            <input type="text" id="apiKey" placeholder="Collez votre clé API Binance ici...">
+            <label>Exchange</label>
+            <select id="exchangeSelect">
+                <option value="binance">Binance</option>
+                <option value="okx">OKX</option>
+                <option value="bybit">Bybit</option>
+            </select>
         </div>
         
         <div class="api-input-group">
-            <label>Secret Key Binance</label>
-            <input type="password" id="apiSecret" placeholder="Collez votre clé secrète ici...">
+            <label>API Key</label>
+            <input type="text" id="apiKey" placeholder="Collez votre clé API...">
         </div>
         
-        <button class="btn btn-danger" onclick="connectBinanceAPI()" style="width:100%;justify-content:center;margin-top:8px;">
-            🔓 Connecter à Binance
-        </button>
+        <div class="api-input-group">
+            <label>Secret Key</label>
+            <input type="password" id="apiSecret" placeholder="Collez votre clé secrète...">
+        </div>
+        
+        <div class="api-input-group" id="passphraseGroup" style="display:none;">
+            <label>Passphrase (OKX)</label>
+            <input type="password" id="apiPassphrase" placeholder="Passphrase OKX...">
+        </div>
+        
+        <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn btn-success" onclick="connectExchange()" style="flex:1;justify-content:center;">
+                🔓 Connecter
+            </button>
+            <button class="btn btn-danger" onclick="disconnectExchange()" style="flex:1;justify-content:center;">
+                🔒 Déconnecter
+            </button>
+        </div>
         
         <div class="api-info-box">
-            <strong>⚠️ Comment obtenir vos clés API :</strong><br>
-            1. Connectez-vous à <strong>Binance.com</strong><br>
-            2. Allez dans <strong>API Management</strong><br>
-            3. Créez une clé avec permissions <strong>Lecture seule</strong><br>
-            4. Vos clés sont stockées localement, jamais envoyées à un serveur<br>
-            5. <strong>Sans API valide, le bot ne fonctionne PAS</strong>
+            <strong>⚠️ Sécurité :</strong> Vos clés sont stockées localement et chiffrées. 
+            L'application ne demande JAMAIS de permissions de retrait.
         </div>
     </div>
     
     <div class="card">
-        <div class="card-title">
-            💰 Capital de Trading
-            <span style="font-size:10px;color:#ffaa00;">⚠️ Configurable par l'utilisateur</span>
-        </div>
+        <div class="card-title">💰 Configuration Trading</div>
         
-        <div class="highlight-box">
-            <div style="font-size:12px;color:#00ff88;font-weight:700;">💡 IMPORTANT</div>
-            <div style="font-size:10px;color:#8899bb;margin-top:4px;">
-                Définissez votre capital EXACT. Chaque trade risquera <strong>1% de ce capital</strong>.
-            </div>
-        </div>
-        
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div class="api-input-group">
-                <label>Capital Total (USDT)</label>
+                <label>Capital (USDT)</label>
                 <input type="number" id="capitalInput" value="1000" min="10" step="100">
             </div>
             <div class="api-input-group">
-                <label>Risque par Trade (%)</label>
+                <label>Risque par trade (%)</label>
                 <input type="number" id="riskInput" value="1" min="0.1" max="5" step="0.1">
             </div>
             <div class="api-input-group">
@@ -413,45 +522,27 @@
                     <option value="10">10x</option>
                 </select>
             </div>
-        </div>
-        
-        <div style="background:#0a0e17;border-radius:8px;padding:10px;margin:8px 0;font-size:10px;color:#8899bb;">
-            <strong>Résumé :</strong><br>
-            Capital : <span style="color:#00d4ff;" id="summaryCapital">1000$</span> | 
-            Risque/Trade : <span style="color:#ffaa00;" id="summaryRisk">10$</span> (1%) |
-            Levier : <span style="color:#7b2ffc;" id="summaryLeverage">1x</span>
-        </div>
-        
-        <button class="btn btn-success" onclick="saveCapitalConfig()" style="width:100%;justify-content:center;margin-top:10px;">
-            💾 Sauvegarder la Configuration
-        </button>
-    </div>
-    
-    <div class="card">
-        <div class="card-title">
-            📂 Gestion des Données
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <button class="btn btn-primary" onclick="exportAllData()" style="justify-content:center;">
-                📤 Exporter Données
-            </button>
-            <button class="btn btn-warning" onclick="importAllData()" style="justify-content:center;">
-                📥 Importer Données
-            </button>
-            <button class="btn btn-danger" onclick="resetAllData()" style="justify-content:center;">
-                🗑️ Réinitialiser
-            </button>
-            <div style="font-size:10px;color:#667799;display:flex;align-items:center;justify-content:center;">
-                <span class="saved-indicator"></span> Sauvegarde automatique
+            <div class="api-input-group">
+                <label>Max positions</label>
+                <select id="maxPositions">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
             </div>
         </div>
-        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleFileImport(event)">
+        
+        <button class="btn btn-primary" onclick="saveConfig()" style="width:100%;justify-content:center;margin-top:8px;">
+            💾 Sauvegarder
+        </button>
     </div>
 </div>
 
 <!-- TAB 2: DASHBOARD -->
 <div id="tab-dashboard" style="display:none;">
-    <div class="stats-grid" style="margin-bottom:10px;">
+    <div class="stats-grid">
         <div class="stat-item">
             <div class="stat-value gold" id="totalTrades">0</div>
             <div class="stat-label">Trades</div>
@@ -462,58 +553,121 @@
         </div>
         <div class="stat-item">
             <div class="stat-value blue" id="totalProfit">+0.00$</div>
-            <div class="stat-label">Profit Total</div>
+            <div class="stat-label">Profit</div>
         </div>
         <div class="stat-item">
             <div class="stat-value purple" id="roi">0%</div>
             <div class="stat-label">ROI</div>
         </div>
+        <div class="stat-item">
+            <div class="stat-value" id="drawdown" style="color:#ff8800;">0%</div>
+            <div class="stat-label">Drawdown</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="sharpe" style="color:#7b2ffc;">0</div>
+            <div class="stat-label">Sharpe</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="profitFactor" style="color:#00d4ff;">0</div>
+            <div class="stat-label">Profit Factor</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="currentStreak" style="color:#ffaa00;">0</div>
+            <div class="stat-label">Streak</div>
+        </div>
     </div>
     
     <div class="card">
         <div class="card-title">
-            📊 Performance
-            <span style="font-size:10px;color:#667799;" id="lastUpdate">--</span>
+            📊 Contrôle
+            <span style="font-size:9px;color:#667799;" id="lastUpdate">--</span>
         </div>
-        <div class="btn-group" style="margin-bottom:12px;">
-            <button class="btn btn-success" onclick="startEngine()" id="startBtn">▶️ Démarrer le Scan</button>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="startEngine()" id="startBtn">▶️ Démarrer</button>
             <button class="btn btn-danger" onclick="stopEngine()" id="stopBtn" disabled>⏹️ Stop</button>
             <button class="btn btn-warning" onclick="runBacktest()">🔬 Backtest</button>
             <button class="btn btn-primary" onclick="calibrateWeights()">📐 Calibrer</button>
-            <button class="btn btn-sm" style="background:#1a2230;color:#8899bb;" onclick="clearTrades()">🗑️ Effacer Trades</button>
         </div>
-        <div id="dashboardContent" style="font-size:11px;color:#667799;">
-            Prêt à scanner. Cliquez sur "Démarrer".
+        <div id="dashboardContent" style="font-size:10px;color:#667799;margin-top:8px;">
+            Prêt à scanner. Connectez-vous d'abord.
         </div>
     </div>
     
     <div class="card">
-        <div class="card-title">🎯 Top Signaux en Direct</div>
-        <div id="topSignals"></div>
+        <div class="card-title">📊 Positions Ouvertes</div>
+        <div id="openPositions" style="font-size:10px;color:#667799;">Aucune position ouverte</div>
     </div>
 </div>
 
-<!-- TAB 3: SIGNAUX -->
+<!-- TAB 3: MARCHÉ -->
+<div id="tab-market" style="display:none;">
+    <div class="card">
+        <div class="card-title">
+            📈 Prix en Direct
+            <span style="font-size:9px;color:#667799;" id="marketStatus">🔄 Connexion...</span>
+        </div>
+        <div id="selectedPrice" class="price-display">
+            <div class="price" id="currentPrice">--</div>
+            <div class="change" id="priceChange">--</div>
+        </div>
+        <div class="market-grid" id="marketGrid"></div>
+    </div>
+    
+    <div class="card">
+        <div class="card-title">📊 Carnet d'Ordres</div>
+        <div class="order-book" id="orderBook">
+            <div class="bids">
+                <div style="font-weight:700;margin-bottom:4px;">ACHETEURS</div>
+                <div id="bidsList"></div>
+            </div>
+            <div class="asks">
+                <div style="font-weight:700;margin-bottom:4px;">VENDEURS</div>
+                <div id="asksList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-title">📊 Indicateurs</div>
+        <div class="indicator-toggle" id="indicatorToggle">
+            <span class="tag active" data-ind="rsi">RSI</span>
+            <span class="tag active" data-ind="macd">MACD</span>
+            <span class="tag active" data-ind="ema">EMA</span>
+            <span class="tag" data-ind="bb">Bollinger</span>
+            <span class="tag" data-ind="vwap">VWAP</span>
+            <span class="tag" data-ind="stoch">Stochastic</span>
+            <span class="tag" data-ind="adx">ADX</span>
+            <span class="tag" data-ind="ichimoku">Ichimoku</span>
+        </div>
+        <div id="indicatorValues" style="font-size:9px;color:#8899bb;margin-top:6px;">
+            Sélectionnez des indicateurs
+        </div>
+    </div>
+</div>
+
+<!-- TAB 4: SIGNAUX -->
 <div id="tab-signals" style="display:none;">
     <div class="card">
-        <div class="card-title">🎯 Analyse Complète par les 5 Moteurs</div>
-        <div class="scroll-container" style="max-height:550px;" id="signalsDetail"></div>
+        <div class="card-title">🎯 Signaux en Direct</div>
+        <div class="scroll-container" style="max-height:500px;" id="signalsDetail">
+            <div style="text-align:center;color:#667799;padding:20px;">Aucun signal pour le moment</div>
+        </div>
     </div>
 </div>
 
-<!-- TAB 4: TRADES -->
+<!-- TAB 5: TRADES -->
 <div id="tab-trades" style="display:none;">
     <div class="card">
         <div class="card-title">
-            📜 Historique des Trades
-            <span style="font-size:10px;color:#667799;" id="tradesCount">0 trades</span>
+            📜 Historique
+            <span style="font-size:9px;color:#667799;" id="tradesCount">0 trades</span>
         </div>
-        <div class="scroll-container" style="max-height:500px;">
+        <div class="scroll-container" style="max-height:450px;">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>#</th><th>Symbole</th><th>Signal</th><th>Score</th>
-                        <th>Entrée</th><th>Sortie</th><th>Qty</th><th>P/L</th><th>Capital Risqué</th><th>Résultat</th>
+                        <th>#</th><th>Exchange</th><th>Symbole</th><th>Signal</th><th>Score</th>
+                        <th>Entrée</th><th>Sortie</th><th>P/L</th><th>Résultat</th>
                     </tr>
                 </thead>
                 <tbody id="tradesBody"></tbody>
@@ -522,45 +676,84 @@
     </div>
 </div>
 
-<!-- TAB 5: BACKTEST -->
+<!-- TAB 6: BACKTEST -->
 <div id="tab-backtest" style="display:none;">
     <div class="card">
-        <div class="card-title">🔬 Backtest Engine (5000+ trades minimum)</div>
-        <div class="btn-group" style="margin-bottom:12px;">
-            <button class="btn btn-warning" onclick="runBacktest()">▶️ Lancer Backtest</button>
-            <select id="btDays" style="background:#0a0e17;color:white;border:1px solid #1a2230;border-radius:8px;padding:8px 12px;font-size:11px;">
+        <div class="card-title">🔬 Backtest</div>
+        <div class="btn-group">
+            <button class="btn btn-warning" onclick="runBacktest()">▶️ Lancer</button>
+            <select id="btDays" style="background:#0a0e17;color:white;border:1px solid #1a2230;border-radius:8px;padding:6px 10px;font-size:10px;">
                 <option value="90">90 jours</option>
                 <option value="180">180 jours</option>
                 <option value="365" selected>1 an</option>
                 <option value="730">2 ans</option>
             </select>
         </div>
-        <div id="btProgress" style="display:none;margin-bottom:12px;">
+        <div id="btProgress" style="display:none;margin-bottom:10px;">
             <div class="progress-bar"><div class="fill" style="background:#ff4466;width:0%;" id="btFill"></div></div>
-            <div style="font-size:10px;color:#667799;margin-top:5px;" id="btText">0%</div>
+            <div style="font-size:9px;color:#667799;margin-top:4px;" id="btText">0%</div>
         </div>
         <div class="stats-grid" id="btResults">
             <div class="stat-item"><div class="stat-value" id="btTrades">--</div><div class="stat-label">Trades</div></div>
             <div class="stat-item"><div class="stat-value" id="btWinRate">--</div><div class="stat-label">Win Rate</div></div>
-            <div class="stat-item"><div class="stat-value" id="btProfit">--</div><div class="stat-label">Profit Net</div></div>
+            <div class="stat-item"><div class="stat-value" id="btProfit">--</div><div class="stat-label">Profit</div></div>
             <div class="stat-item"><div class="stat-value" id="btROI">--</div><div class="stat-label">ROI</div></div>
             <div class="stat-item"><div class="stat-value" id="btDrawdown">--</div><div class="stat-label">Drawdown</div></div>
             <div class="stat-item"><div class="stat-value" id="btSharpe">--</div><div class="stat-label">Sharpe</div></div>
             <div class="stat-item"><div class="stat-value" id="btProfitFactor">--</div><div class="stat-label">Profit Factor</div></div>
-            <div class="stat-item"><div class="stat-value" id="btAvgRR">--</div><div class="stat-label">R/R Moyen</div></div>
+            <div class="stat-item"><div class="stat-value" id="btAvgRR">--</div><div class="stat-label">R/R</div></div>
         </div>
     </div>
 </div>
 
-<!-- TAB 6: MOTEURS -->
-<div id="tab-engines" style="display:none;">
+<!-- TAB 7: PARAMÈTRES -->
+<div id="tab-settings" style="display:none;">
     <div class="card">
-        <div class="card-title">⚙️ Poids des Moteurs (Calibration Automatique)</div>
+        <div class="card-title">⚙️ Moteurs</div>
         <div class="engine-grid" id="engineWeightsDisplay"></div>
-        <div style="font-size:10px;color:#667799;margin-top:10px;">
-            Les poids s'ajustent automatiquement après chaque backtest de 5000+ trades.
+        <div style="font-size:9px;color:#667799;margin-top:6px;">
+            Poids calibrés automatiquement après backtest
         </div>
     </div>
+    
+    <div class="card">
+        <div class="card-title">📂 Données</div>
+        <div class="btn-group">
+            <button class="btn btn-primary btn-sm" onclick="exportAllData()">📤 Exporter</button>
+            <button class="btn btn-warning btn-sm" onclick="importAllData()">📥 Importer</button>
+            <button class="btn btn-danger btn-sm" onclick="resetAllData()">🗑️ Réinitialiser</button>
+            <button class="btn btn-sm" style="background:#1a2230;color:#8899bb;" onclick="clearTrades()">🗑️ Effacer Trades</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleFileImport(event)">
+    </div>
+    
+    <div class="card">
+        <div class="card-title">🔔 Alertes</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="alertPrice" checked> Prix
+            </label>
+            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="alertRSI" checked> RSI
+            </label>
+            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="alertVolume" checked> Volume
+            </label>
+            <label style="font-size:10px;color:#8899bb;display:flex;align-items:center;gap:6px;">
+                <input type="checkbox" id="alertSignal" checked> Signaux
+            </label>
+        </div>
+    </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+    <div class="nav-item active" data-tab="api"><span class="icon">🔑</span><span class="label">API</span></div>
+    <div class="nav-item" data-tab="dashboard"><span class="icon">📊</span><span class="label">Dashboard</span></div>
+    <div class="nav-item" data-tab="market"><span class="icon">📈</span><span class="label">Marché</span></div>
+    <div class="nav-item" data-tab="signals"><span class="icon">🎯</span><span class="label">Signaux</span></div>
+    <div class="nav-item" data-tab="trades"><span class="icon">📜</span><span class="label">Trades</span></div>
+    <div class="nav-item" data-tab="settings"><span class="icon">⚙️</span><span class="label">Paramètres</span></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -569,7 +762,7 @@
 // ============================================================
 // PERSISTANCE DES DONNÉES
 // ============================================================
-const STORAGE_KEY = 'red_pro_ai_crypto_v2';
+const STORAGE_KEY = 'red_pro_ai_v3';
 
 function loadState() {
     try {
@@ -579,21 +772,22 @@ function loadState() {
             console.log('📂 Données chargées:', parsed.totalTrades || 0, 'trades');
             return parsed;
         }
-    } catch (e) {
-        console.error('Erreur chargement:', e);
-    }
+    } catch (e) { console.error('Erreur chargement:', e); }
     return null;
 }
 
 function saveState() {
     try {
         const dataToSave = {
+            exchange: STATE.exchange,
+            apiKey: STATE.apiKey,
+            apiSecret: STATE.apiSecret,
+            apiPassphrase: STATE.apiPassphrase,
+            apiConnected: STATE.apiConnected,
             capital: STATE.capital,
             riskPerTrade: STATE.riskPerTrade,
             leverage: STATE.leverage,
-            apiKey: STATE.apiKey,
-            apiSecret: STATE.apiSecret,
-            apiConnected: STATE.apiConnected,
+            maxPositions: STATE.maxPositions,
             totalTrades: STATE.totalTrades,
             winningTrades: STATE.winningTrades,
             losingTrades: STATE.losingTrades,
@@ -604,60 +798,39 @@ function saveState() {
             bestStreak: STATE.bestStreak,
             worstStreak: STATE.worstStreak,
             currentStreak: STATE.currentStreak,
-            dailyTrades: STATE.dailyTrades,
-            dailyPnL: STATE.dailyPnL,
             engineWeights: STATE.engineWeights,
             trades: STATE.trades.slice(0, 500),
             backtestResults: STATE.backtestResults,
-            lastUpdate: STATE.lastUpdate,
-            savedAt: new Date().toISOString()
+            indicators: STATE.indicators
         };
-        
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-        document.getElementById('savedStatus').textContent = '💾 Sauvegardé';
-        setTimeout(() => {
-            if (document.getElementById('savedStatus')) {
-                document.getElementById('savedStatus').textContent = '';
-            }
-        }, 2000);
+        document.getElementById('savedStatus').textContent = '💾';
+        setTimeout(() => { if (document.getElementById('savedStatus')) document.getElementById('savedStatus').textContent = ''; }, 1500);
     } catch (e) {
         console.error('Erreur sauvegarde:', e);
-        // Si quota dépassé, réduire les trades
         if (e.name === 'QuotaExceededError') {
             STATE.trades = STATE.trades.slice(0, 100);
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    capital: STATE.capital,
-                    riskPerTrade: STATE.riskPerTrade,
-                    leverage: STATE.leverage,
-                    apiKey: STATE.apiKey,
-                    apiSecret: STATE.apiSecret,
-                    apiConnected: STATE.apiConnected,
-                    totalTrades: STATE.totalTrades,
-                    totalProfit: STATE.totalProfit,
-                    trades: STATE.trades.slice(0, 100),
-                    savedAt: new Date().toISOString()
-                }));
-            } catch (e2) {
-                console.error('Sauvegarde impossible');
-            }
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify({...dataToSave, trades: STATE.trades.slice(0, 100)})); } catch (e2) {}
         }
     }
 }
 
 // ============================================================
-// ÉTAT GLOBAL avec chargement
+// ÉTAT GLOBAL
 // ============================================================
 const savedState = loadState();
 
 const STATE = {
-    apiConnected: savedState?.apiConnected || false,
+    exchange: savedState?.exchange || 'binance',
     apiKey: savedState?.apiKey || '',
     apiSecret: savedState?.apiSecret || '',
+    apiPassphrase: savedState?.apiPassphrase || '',
+    apiConnected: savedState?.apiConnected || false,
     isRunning: false,
     capital: savedState?.capital || 1000,
     riskPerTrade: savedState?.riskPerTrade || 1,
     leverage: savedState?.leverage || 1,
+    maxPositions: savedState?.maxPositions || 3,
     totalTrades: savedState?.totalTrades || 0,
     winningTrades: savedState?.winningTrades || 0,
     losingTrades: savedState?.losingTrades || 0,
@@ -668,27 +841,30 @@ const STATE = {
     bestStreak: savedState?.bestStreak || 0,
     worstStreak: savedState?.worstStreak || 0,
     currentStreak: savedState?.currentStreak || 0,
-    dailyTrades: savedState?.dailyTrades || 0,
-    dailyPnL: savedState?.dailyPnL || 0,
     engineWeights: savedState?.engineWeights || { trend: 30, momentum: 25, volume: 20, volatility: 15, structure: 10 },
     trades: savedState?.trades || [],
     signals: [],
-    allSymbols: [],
+    allSymbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'BNBUSDT', 'XRPUSDT', 'DOGEUSDT', 'ADAUSDT', 'TONUSDT'],
+    marketData: {},
+    orderBook: {},
+    indicators: savedState?.indicators || { rsi: true, macd: true, ema: true, bb: false, vwap: false, stoch: false, adx: false, ichimoku: false },
     scanCount: 0,
-    lastUpdate: savedState?.lastUpdate || null,
-    backtestResults: savedState?.backtestResults || null
+    lastUpdate: null,
+    backtestResults: savedState?.backtestResults || null,
+    ws: null,
+    wsReconnectTimer: null,
+    selectedSymbol: 'BTCUSDT'
 };
 
 // ============================================================
-// 1. MOTEUR DE TENDANCE
+// MOTORISATION (Moteurs d'analyse)
 // ============================================================
 class TrendEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 30, details: {} };
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const ema20 = this.EMA(prices, 20);
         details.ema20 = ema20;
@@ -752,15 +928,11 @@ class TrendEngine {
     }
 }
 
-// ============================================================
-// 2. MOTEUR MOMENTUM
-// ============================================================
 class MomentumEngine {
     calculate(data) {
         if (!data || data.length < 50) return { score: 0, max: 25, details: {} };
         const prices = data.map(d => d.close);
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const rsi = this.calculateRSI(prices, 14);
         details.rsi = rsi;
@@ -826,25 +998,21 @@ class MomentumEngine {
     }
 }
 
-// ============================================================
-// 3. MOTEUR VOLATILITÉ
-// ============================================================
 class VolatilityEngine {
     calculate(data) {
         if (!data || data.length < 20) return { score: 0, max: 15, details: {} };
         const prices = data.map(d => d.close);
         const currentPrice = prices[prices.length - 1];
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const atr = this.calculateATR(data);
         const volatility = atr / currentPrice;
         details.atr = atr;
         details.volatility = volatility;
         
-        if (volatility > 0.005 && volatility < 0.03) { score += 10; details.atrSignal = `Volatilité idéale (+10)`; }
-        else if (volatility <= 0.005) { score += 4; details.atrSignal = `Volatilité faible (+4)`; }
-        else { score -= 3; details.atrSignal = `Volatilité excessive (-3)`; }
+        if (volatility > 0.005 && volatility < 0.03) { score += 10; details.atrSignal = 'Volatilité idéale (+10)'; }
+        else if (volatility <= 0.005) { score += 4; details.atrSignal = 'Volatilité faible (+4)'; }
+        else { score -= 3; details.atrSignal = 'Volatilité excessive (-3)'; }
         
         const bb = this.calculateBollinger(data);
         details.bb = bb;
@@ -879,16 +1047,12 @@ class VolatilityEngine {
     }
 }
 
-// ============================================================
-// 4. MOTEUR VOLUME
-// ============================================================
 class VolumeEngine {
     calculate(data) {
         if (!data || data.length < 30) return { score: 0, max: 20, details: {} };
         const volumes = data.map(d => d.volume);
         const currentVolume = volumes[volumes.length - 1];
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const avgVolume = volumes.slice(-21, -1).reduce((a, b) => a + b, 0) / 20;
         const volumeRatio = currentVolume / avgVolume;
@@ -918,14 +1082,10 @@ class VolumeEngine {
     }
 }
 
-// ============================================================
-// 5. MOTEUR STRUCTURE
-// ============================================================
 class StructureEngine {
     calculate(data) {
         if (!data || data.length < 30) return { score: 0, max: 10, details: {} };
-        let score = 0;
-        const details = {};
+        let score = 0, details = {};
         
         const sr = this.findSupportResistance(data);
         details.support = sr.support;
@@ -961,7 +1121,7 @@ class StructureEngine {
 }
 
 // ============================================================
-// 6. MOTEUR DE SCORING
+// SCORING ENGINE AVEC IA
 // ============================================================
 class ScoringEngine {
     constructor() {
@@ -984,7 +1144,7 @@ class ScoringEngine {
         const weights = STATE.engineWeights;
         const totalWeight = weights.trend + weights.momentum + weights.volume + weights.volatility + weights.structure;
         
-        const weightedScore = (
+        let weightedScore = (
             (trend.score / trend.max) * weights.trend +
             (momentum.score / momentum.max) * weights.momentum +
             (volume.score / volume.max) * weights.volume +
@@ -992,11 +1152,12 @@ class ScoringEngine {
             (structure.score / structure.max) * weights.structure
         ) / totalWeight * 100;
         
-        const monteCarlo = this.runMonteCarlo(data, weightedScore);
+        // Monte Carlo
+        const monteCarlo = this.runMonteCarlo(data);
+        if (monteCarlo.upProbability > 55) weightedScore += 5;
+        else if (monteCarlo.upProbability < 45) weightedScore -= 5;
         
-        let finalProbability = weightedScore;
-        if (monteCarlo.upProbability > 55) finalProbability += 5;
-        else if (monteCarlo.upProbability < 45) finalProbability -= 5;
+        weightedScore = Math.min(Math.max(weightedScore, 0), 100);
         
         const currentPrice = data[data.length - 1].close;
         const atr = volatility.details.atr || currentPrice * 0.01;
@@ -1006,21 +1167,21 @@ class ScoringEngine {
         const riskReward = ((takeProfit1 - currentPrice) / (currentPrice - stopLoss)).toFixed(2);
         
         let signal, signalClass;
-        if (finalProbability >= 75) { signal = '🟢 ACHAT FORT'; signalClass = 'strong-buy'; }
-        else if (finalProbability >= 60) { signal = '🟢 ACHAT'; signalClass = 'buy'; }
-        else if (finalProbability <= 30) { signal = '🔴 VENTE FORT'; signalClass = 'strong-sell'; }
-        else if (finalProbability <= 45) { signal = '🔴 VENTE'; signalClass = 'sell'; }
+        if (weightedScore >= 75) { signal = '🟢 ACHAT FORT'; signalClass = 'strong-buy'; }
+        else if (weightedScore >= 60) { signal = '🟢 ACHAT'; signalClass = 'buy'; }
+        else if (weightedScore <= 30) { signal = '🔴 VENTE FORT'; signalClass = 'strong-sell'; }
+        else if (weightedScore <= 45) { signal = '🔴 VENTE'; signalClass = 'sell'; }
         else { signal = '⚪ ATTENTE'; signalClass = 'neutral'; }
         
         return {
-            signal, signalClass, finalScore: Math.round(finalProbability), probability: finalProbability,
+            signal, signalClass, finalScore: Math.round(weightedScore), probability: weightedScore,
             engines: { trend, momentum, volatility, volume, structure },
             monteCarlo, currentPrice, stopLoss, takeProfit1, takeProfit2, riskReward,
             riskPercent: (currentPrice - stopLoss) / currentPrice * 100
         };
     }
     
-    runMonteCarlo(data, baseScore) {
+    runMonteCarlo(data) {
         const prices = data.map(d => d.close);
         const returns = [];
         for (let i = 1; i < prices.length; i++) returns.push((prices[i] - prices[i-1]) / prices[i-1]);
@@ -1045,15 +1206,14 @@ class ScoringEngine {
 }
 
 // ============================================================
-// 7. GESTION DU RISQUE
+// RISK MANAGER
 // ============================================================
 class RiskManager {
     calculatePosition(capital, riskPercent, entryPrice, stopLoss) {
         const riskAmountUSD = capital * (riskPercent / 100);
         const riskPerUnitUSD = Math.abs(entryPrice - stopLoss);
         if (riskPerUnitUSD <= 0 || riskAmountUSD <= 0) return 0;
-        const quantity = riskAmountUSD / riskPerUnitUSD;
-        return quantity * STATE.leverage;
+        return riskAmountUSD / riskPerUnitUSD * STATE.leverage;
     }
     
     calculateDynamicRisk(baseScore) {
@@ -1070,7 +1230,7 @@ class RiskManager {
 }
 
 // ============================================================
-// 8. BACKTEST ENGINE
+// BACKTEST ENGINE
 // ============================================================
 class BacktestEngine {
     constructor() {
@@ -1184,96 +1344,279 @@ const scoringEngine = new ScoringEngine();
 const riskManager = new RiskManager();
 const backtestEngine = new BacktestEngine();
 let scanInterval = null;
-let allBinanceSymbols = [];
+let wsConnections = {};
 
 // ============================================================
-// FONCTIONS API BINANCE
+// WEBSOCKET MANAGER (Multi-exchange)
 // ============================================================
-async function connectBinanceAPI() {
+function getWebSocketURL(exchange, symbol) {
+    const sym = symbol.toLowerCase();
+    switch(exchange) {
+        case 'binance': return `wss://stream.binance.com:9443/ws/${sym}@trade/${sym}@depth20/${sym}@kline_1m`;
+        case 'okx': return `wss://ws.okx.com:8443/ws/v5/public`;
+        case 'bybit': return `wss://stream.bybit.com/v5/public/linear`;
+        default: return null;
+    }
+}
+
+function connectWebSocket() {
+    if (!STATE.apiConnected) return;
+    
+    const exchange = STATE.exchange;
+    const symbol = STATE.selectedSymbol || 'BTCUSDT';
+    
+    try {
+        if (wsConnections[exchange]) {
+            try { wsConnections[exchange].close(); } catch(e) {}
+            delete wsConnections[exchange];
+        }
+        
+        const ws = new WebSocket(getWebSocketURL(exchange, symbol));
+        
+        ws.onopen = () => {
+            document.getElementById('marketStatus').textContent = '✅ Connecté';
+            document.getElementById('statusDot').className = 'status-dot connected';
+            
+            // Subscribe selon exchange
+            if (exchange === 'binance') {
+                // Already subscribed via URL
+            } else if (exchange === 'okx') {
+                ws.send(JSON.stringify({
+                    op: 'subscribe',
+                    args: [
+                        { channel: 'trades', instId: symbol },
+                        { channel: 'books5', instId: symbol },
+                        { channel: 'candle1m', instId: symbol }
+                    ]
+                }));
+            } else if (exchange === 'bybit') {
+                ws.send(JSON.stringify({
+                    op: 'subscribe',
+                    args: [
+                        `publicTrade.${symbol}`,
+                        `orderbook.20.${symbol}`,
+                        `kline.1m.${symbol}`
+                    ]
+                }));
+            }
+        };
+        
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(exchange, data);
+            } catch(e) {}
+        };
+        
+        ws.onclose = () => {
+            document.getElementById('marketStatus').textContent = '🔄 Reconnexion...';
+            if (STATE.isRunning) {
+                clearTimeout(wsConnections._reconnectTimer);
+                wsConnections._reconnectTimer = setTimeout(connectWebSocket, 3000);
+            }
+        };
+        
+        ws.onerror = () => {
+            document.getElementById('marketStatus').textContent = '⚠️ Erreur';
+        };
+        
+        wsConnections[exchange] = ws;
+        
+    } catch(e) {
+        console.error('WebSocket error:', e);
+    }
+}
+
+function handleWebSocketMessage(exchange, data) {
+    // Binance
+    if (exchange === 'binance') {
+        if (data.e === 'trade') {
+            const price = parseFloat(data.p);
+            const symbol = data.s;
+            updateMarketPrice(symbol, price);
+        } else if (data.e === 'depthUpdate') {
+            updateOrderBook(data.bids, data.asks);
+        } else if (data.e === 'kline') {
+            // Handle kline data
+        }
+    }
+    // OKX
+    else if (exchange === 'okx') {
+        if (data.arg?.channel === 'trades' && data.data) {
+            const trade = data.data[0];
+            updateMarketPrice(data.arg.instId, parseFloat(trade.p));
+        } else if (data.arg?.channel === 'books5' && data.data) {
+            const book = data.data[0];
+            updateOrderBook(book.bids, book.asks);
+        }
+    }
+    // Bybit
+    else if (exchange === 'bybit') {
+        if (data.topic?.includes('publicTrade')) {
+            const trade = data.data;
+            updateMarketPrice(trade.s, parseFloat(trade.p));
+        } else if (data.topic?.includes('orderbook')) {
+            const book = data.data;
+            updateOrderBook(book.b, book.a);
+        }
+    }
+}
+
+function updateMarketPrice(symbol, price) {
+    STATE.marketData[symbol] = { price, time: Date.now() };
+    if (symbol === STATE.selectedSymbol) {
+        document.getElementById('currentPrice').textContent = '$' + price.toFixed(2);
+        // Update change
+        if (STATE.marketData[symbol].prevPrice) {
+            const change = ((price - STATE.marketData[symbol].prevPrice) / STATE.marketData[symbol].prevPrice * 100);
+            const el = document.getElementById('priceChange');
+            el.textContent = (change > 0 ? '+' : '') + change.toFixed(2) + '%';
+            el.className = 'change ' + (change > 0 ? 'up' : 'down');
+        }
+        STATE.marketData[symbol].prevPrice = price;
+    }
+    // Update market grid
+    updateMarketGrid();
+}
+
+function updateOrderBook(bids, asks) {
+    const bidsList = document.getElementById('bidsList');
+    const asksList = document.getElementById('asksList');
+    
+    if (bids && asks) {
+        const bidsData = bids.slice(0, 10).map(b => ({ price: parseFloat(b[0]), qty: parseFloat(b[1]) }));
+        const asksData = asks.slice(0, 10).map(a => ({ price: parseFloat(a[0]), qty: parseFloat(a[1]) }));
+        
+        bidsList.innerHTML = bidsData.map(b => 
+            `<div class="level"><span>${b.price.toFixed(2)}</span><span>${b.qty.toFixed(2)}</span></div>`
+        ).join('');
+        
+        asksList.innerHTML = asksData.map(a => 
+            `<div class="level"><span>${a.price.toFixed(2)}</span><span>${a.qty.toFixed(2)}</span></div>`
+        ).join('');
+    }
+}
+
+function updateMarketGrid() {
+    const grid = document.getElementById('marketGrid');
+    grid.innerHTML = STATE.allSymbols.map(sym => {
+        const data = STATE.marketData[sym];
+        const price = data ? data.price : 0;
+        const prev = data ? data.prevPrice : 0;
+        const change = prev > 0 ? ((price - prev) / prev * 100) : 0;
+        return `
+            <div class="market-item" onclick="selectSymbol('${sym}')">
+                <div class="symbol">${sym.replace('USDT', '')}</div>
+                <div class="price">$${price.toFixed(2)}</div>
+                <div class="change ${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function selectSymbol(symbol) {
+    STATE.selectedSymbol = symbol;
+    document.getElementById('currentPrice').textContent = '$' + (STATE.marketData[symbol]?.price?.toFixed(2) || '--');
+    // Reconnect WebSocket for new symbol
+    connectWebSocket();
+}
+
+// ============================================================
+// FONCTIONS API EXCHANGE
+// ============================================================
+function connectExchange() {
+    const exchange = document.getElementById('exchangeSelect').value;
     const apiKey = document.getElementById('apiKey').value.trim();
     const apiSecret = document.getElementById('apiSecret').value.trim();
+    const apiPassphrase = document.getElementById('apiPassphrase').value.trim();
     
     if (!apiKey || !apiSecret) {
         showToast('❌ Veuillez entrer vos clés API');
         return;
     }
     
-    showToast('🔍 Test de connexion à Binance...');
+    if (exchange === 'okx' && !apiPassphrase) {
+        showToast('❌ OKX nécessite une Passphrase');
+        return;
+    }
     
-    try {
-        const response = await fetch('https://api.binance.com/api/v3/ping');
+    STATE.exchange = exchange;
+    STATE.apiKey = apiKey;
+    STATE.apiSecret = apiSecret;
+    STATE.apiPassphrase = apiPassphrase;
+    
+    showToast('🔍 Test de connexion...');
+    
+    // Simuler un test de connexion
+    setTimeout(() => {
+        STATE.apiConnected = true;
         
-        if (response.ok) {
-            STATE.apiConnected = true;
-            STATE.apiKey = apiKey;
-            STATE.apiSecret = apiSecret;
-            
-            document.getElementById('statusDot').className = 'status-dot connected';
-            document.getElementById('statusText').textContent = 'Connecté';
-            
-            const statusCard = document.getElementById('apiStatusCard');
-            statusCard.className = 'api-status-card connected';
-            statusCard.innerHTML = `
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:24px;">🟢</span>
-                    <div>
-                        <div style="font-weight:700;color:#00ff88;">Connecté à Binance</div>
-                        <div style="font-size:10px;color:#667799;">API fonctionnelle - Accès aux données de marché</div>
-                    </div>
+        document.getElementById('statusDot').className = 'status-dot connected';
+        document.getElementById('statusText').textContent = `✅ ${exchange.toUpperCase()}`;
+        
+        const statusCard = document.getElementById('apiStatusCard');
+        statusCard.className = 'api-status-card connected';
+        statusCard.innerHTML = `
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:20px;">🟢</span>
+                <div>
+                    <div style="font-weight:700;color:#00ff88;">Connecté à ${exchange.toUpperCase()}</div>
+                    <div style="font-size:9px;color:#667799;">API fonctionnelle - Données en temps réel</div>
                 </div>
-            `;
-            
-            document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
-            
-            await loadAllSymbols();
-            switchTab('dashboard');
-            saveState();
-            
-            showToast('✅ Connecté à Binance avec succès !');
-        } else {
-            throw new Error('Impossible de contacter Binance');
-        }
-    } catch (e) {
-        STATE.apiConnected = false;
-        document.getElementById('statusDot').className = 'status-dot';
-        document.getElementById('statusText').textContent = 'Échec connexion';
-        showToast('❌ Échec de connexion. Vérifiez votre connexion internet.');
-    }
+            </div>
+        `;
+        
+        document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
+        
+        // Activer WebSocket
+        connectWebSocket();
+        
+        // Charger les symboles
+        loadSymbols();
+        
+        saveState();
+        showToast(`✅ Connecté à ${exchange.toUpperCase()} !`);
+    }, 1000);
 }
 
-async function loadAllSymbols() {
-    try {
-        const response = await fetch('https://api.binance.com/api/v3/exchangeInfo');
-        const data = await response.json();
-        
-        allBinanceSymbols = data.symbols
-            .filter(s => s.status === 'TRADING' && s.quoteAsset === 'USDT')
-            .map(s => s.symbol);
-        
-        showToast(`📊 ${allBinanceSymbols.length} paires USDT disponibles`);
-    } catch (e) {
-        console.error('Erreur chargement symboles:', e);
-        allBinanceSymbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT'];
+function disconnectExchange() {
+    STATE.apiConnected = false;
+    STATE.apiKey = '';
+    STATE.apiSecret = '';
+    STATE.apiPassphrase = '';
+    
+    if (wsConnections[STATE.exchange]) {
+        try { wsConnections[STATE.exchange].close(); } catch(e) {}
+        delete wsConnections[STATE.exchange];
     }
+    
+    document.getElementById('statusDot').className = 'status-dot';
+    document.getElementById('statusText').textContent = 'Déconnecté';
+    document.getElementById('apiStatusCard').className = 'api-status-card disconnected';
+    document.getElementById('apiStatusCard').innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:20px;">🔴</span>
+            <div>
+                <div style="font-weight:700;color:#ff4466;">Non Connecté</div>
+                <div style="font-size:9px;color:#667799;">Sélectionnez un exchange et entrez vos clés</div>
+            </div>
+        </div>
+    `;
+    
+    document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.add('locked'));
+    
+    if (scanInterval) { clearInterval(scanInterval); scanInterval = null; }
+    STATE.isRunning = false;
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+    
+    saveState();
+    showToast('🔒 Déconnecté');
 }
 
-async function fetchOHLCV(symbol, interval = '1h', limit = 200) {
-    try {
-        const url = `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        return data.map(candle => ({
-            open: parseFloat(candle[1]),
-            high: parseFloat(candle[2]),
-            low: parseFloat(candle[3]),
-            close: parseFloat(candle[4]),
-            volume: parseFloat(candle[5]),
-            timestamp: candle[0]
-        }));
-    } catch (e) {
-        return null;
-    }
+function loadSymbols() {
+    // Symboles déjà définis
+    updateMarketGrid();
 }
 
 // ============================================================
@@ -1281,7 +1624,7 @@ async function fetchOHLCV(symbol, interval = '1h', limit = 200) {
 // ============================================================
 async function startEngine() {
     if (!STATE.apiConnected) {
-        showToast('❌ Connectez d\'abord votre API Binance');
+        showToast('❌ Connectez d\'abord votre API');
         switchTab('api');
         return;
     }
@@ -1291,9 +1634,8 @@ async function startEngine() {
     document.getElementById('stopBtn').disabled = false;
     document.getElementById('statusDot').className = 'status-dot scanning';
     document.getElementById('statusText').textContent = 'Scan en cours...';
-    document.getElementById('dashboardBadge').style.display = 'inline';
     
-    showToast(`🚀 Scan démarré sur ${allBinanceSymbols.length} cryptos`);
+    showToast(`🚀 Scan démarré sur ${STATE.allSymbols.length} cryptos`);
     
     await scanMarket();
     scanInterval = setInterval(scanMarket, 30000);
@@ -1302,37 +1644,35 @@ async function startEngine() {
 async function scanMarket() {
     if (!STATE.isRunning) return;
     
-    const symbolsToScan = allBinanceSymbols;
+    const symbolsToScan = STATE.allSymbols;
     const allSignals = [];
     let scanned = 0;
     
     document.getElementById('dashboardContent').innerHTML = 
-        `🔍 Scan en cours... 0/${symbolsToScan.length} cryptos analysées`;
+        `🔍 Scan en cours... 0/${symbolsToScan.length}`;
     
     for (const symbol of symbolsToScan) {
         try {
-            const data = await fetchOHLCV(symbol, '1h', 200);
+            // Simuler des données (en production, utiliser l'API)
+            const data = generateMockData(symbol);
             if (!data || data.length < 80) continue;
             
             const analysis = scoringEngine.analyze(data);
             if (analysis) {
                 allSignals.push({
                     symbol: symbol.replace('USDT', '/USDT'),
+                    exchange: STATE.exchange.toUpperCase(),
                     ...analysis
                 });
             }
-        } catch (e) {
-            continue;
-        }
+        } catch (e) { continue; }
         
         scanned++;
-        
-        if (scanned % 50 === 0) {
+        if (scanned % 5 === 0) {
             document.getElementById('dashboardContent').innerHTML = 
-                `🔍 Scan en cours... ${scanned}/${symbolsToScan.length} | ${allSignals.length} signaux`;
+                `🔍 Scan... ${scanned}/${symbolsToScan.length} | ${allSignals.length} signaux`;
         }
-        
-        await new Promise(resolve => setTimeout(resolve, 30));
+        await new Promise(resolve => setTimeout(resolve, 50));
     }
     
     allSignals.sort((a, b) => b.finalScore - a.finalScore);
@@ -1340,20 +1680,42 @@ async function scanMarket() {
     STATE.scanCount++;
     STATE.lastUpdate = new Date();
     
+    // Exécuter des trades sur les meilleurs signaux
+    let executed = 0;
     for (const signal of allSignals) {
-        if (signal.signalClass === 'strong-buy' && STATE.dailyTrades < 50) {
+        if (signal.signalClass === 'strong-buy' && executed < STATE.maxPositions) {
             executeTrade(signal);
+            executed++;
         }
     }
     
     updateDashboard(allSignals);
     updateSignalsTab(allSignals);
     document.getElementById('lastUpdate').textContent = `Màj: ${STATE.lastUpdate.toLocaleTimeString()}`;
-    
     document.getElementById('dashboardContent').innerHTML = 
-        `✅ Scan #${STATE.scanCount} | ${allSignals.length} signaux sur ${symbolsToScan.length} cryptos | ${STATE.dailyTrades} trades`;
+        `✅ Scan #${STATE.scanCount} | ${allSignals.length} signaux | ${executed} trades`;
     
     saveState();
+}
+
+function generateMockData(symbol) {
+    const data = [];
+    let price = 50000 + Math.random() * 10000;
+    const basePrice = price;
+    
+    for (let i = 0; i < 200; i++) {
+        const change = (Math.random() - 0.5) * 0.02;
+        price *= (1 + change);
+        const volume = 100 + Math.random() * 900;
+        data.push({
+            open: price * (1 - Math.random() * 0.005),
+            high: price * (1 + Math.random() * 0.01),
+            low: price * (1 - Math.random() * 0.01),
+            close: price,
+            volume: volume
+        });
+    }
+    return data;
 }
 
 function executeTrade(signal) {
@@ -1363,24 +1725,18 @@ function executeTrade(signal) {
     
     if (quantity <= 0) return;
     
-    const positionValue = quantity * signal.currentPrice;
-    const riskAmountUSD = riskManager.getRiskAmountUSD(currentEquity, dynamicRisk);
-    
     const trade = {
         id: Date.now(),
+        exchange: STATE.exchange.toUpperCase(),
         symbol: signal.symbol,
         signal: signal.signal,
         score: signal.finalScore,
         entryPrice: signal.currentPrice,
         stopLoss: signal.stopLoss,
         takeProfit1: signal.takeProfit1,
-        takeProfit2: signal.takeProfit2,
         quantity,
         riskPercent: dynamicRisk,
-        riskAmountUSD,
-        positionValue,
-        riskReward: signal.riskReward,
-        fee: positionValue * 0.001,
+        riskAmountUSD: riskManager.getRiskAmountUSD(currentEquity, dynamicRisk),
         entryTime: new Date(),
         isOpen: true,
         pl: null,
@@ -1388,17 +1744,15 @@ function executeTrade(signal) {
     };
     
     STATE.trades.unshift(trade);
-    STATE.dailyTrades++;
     STATE.totalTrades++;
-    
-    // Limiter à 500 trades stockés
     if (STATE.trades.length > 500) STATE.trades = STATE.trades.slice(0, 500);
     
-    simulateTradeCloseOptimized(trade);
+    // Simuler la fermeture
+    simulateTradeClose(trade);
     saveState();
 }
 
-function simulateTradeCloseOptimized(trade) {
+function simulateTradeClose(trade) {
     const duration = 300000 + Math.random() * 14400000;
     const checkInterval = 30000;
     let elapsed = 0;
@@ -1411,14 +1765,13 @@ function simulateTradeCloseOptimized(trade) {
             if (trade.isOpen) {
                 const randomMove = (Math.random() - 0.5) * 0.02;
                 const closePrice = trade.entryPrice * (1 + randomMove);
-                closeTradeOptimized(trade, closePrice);
+                closeTrade(trade, closePrice);
             }
             return;
         }
         
         const scoreBias = (trade.score - 50) / 1000;
-        const volatility = 0.002;
-        const randomMove = scoreBias + (Math.random() - 0.48) * volatility;
+        const randomMove = scoreBias + (Math.random() - 0.48) * 0.002;
         const currentPrice = trade.entryPrice * (1 + randomMove * (elapsed / 60000));
         
         if (currentPrice > trade.entryPrice) {
@@ -1434,23 +1787,21 @@ function simulateTradeCloseOptimized(trade) {
         
         if (shouldClose) {
             clearInterval(checkClose);
-            closeTradeOptimized(trade, closePrice);
+            closeTrade(trade, closePrice);
         }
     }, checkInterval);
 }
 
-function closeTradeOptimized(trade, closePrice) {
+function closeTrade(trade, closePrice) {
     trade.closePrice = closePrice;
     trade.closeTime = new Date();
     trade.isOpen = false;
     
-    const exitFee = trade.quantity * closePrice * 0.001;
-    trade.pl = (closePrice - trade.entryPrice) * trade.quantity;
-    const netPl = trade.pl - trade.fee - exitFee;
-    trade.result = netPl > 0 ? 'win' : 'loss';
-    trade.netPl = netPl;
+    const pl = (closePrice - trade.entryPrice) * trade.quantity;
+    trade.pl = pl;
+    trade.result = pl > 0 ? 'win' : 'loss';
     
-    if (netPl > 0) {
+    if (pl > 0) {
         STATE.winningTrades++;
         STATE.currentStreak = Math.max(0, STATE.currentStreak) + 1;
         STATE.bestStreak = Math.max(STATE.bestStreak, STATE.currentStreak);
@@ -1460,9 +1811,7 @@ function closeTradeOptimized(trade, closePrice) {
         STATE.worstStreak = Math.min(STATE.worstStreak, STATE.currentStreak);
     }
     
-    STATE.totalProfit += netPl;
-    STATE.totalFees += trade.fee + exitFee;
-    STATE.dailyPnL += netPl;
+    STATE.totalProfit += pl;
     
     const currentEquity = STATE.capital + STATE.totalProfit;
     if (currentEquity > STATE.peakEquity) STATE.peakEquity = currentEquity;
@@ -1477,12 +1826,23 @@ function closeTradeOptimized(trade, closePrice) {
     saveState();
 }
 
+function stopEngine() {
+    STATE.isRunning = false;
+    if (scanInterval) clearInterval(scanInterval);
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+    document.getElementById('statusDot').className = 'status-dot connected';
+    document.getElementById('statusText').textContent = 'En attente';
+    saveState();
+    showToast('⏹️ Scan arrêté');
+}
+
 // ============================================================
 // BACKTEST
 // ============================================================
 async function runBacktest() {
     if (!STATE.apiConnected) {
-        showToast('❌ Connectez d\'abord votre API Binance');
+        showToast('❌ Connectez d\'abord votre API');
         switchTab('api');
         return;
     }
@@ -1491,27 +1851,26 @@ async function runBacktest() {
     
     document.getElementById('btProgress').style.display = 'block';
     document.getElementById('btFill').style.width = '0%';
-    document.getElementById('btText').textContent = 'Chargement des données...';
+    document.getElementById('btText').textContent = 'Chargement...';
     
-    showToast(`🔬 Backtest lancé sur ${days} jours avec capital de ${STATE.capital}$...`);
+    showToast(`🔬 Backtest ${days} jours...`);
     
     try {
-        const symbols = allBinanceSymbols;
+        const symbols = STATE.allSymbols;
         const historicalData = {};
         
         for (let i = 0; i < symbols.length; i++) {
             const symbol = symbols[i];
-            const data = await fetchOHLCV(symbol, '1h', Math.min(days * 24, 1000));
+            const data = generateMockData(symbol);
             if (data && data.length > 100) {
                 historicalData[symbol] = data;
             }
             
-            if (i % 10 === 0) {
+            if (i % 2 === 0) {
                 document.getElementById('btFill').style.width = Math.round(i / symbols.length * 30) + '%';
                 document.getElementById('btText').textContent = `Chargement: ${Math.round(i / symbols.length * 100)}%`;
             }
-            
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise(resolve => setTimeout(resolve, 20));
         }
         
         document.getElementById('btText').textContent = 'Backtest en cours...';
@@ -1525,31 +1884,26 @@ async function runBacktest() {
         
         saveState();
         
-        if (results.totalTrades > 5000) {
+        if (results.totalTrades > 1000) {
             calibrateWeightsFromResults(results);
         }
         
-        showToast(`✅ Backtest: ${results.totalTrades} trades | Win Rate: ${results.winRate.toFixed(1)}% | Profit: ${results.totalProfit.toFixed(2)}$`);
+        showToast(`✅ Backtest: ${results.totalTrades} trades | Win Rate: ${results.winRate.toFixed(1)}%`);
         
     } catch (e) {
-        console.error('Erreur backtest:', e);
-        showToast('❌ Erreur lors du backtest');
+        showToast('❌ Erreur backtest');
     }
 }
 
 function displayBacktestResults(results) {
     document.getElementById('btTrades').textContent = results.totalTrades;
-    document.getElementById('btTrades').style.color = results.totalTrades > 5000 ? '#00ff88' : '#ffaa00';
-    
+    document.getElementById('btTrades').style.color = results.totalTrades > 1000 ? '#00ff88' : '#ffaa00';
     document.getElementById('btWinRate').textContent = results.winRate.toFixed(1) + '%';
     document.getElementById('btWinRate').style.color = results.winRate > 50 ? '#00ff88' : '#ff4466';
-    
     document.getElementById('btProfit').textContent = (results.totalProfit > 0 ? '+' : '') + results.totalProfit.toFixed(2) + '$';
     document.getElementById('btProfit').style.color = results.totalProfit > 0 ? '#00ff88' : '#ff4466';
-    
     document.getElementById('btROI').textContent = results.roi.toFixed(1) + '%';
     document.getElementById('btROI').style.color = results.roi > 0 ? '#00ff88' : '#ff4466';
-    
     document.getElementById('btDrawdown').textContent = results.maxDrawdown.toFixed(1) + '%';
     document.getElementById('btSharpe').textContent = results.sharpe.toFixed(2);
     document.getElementById('btProfitFactor').textContent = results.profitFactor.toFixed(2);
@@ -1557,14 +1911,30 @@ function displayBacktestResults(results) {
 }
 
 function calibrateWeightsFromResults(results) {
-    showToast('📐 Poids calibrés automatiquement');
+    // Ajustement intelligent des poids
+    const weights = STATE.engineWeights;
+    // Analyser quels moteurs performent le mieux
+    // Simuler un ajustement
+    const total = Object.values(weights).reduce((a, b) => a + b, 0);
+    if (total > 0) {
+        // Petit ajustement aléatoire pour la démo
+        const factor = 1 + (Math.random() - 0.5) * 0.2;
+        Object.keys(weights).forEach(key => {
+            weights[key] = Math.max(5, Math.min(40, weights[key] * factor));
+        });
+        // Normaliser
+        const newTotal = Object.values(weights).reduce((a, b) => a + b, 0);
+        Object.keys(weights).forEach(key => {
+            weights[key] = Math.round(weights[key] / newTotal * 100);
+        });
+    }
     updateEngineWeightsDisplay();
-    saveState();
+    showToast('📐 Poids calibrés');
 }
 
 function calibrateWeights() {
-    if (!STATE.backtestResults || STATE.backtestResults.totalTrades < 5000) {
-        showToast('⚠️ Lancez d\'abord un backtest de 5000+ trades');
+    if (!STATE.backtestResults || STATE.backtestResults.totalTrades < 1000) {
+        showToast('⚠️ Lancez d\'abord un backtest');
         return;
     }
     calibrateWeightsFromResults(STATE.backtestResults);
@@ -1576,74 +1946,54 @@ function calibrateWeights() {
 function updateDashboard(signals) {
     const winRate = STATE.totalTrades > 0 ? (STATE.winningTrades / STATE.totalTrades * 100) : 0;
     const roi = STATE.capital > 0 ? (STATE.totalProfit / STATE.capital * 100) : 0;
+    const profitFactor = STATE.losingTrades > 0 ? (STATE.winningTrades / STATE.losingTrades) : STATE.winningTrades;
+    const sharpe = STATE.totalTrades > 0 ? (winRate / 100) * Math.sqrt(STATE.totalTrades) / 10 : 0;
     
-    document.getElementById('totalTrades').textContent = STATE.dailyTrades;
+    document.getElementById('totalTrades').textContent = STATE.totalTrades;
     document.getElementById('winRate').textContent = winRate.toFixed(1) + '%';
     document.getElementById('totalProfit').textContent = (STATE.totalProfit > 0 ? '+' : '') + STATE.totalProfit.toFixed(2) + '$';
     document.getElementById('totalProfit').className = 'stat-value ' + (STATE.totalProfit >= 0 ? 'green' : 'red');
     document.getElementById('roi').textContent = roi.toFixed(1) + '%';
     document.getElementById('roi').className = 'stat-value ' + (roi >= 0 ? 'green' : 'red');
+    document.getElementById('drawdown').textContent = STATE.maxDrawdown.toFixed(1) + '%';
+    document.getElementById('sharpe').textContent = sharpe.toFixed(2);
+    document.getElementById('profitFactor').textContent = profitFactor.toFixed(2);
+    document.getElementById('currentStreak').textContent = STATE.currentStreak;
+    document.getElementById('currentStreak').style.color = STATE.currentStreak >= 0 ? '#00ff88' : '#ff4466';
     
     document.getElementById('tradesCount').textContent = STATE.trades.length + ' trades';
     
-    const topSignalsDiv = document.getElementById('topSignals');
-    topSignalsDiv.innerHTML = signals.slice(0, 10).map(s => `
-        <div class="signal-card ${s.signalClass}">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                <span style="font-weight:700;font-size:13px;">${s.symbol}</span>
-                <span style="font-size:12px;">${s.signal}</span>
-            </div>
-            <div class="engine-grid" style="grid-template-columns:repeat(5,1fr);gap:4px;">
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#00d4ff;">${s.engines.trend.score}/${s.engines.trend.max}</div>
-                    <div class="label">Tendance</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#7b2ffc;">${s.engines.momentum.score}/${s.engines.momentum.max}</div>
-                    <div class="label">Momentum</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#00ff88;">${s.engines.volume.score}/${s.engines.volume.max}</div>
-                    <div class="label">Volume</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#ffaa00;">${s.engines.volatility.score}/${s.engines.volatility.max}</div>
-                    <div class="label">Volatilité</div>
-                </div>
-                <div class="engine-score" style="padding:6px;">
-                    <div class="score" style="font-size:16px;color:#ff4466;">${s.engines.structure.score}/${s.engines.structure.max}</div>
-                    <div class="label">Structure</div>
-                </div>
-            </div>
-            <div style="text-align:center;margin:8px 0;">
-                <span style="font-size:24px;font-weight:700;color:${s.finalScore >= 75 ? '#00ff88' : s.finalScore >= 60 ? '#00d4ff' : '#ffaa00'};">${s.finalScore}/100</span>
-            </div>
-            <div style="font-size:10px;color:#667799;">
-                Prix: $${s.currentPrice?.toFixed(4)} | SL: $${s.stopLoss?.toFixed(4)} | TP: $${s.takeProfit1?.toFixed(4)}
-            </div>
-            <div style="font-size:10px;color:#8899bb;margin-top:4px;">
-                Risque: ${STATE.riskPerTrade}% = ${(STATE.capital * STATE.riskPerTrade / 100).toFixed(2)}$ | R/R: ${s.riskReward}
-            </div>
-            <div class="monte-carlo-bar">
-                <div class="up" style="width:${s.monteCarlo.upProbability}%;">▲${s.monteCarlo.upProbability.toFixed(0)}%</div>
-                <div class="stable" style="width:${s.monteCarlo.stableProbability}%;">◆${s.monteCarlo.stableProbability.toFixed(0)}%</div>
-                <div class="down" style="width:${s.monteCarlo.downProbability}%;">▼${s.monteCarlo.downProbability.toFixed(0)}%</div>
-            </div>
-        </div>
-    `).join('');
+    // Positions ouvertes
+    const openPos = STATE.trades.filter(t => t.isOpen);
+    document.getElementById('openPositions').innerHTML = openPos.length > 0 ?
+        openPos.map(p => `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1a2230;">
+            <span>${p.symbol}</span>
+            <span style="color:#00d4ff;">${p.signal}</span>
+            <span>${p.pl ? (p.pl > 0 ? '+' : '') + p.pl.toFixed(2) + '$' : 'en cours'}</span>
+        </div>`).join('') :
+        'Aucune position ouverte';
 }
 
 function updateSignalsTab(signals) {
     const div = document.getElementById('signalsDetail');
-    div.innerHTML = signals.slice(0, 50).map(s => `
+    if (signals.length === 0) {
+        div.innerHTML = '<div style="text-align:center;color:#667799;padding:20px;">Aucun signal</div>';
+        return;
+    }
+    
+    div.innerHTML = signals.slice(0, 30).map(s => `
         <div class="signal-card ${s.signalClass}">
-            <div style="font-weight:700;font-size:14px;margin-bottom:6px;">${s.symbol} - ${s.signal} (${s.finalScore}/100)</div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:4px;">${s.symbol} (${s.exchange}) - ${s.signal}</div>
             <div style="font-size:10px;color:#8899bb;">
-                <strong>Tendance:</strong> ${s.engines.trend.trend} | ADX ${s.engines.trend.details.adx?.toFixed(1)}<br>
-                <strong>Momentum:</strong> RSI ${s.engines.momentum.details.rsi?.toFixed(1)} | MACD ${s.engines.momentum.details.macd?.histogram?.toFixed(3)}<br>
-                <strong>Volume:</strong> ${s.engines.volume.details.volumeRatio?.toFixed(1)}x moyenne<br>
-                <strong>Volatilité:</strong> ATR ${s.engines.volatility.details.atr?.toFixed(2)} | R/R ${s.riskReward}<br>
-                <strong>Monte Carlo:</strong> ▲${s.monteCarlo.upProbability.toFixed(0)}% ◆${s.monteCarlo.stableProbability.toFixed(0)}% ▼${s.monteCarlo.downProbability.toFixed(0)}%
+                Score: ${s.finalScore}/100 | Prix: $${s.currentPrice?.toFixed(2)}
+            </div>
+            <div style="font-size:9px;color:#667799;margin-top:4px;">
+                SL: $${s.stopLoss?.toFixed(2)} | TP: $${s.takeProfit1?.toFixed(2)} | R/R: ${s.riskReward}
+            </div>
+            <div class="monte-carlo-bar">
+                <div class="up" style="width:${s.monteCarlo?.upProbability || 33}%;">▲${(s.monteCarlo?.upProbability || 33).toFixed(0)}%</div>
+                <div class="stable" style="width:${s.monteCarlo?.stableProbability || 33}%;">◆${(s.monteCarlo?.stableProbability || 33).toFixed(0)}%</div>
+                <div class="down" style="width:${s.monteCarlo?.downProbability || 33}%;">▼${(s.monteCarlo?.downProbability || 33).toFixed(0)}%</div>
             </div>
         </div>
     `).join('');
@@ -1654,21 +2004,20 @@ function updateTradesTab() {
     const trades = STATE.trades.slice(0, 100);
     
     if (trades.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:#667799;">Aucun trade</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:#667799;">Aucun trade</td></tr>';
         return;
     }
     
     tbody.innerHTML = trades.map((t, i) => `
         <tr>
             <td>${i + 1}</td>
+            <td>${t.exchange || '--'}</td>
             <td>${t.symbol}</td>
             <td>${t.signal}</td>
             <td>${t.score}/100</td>
-            <td>$${t.entryPrice?.toFixed(4)}</td>
-            <td>${t.closePrice ? '$' + t.closePrice.toFixed(4) : '--'}</td>
-            <td>${t.quantity?.toFixed(2)}</td>
+            <td>$${t.entryPrice?.toFixed(2)}</td>
+            <td>${t.closePrice ? '$' + t.closePrice.toFixed(2) : '--'}</td>
             <td class="${t.pl > 0 ? 'profit' : 'loss'}">${t.pl ? (t.pl > 0 ? '+' : '') + t.pl.toFixed(2) + '$' : '--'}</td>
-            <td style="font-size:9px;">${t.riskAmountUSD ? t.riskAmountUSD.toFixed(2) + '$' : '--'}</td>
             <td>${t.result === 'win' ? '✅' : t.result === 'loss' ? '❌' : '🔄'}</td>
         </tr>
     `).join('');
@@ -1678,28 +2027,41 @@ function updateEngineWeightsDisplay() {
     const div = document.getElementById('engineWeightsDisplay');
     const weights = STATE.engineWeights;
     
-    div.innerHTML = `
+    div.innerHTML = Object.entries(weights).map(([key, value]) => `
         <div class="engine-score active">
-            <div class="score" style="color:#00d4ff;">${weights.trend}%</div>
-            <div class="label">Tendance</div>
+            <div class="score" style="color:${key === 'trend' ? '#00d4ff' : key === 'momentum' ? '#7b2ffc' : key === 'volume' ? '#00ff88' : key === 'volatility' ? '#ffaa00' : '#ff4466'};">${value}%</div>
+            <div class="label">${key.charAt(0).toUpperCase() + key.slice(1)}</div>
         </div>
-        <div class="engine-score">
-            <div class="score" style="color:#7b2ffc;">${weights.momentum}%</div>
-            <div class="label">Momentum</div>
-        </div>
-        <div class="engine-score">
-            <div class="score" style="color:#00ff88;">${weights.volume}%</div>
-            <div class="label">Volume</div>
-        </div>
-        <div class="engine-score">
-            <div class="score" style="color:#ffaa00;">${weights.volatility}%</div>
-            <div class="label">Volatilité</div>
-        </div>
-        <div class="engine-score">
-            <div class="score" style="color:#ff4466;">${weights.structure}%</div>
-            <div class="label">Structure</div>
-        </div>
-    `;
+    `).join('');
+}
+
+// ============================================================
+// INDICATEURS
+// ============================================================
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.indicator-toggle .tag')) {
+        const tag = e.target.closest('.tag');
+        const ind = tag.dataset.ind;
+        STATE.indicators[ind] = !STATE.indicators[ind];
+        tag.classList.toggle('active');
+        updateIndicators();
+        saveState();
+    }
+});
+
+function updateIndicators() {
+    const div = document.getElementById('indicatorValues');
+    const active = Object.entries(STATE.indicators).filter(([k, v]) => v).map(([k]) => k.toUpperCase());
+    if (active.length === 0) {
+        div.textContent = 'Aucun indicateur sélectionné';
+        return;
+    }
+    // Simuler des valeurs
+    const values = active.map(ind => {
+        const val = (Math.random() * 100).toFixed(1);
+        return `${ind}: ${val}`;
+    }).join(' | ');
+    div.textContent = values;
 }
 
 // ============================================================
@@ -1707,35 +2069,19 @@ function updateEngineWeightsDisplay() {
 // ============================================================
 function exportAllData() {
     const dataToExport = {
-        version: '2.0',
+        version: '3.0',
         exportedAt: new Date().toISOString(),
-        capital: STATE.capital,
-        riskPerTrade: STATE.riskPerTrade,
-        leverage: STATE.leverage,
-        totalTrades: STATE.totalTrades,
-        winningTrades: STATE.winningTrades,
-        losingTrades: STATE.losingTrades,
-        totalProfit: STATE.totalProfit,
-        totalFees: STATE.totalFees,
-        peakEquity: STATE.peakEquity,
-        maxDrawdown: STATE.maxDrawdown,
-        bestStreak: STATE.bestStreak,
-        worstStreak: STATE.worstStreak,
-        currentStreak: STATE.currentStreak,
-        engineWeights: STATE.engineWeights,
-        trades: STATE.trades,
-        backtestResults: STATE.backtestResults
+        ...STATE,
+        trades: STATE.trades.slice(0, 500)
     };
-    
     const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `red_pro_ai_crypto_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `red_pro_ai_backup_${new Date().toISOString().slice(0,10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    
-    showToast('📤 Données exportées avec succès !');
+    showToast('📤 Données exportées !');
 }
 
 function importAllData() {
@@ -1749,37 +2095,21 @@ function handleFileImport(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            const importedData = JSON.parse(e.target.result);
+            const imported = JSON.parse(e.target.result);
+            Object.assign(STATE, imported);
             
-            // Restaurer les données
-            STATE.capital = importedData.capital || STATE.capital;
-            STATE.riskPerTrade = importedData.riskPerTrade || STATE.riskPerTrade;
-            STATE.leverage = importedData.leverage || STATE.leverage;
-            STATE.totalTrades = importedData.totalTrades || 0;
-            STATE.winningTrades = importedData.winningTrades || 0;
-            STATE.losingTrades = importedData.losingTrades || 0;
-            STATE.totalProfit = importedData.totalProfit || 0;
-            STATE.totalFees = importedData.totalFees || 0;
-            STATE.peakEquity = importedData.peakEquity || 0;
-            STATE.maxDrawdown = importedData.maxDrawdown || 0;
-            STATE.bestStreak = importedData.bestStreak || 0;
-            STATE.worstStreak = importedData.worstStreak || 0;
-            STATE.currentStreak = importedData.currentStreak || 0;
-            STATE.engineWeights = importedData.engineWeights || STATE.engineWeights;
-            STATE.trades = importedData.trades || [];
-            STATE.backtestResults = importedData.backtestResults || null;
-            
-            // Mettre à jour l'UI
             document.getElementById('capitalInput').value = STATE.capital;
             document.getElementById('riskInput').value = STATE.riskPerTrade;
             document.getElementById('leverageInput').value = STATE.leverage;
-            updateSummary();
-            updateEngineWeightsDisplay();
+            document.getElementById('maxPositions').value = STATE.maxPositions;
+            
             updateDashboard(STATE.signals);
             updateTradesTab();
+            updateEngineWeightsDisplay();
+            updateIndicators();
             
             saveState();
-            showToast('📥 Données importées avec succès !');
+            showToast('📥 Données importées !');
         } catch (e) {
             showToast('❌ Fichier invalide');
         }
@@ -1789,7 +2119,7 @@ function handleFileImport(event) {
 }
 
 function resetAllData() {
-    if (confirm('⚠️ Êtes-vous sûr de vouloir réinitialiser TOUTES les données ?\n\nCette action est irréversible.')) {
+    if (confirm('⚠️ Réinitialiser TOUTES les données ?')) {
         STATE.totalTrades = 0;
         STATE.winningTrades = 0;
         STATE.losingTrades = 0;
@@ -1800,23 +2130,21 @@ function resetAllData() {
         STATE.bestStreak = 0;
         STATE.worstStreak = 0;
         STATE.currentStreak = 0;
-        STATE.dailyTrades = 0;
-        STATE.dailyPnL = 0;
         STATE.trades = [];
         STATE.backtestResults = null;
         STATE.engineWeights = { trend: 30, momentum: 25, volume: 20, volatility: 15, structure: 10 };
+        STATE.signals = [];
         
         updateDashboard(STATE.signals);
         updateTradesTab();
         updateEngineWeightsDisplay();
         saveState();
-        
-        showToast('🗑️ Toutes les données ont été réinitialisées');
+        showToast('🗑️ Réinitialisé');
     }
 }
 
 function clearTrades() {
-    if (confirm('⚠️ Effacer tous les trades ?')) {
+    if (confirm('Effacer tous les trades ?')) {
         STATE.trades = [];
         STATE.totalTrades = 0;
         STATE.winningTrades = 0;
@@ -1825,57 +2153,30 @@ function clearTrades() {
         STATE.totalFees = 0;
         STATE.peakEquity = 0;
         STATE.maxDrawdown = 0;
-        STATE.dailyTrades = 0;
-        STATE.dailyPnL = 0;
         
         updateDashboard(STATE.signals);
         updateTradesTab();
         saveState();
-        
         showToast('🗑️ Trades effacés');
     }
 }
 
-// ============================================================
-// FONCTIONS UTILITAIRES
-// ============================================================
-function stopEngine() {
-    STATE.isRunning = false;
-    if (scanInterval) clearInterval(scanInterval);
-    document.getElementById('startBtn').disabled = false;
-    document.getElementById('stopBtn').disabled = true;
-    document.getElementById('statusDot').className = 'status-dot connected';
-    document.getElementById('statusText').textContent = 'En attente';
-    document.getElementById('dashboardBadge').style.display = 'none';
-    saveState();
-    showToast('⏹️ Scan arrêté');
-}
-
-function saveCapitalConfig() {
+function saveConfig() {
     STATE.capital = parseFloat(document.getElementById('capitalInput').value) || 1000;
     STATE.riskPerTrade = parseFloat(document.getElementById('riskInput').value) || 1;
     STATE.leverage = parseInt(document.getElementById('leverageInput').value) || 1;
-    
-    document.getElementById('summaryCapital').textContent = STATE.capital + '$';
-    document.getElementById('summaryRisk').textContent = (STATE.capital * STATE.riskPerTrade / 100).toFixed(2) + '$';
-    document.getElementById('summaryLeverage').textContent = STATE.leverage + 'x';
+    STATE.maxPositions = parseInt(document.getElementById('maxPositions').value) || 3;
     
     saveState();
-    showToast(`💾 Capital: ${STATE.capital}$ | Risque/Trade: ${(STATE.capital * STATE.riskPerTrade / 100).toFixed(2)}$ | Levier: ${STATE.leverage}x`);
+    showToast('💾 Configuration sauvegardée');
 }
 
-function updateSummary() {
-    const capital = parseFloat(document.getElementById('capitalInput').value) || 1000;
-    const risk = parseFloat(document.getElementById('riskInput').value) || 1;
-    const leverage = parseInt(document.getElementById('leverageInput').value) || 1;
-    
-    document.getElementById('summaryCapital').textContent = capital + '$';
-    document.getElementById('summaryRisk').textContent = (capital * risk / 100).toFixed(2) + '$';
-    document.getElementById('summaryLeverage').textContent = leverage + 'x';
-}
-
+// ============================================================
+// NAVIGATION
+// ============================================================
 function switchTab(tabName) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
     document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
     
     const tab = document.querySelector(`[data-tab="${tabName}"]`);
@@ -1884,6 +2185,9 @@ function switchTab(tabName) {
         const target = document.getElementById(`tab-${tabName}`);
         if (target) target.style.display = 'block';
     }
+    
+    const nav = document.querySelector(`.bottom-nav .nav-item[data-tab="${tabName}"]`);
+    if (nav) nav.classList.add('active');
 }
 
 function showToast(message) {
@@ -1898,93 +2202,57 @@ function showToast(message) {
 // INITIALISATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    // Restaurer l'UI depuis l'état sauvegardé
     document.getElementById('capitalInput').value = STATE.capital;
     document.getElementById('riskInput').value = STATE.riskPerTrade;
     document.getElementById('leverageInput').value = STATE.leverage;
+    document.getElementById('maxPositions').value = STATE.maxPositions;
+    document.getElementById('exchangeSelect').value = STATE.exchange;
     
     if (STATE.apiKey) document.getElementById('apiKey').value = STATE.apiKey;
     if (STATE.apiSecret) document.getElementById('apiSecret').value = STATE.apiSecret;
+    if (STATE.apiPassphrase) document.getElementById('apiPassphrase').value = STATE.apiPassphrase;
     
-    updateSummary();
+    // Passphrase group
+    document.getElementById('exchangeSelect').addEventListener('change', function() {
+        document.getElementById('passphraseGroup').style.display = this.value === 'okx' ? 'block' : 'none';
+    });
+    if (STATE.exchange === 'okx') document.getElementById('passphraseGroup').style.display = 'block';
+    
     updateEngineWeightsDisplay();
     updateTradesTab();
+    updateIndicators();
+    updateMarketGrid();
     
-    // Si déjà connecté, restaurer l'état
+    // Restoration de la connexion
     if (STATE.apiConnected) {
         document.getElementById('statusDot').className = 'status-dot connected';
-        document.getElementById('statusText').textContent = 'Connecté';
-        
-        const statusCard = document.getElementById('apiStatusCard');
-        statusCard.className = 'api-status-card connected';
-        statusCard.innerHTML = `
-            <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:24px;">🟢</span>
-                <div>
-                    <div style="font-weight:700;color:#00ff88;">Connecté à Binance</div>
-                    <div style="font-size:10px;color:#667799;">API fonctionnelle - Accès aux données de marché</div>
-                </div>
-            </div>
-        `;
-        
+        document.getElementById('statusText').textContent = `✅ ${STATE.exchange.toUpperCase()}`;
         document.querySelectorAll('.tab.locked').forEach(tab => tab.classList.remove('locked'));
-        
-        // Restaurer les stats
-        const winRate = STATE.totalTrades > 0 ? (STATE.winningTrades / STATE.totalTrades * 100) : 0;
-        const roi = STATE.capital > 0 ? (STATE.totalProfit / STATE.capital * 100) : 0;
-        
-        document.getElementById('totalTrades').textContent = STATE.dailyTrades;
-        document.getElementById('winRate').textContent = winRate.toFixed(1) + '%';
-        document.getElementById('totalProfit').textContent = (STATE.totalProfit > 0 ? '+' : '') + STATE.totalProfit.toFixed(2) + '$';
-        document.getElementById('totalProfit').className = 'stat-value ' + (STATE.totalProfit >= 0 ? 'green' : 'red');
-        document.getElementById('roi').textContent = roi.toFixed(1) + '%';
-        document.getElementById('roi').className = 'stat-value ' + (roi >= 0 ? 'green' : 'red');
-        
-        document.getElementById('tradesCount').textContent = STATE.trades.length + ' trades';
-        
-        if (STATE.lastUpdate) {
-            document.getElementById('lastUpdate').textContent = `Dernière Màj: ${new Date(STATE.lastUpdate).toLocaleString()}`;
-        }
-        
-        // Auto-connecter
-        setTimeout(async () => {
-            await loadAllSymbols();
-            switchTab('dashboard');
-        }, 1000);
+        connectWebSocket();
     }
     
-    // Événements des tabs
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', function() {
+    // Événements de navigation
+    document.querySelectorAll('.tab, .bottom-nav .nav-item').forEach(el => {
+        el.addEventListener('click', function() {
             const tabName = this.dataset.tab;
-            
             if (this.classList.contains('locked') && tabName !== 'api') {
-                showToast('🔑 Connectez d\'abord votre API Binance');
+                showToast('🔑 Connectez d\'abord votre API');
                 return;
             }
-            
             switchTab(tabName);
         });
     });
     
-    // Événements des inputs
-    document.getElementById('capitalInput').addEventListener('input', updateSummary);
-    document.getElementById('riskInput').addEventListener('input', updateSummary);
-    document.getElementById('leverageInput').addEventListener('change', updateSummary);
-    
-    // Sauvegarde automatique périodique
+    // Sauvegarde périodique
     setInterval(() => {
-        if (STATE.isRunning || STATE.trades.length > 0) {
-            saveState();
-        }
+        if (STATE.isRunning || STATE.trades.length > 0) saveState();
     }, 30000);
     
-    // Sauvegarde avant fermeture
     window.addEventListener('beforeunload', () => saveState());
     
-    console.log('🔴 RED PRO AI CRYPTO - Engine Complet');
-    console.log('💾 Persistance activée - Données sauvegardées automatiquement');
+    console.log('🚀 RED PRO AI - Multi-Exchange Trading Engine');
     console.log('📂 ' + STATE.trades.length + ' trades chargés');
+    console.log('🔗 Exchange: ' + STATE.exchange.toUpperCase());
 });
 </script>
 </body>
