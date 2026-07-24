@@ -1887,7 +1887,6 @@ const DB = {
             req.onerror = () => rej(new Error('IndexedDB'));
         });
     },
-    // ... toutes les méthodes (inchangées)
     async saveTeam(t) { await this.open(); return new Promise(res => { const tx = this._db.transaction('teams', 'readwrite'); tx.objectStore('teams').put(t); tx.oncomplete = () => res(t); }); },
     async getTeam(n) { await this.open(); return new Promise(res => { const req = this._db.transaction('teams').objectStore('teams').get(n); req.onsuccess = () => res(req.result || null); }); },
     async getAllTeams() { await this.open(); return new Promise(res => { const req = this._db.transaction('teams').objectStore('teams').getAll(); req.onsuccess = () => res(req.result || []); }); },
@@ -2903,7 +2902,7 @@ const EngineV22 = {
 };
 
 // ============================================================
-// 7. XG ENGINE (avec calculateXGFromGoals corrigé)
+// 7. XG ENGINE — CORRECTION (mise à jour uniquement des équipes ayant joué)
 // ============================================================
 const xGEngine = {
     recalculateAllXG(matches, teams) {
@@ -2925,8 +2924,11 @@ const xGEngine = {
             teamStats[away].goalsScored += ag; teamStats[away].goalsConceded += hg;
             teamStats[away].shots += as; teamStats[away].shotsOnTarget += ast;
         }
+        const updatedStats = {};
         for (const [name, stats] of Object.entries(teamStats)) {
-            if (stats.matches === 0) continue;
+            if (stats.matches === 0) {
+                continue;
+            }
             const avgGoals = stats.goalsScored / stats.matches;
             const avgConceded = stats.goalsConceded / stats.matches;
             const avgShots = stats.shots / stats.matches;
@@ -2942,21 +2944,21 @@ const xGEngine = {
             }
             xG = Math.min(3.5, Math.max(0.3, xG));
             xGA = Math.min(3.5, Math.max(0.3, xGA));
-            stats.xG = xG; stats.xGA = xGA;
+            updatedStats[name] = { xG, xGA, matches: stats.matches, goalsScored: stats.goalsScored, goalsConceded: stats.goalsConceded };
         }
         return teams.map(t => {
-            const s = teamStats[t.name];
+            const s = updatedStats[t.name];
             if (s) {
-                t.matches = s.matches;
-                t.goalsScored = s.goalsScored;
-                t.goalsConceded = s.goalsConceded;
+                t.matches = (t.matches || 0) + s.matches;
+                t.goalsScored = (t.goalsScored || 0) + s.goalsScored;
+                t.goalsConceded = (t.goalsConceded || 0) + s.goalsConceded;
                 if (!t.xG_manual) {
-                    t.xG = s.xG; t.xGA = s.xGA;
-                    t.stats = t.stats || {};
-                    t.stats.xG = s.xG; t.stats.xGA = s.xGA;
+                    t.xG = s.xG;
+                    t.xGA = s.xGA;
+                    if (!t.stats) t.stats = {};
+                    t.stats.xG = s.xG;
+                    t.stats.xGA = s.xGA;
                     t.stats.goalsPerMatch = s.goalsScored / s.matches;
-                    t.stats.shotsPerMatch = s.shots / s.matches;
-                    t.stats.shotsOnTargetPerMatch = s.shotsOnTarget / s.matches;
                 }
                 if (!t.elo) t.elo = 1500;
             }
@@ -3016,7 +3018,7 @@ const MarketCalculator = {
 };
 
 // ============================================================
-// 9. APPLICATION (App) — structure réorganisée
+// 9. APPLICATION (App)
 // ============================================================
 const App = {
     // --- Propriétés ---
@@ -3069,7 +3071,6 @@ const App = {
             await this.loadLeaguesAndAverages();
             await this.refreshAllData();
 
-            // Événements navigation
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.addEventListener('click', () => this.navigateTo(el.dataset.page));
             });
@@ -3083,14 +3084,12 @@ const App = {
                 });
             });
 
-            // Fermeture autocomplete
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.autocomplete-wrapper')) {
                     document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.add('hidden'));
                 }
             });
 
-            // Raccourcis clavier
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     document.querySelectorAll('.modal:not(.hidden)').forEach(m => m.classList.add('hidden'));
@@ -3107,13 +3106,11 @@ const App = {
                 }
             });
 
-            // Sauvegarde périodique
             setInterval(() => {
                 this.refreshUI();
                 this.updateCouponBadge();
             }, 600000);
 
-            // Chargement des préférences
             await this.loadUserPreferences();
             this._hotPickThreshold = parseFloat(document.getElementById('hotPickThreshold')?.value || '0.65');
             document.getElementById('hotPickThresholdDisplay').textContent = (this._hotPickThreshold * 100).toFixed(0) + '%';
@@ -3149,7 +3146,6 @@ const App = {
             this.leagues = await DB.getAllLeagues();
             this.leagueAverages = await DB.getAllLeagueAverages();
 
-            // Mise à jour des Elos à partir des saisons
             for (const team of this.teams) {
                 if (team.seasons && Object.keys(team.seasons).length > 0) {
                     const leagueConfig = this.getLeagueConfigWithCustom(team.league || 'default');
@@ -3168,7 +3164,6 @@ const App = {
             this.teams = await DB.getAllTeams();
             EngineV22.clearCache();
 
-            // Récupération du capital
             const capitalHistory = await DB.getCapitalHistory();
             if (capitalHistory.length > 0) {
                 const last = capitalHistory[capitalHistory.length - 1];
@@ -3196,7 +3191,6 @@ const App = {
             }
             document.getElementById('leagueCount').textContent = leagueNames.size;
 
-            // Initialisation des poids des modèles
             await this._initializeModelWeights();
 
             this.refreshUI();
@@ -5938,15 +5932,17 @@ const App = {
         document.getElementById('importProgressText').textContent = '100%';
         setTimeout(() => progress.classList.add('hidden'), 1000);
 
-        // Recalcul xG
-        const xGTeams = xGEngine.recalculateAllXG(matchesToAdd, existingTeams);
+        // Recalcul xG (corrigé)
+        const allTeams = await DB.getAllTeams();
+        const allMatches = await DB.getAllMatches();
+        const xGTeams = xGEngine.recalculateAllXG(allMatches, allTeams);
         for (const team of xGTeams) {
             await DB.saveTeam(team);
         }
 
         // Profils de ligue
         for (const league of leagueNames) {
-            await LeagueProfileEngine.computeProfile(league, matchesToAdd);
+            await LeagueProfileEngine.computeProfile(league, allMatches);
         }
 
         this.matches = await DB.getAllMatches();
